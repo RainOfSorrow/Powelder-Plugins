@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{2C64650E-D29E-406C-988F-833D30239436}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <OutputType>Library</OutputType>
+    <LangVersion>7</LangVersion>
+    <AssemblyName>SurvivalCore</AssemblyName>
+    <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TShock\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="OTAPI, Version=1.3.5.3, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TShock\OTAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data">
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_32\System.Data\v4.0_4.0.0.0__b77a5c561934e089\System.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data">
+      <HintPath>..\..\..\Powelder (on_serwer)\ServerPlugins\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core">
+      <HintPath>C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System.Core\v4.0_4.0.0.0__b77a5c561934e089\System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>..\..\..\Powelder (on_serwer)\ServerPlugins\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="HttpServer">
+      <HintPath>C:\Users\Xedlefix\Desktop\Powelder (on_serwer)\ServerPlugins\HttpServer.dll</HintPath>
+    </Reference>
+    <Reference Include="EssentialsPlus">
+      <HintPath>C:\Users\Xedlefix\Desktop\Plugin\PowelderCore\EssentialsPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="TerrariaServer, Version=1.3.5.3, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TShock\TerrariaServer.exe</HintPath>
+    </Reference>
+    <Reference Include="TShockAPI, Version=4.3.25.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TShock\ServerPlugins\TShockAPI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Change.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="DataBase.cs" />
+    <Compile Include="Economy\Database\QueryDly.cs" />
+    <Compile Include="Economy\Database\QueryPlr.cs" />
+    <Compile Include="Economy\Database\QueryShop.cs" />
+    <Compile Include="Economy\Database\Setup.cs" />
+    <Compile Include="Economy\ECommands.cs" />
+    <Compile Include="Economy\EConfig.cs" />
+    <Compile Include="Economy\Economy.cs" />
+    <Compile Include="Economy\Gambling\Casino.cs" />
+    <Compile Include="Economy\Gambling\Slots.cs" />
+    <Compile Include="Economy\Operations.cs" />
+    <Compile Include="Economy\Shop\Product.cs" />
+    <Compile Include="Economy\Shop\Reforge.cs" />
+    <Compile Include="Economy\Shop\SCommands.cs" />
+    <Compile Include="ExtendedChat.cs" />
+    <Compile Include="NPI.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ChangeClasses.cs" />
+    <Compile Include="SavingFormat.cs" />
+    <Compile Include="SrvCommands.cs" />
+    <Compile Include="SrvPlayer.cs" />
+    <Compile Include="SurvivalCore.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="WorldRegeneration.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PowelderCore\PowelderAPI.csproj">
+      <Project>{e8fbb38b-5d78-4d7d-9930-198d50202d54}</Project>
+      <Name>PowelderAPI</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
