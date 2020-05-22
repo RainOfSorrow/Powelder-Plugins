@@ -94,11 +94,5 @@
     <Compile Include="Utils.cs" />
     <Compile Include="WorldRegeneration.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PowelderCore\PowelderAPI.csproj">
-      <Project>{e8fbb38b-5d78-4d7d-9930-198d50202d54}</Project>
-      <Name>PowelderAPI</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
