@@ -8,7 +8,7 @@ namespace SurvivalCore
 {
 	public class Utils
 	{
-		public static bool isAvalible(int type)
+		public static bool IsAvalible(int type)
 		{
 			if (!NPC.downedMoonlord)
 			{
@@ -90,7 +90,7 @@ namespace SurvivalCore
 			return true;
 		}
 
-		public static int costCalc(TSPlayer who, int cost)
+		public static int CostCalc(TSPlayer who, int cost)
 		{
 			if (who.HasPermission("isGracz+"))
 			{

@@ -19,13 +19,13 @@ namespace PowelderAPI
 
 		public static event PowelderChatHookD OnPowelderChat;
 
-		public static Dictionary<byte, Action<byte, object[]>> acceptation = new Dictionary<byte, Action<byte, object[]>>();
+		public static Dictionary<byte, Action<byte, object[]>> Acceptation = new Dictionary<byte, Action<byte, object[]>>();
 
-		public static Dictionary<byte, object[]> acceptData = new Dictionary<byte, object[]>();
+		public static Dictionary<byte, object[]> AcceptData = new Dictionary<byte, object[]>();
 
-		private static Dictionary<int, DateTime> antiSpam = new Dictionary<int, DateTime>();
+		private static Dictionary<int, DateTime> _antiSpam = new Dictionary<int, DateTime>();
 
-		public static void onChat(ServerChatEventArgs args)
+		public static void OnChat(ServerChatEventArgs args)
 		{
 			if (args.Handled)
 				return;
@@ -60,7 +60,7 @@ namespace PowelderAPI
 			}
 			if (text.ToLower().StartsWith("/tak") || text.ToLower().StartsWith("/nie"))
 			{
-				if (acceptation.ContainsKey((byte)tSPlayer.Index))
+				if (Acceptation.ContainsKey((byte)tSPlayer.Index))
 				{
 					bool flag = false;
 					if (text.ToLower().StartsWith("/tak"))
@@ -69,15 +69,15 @@ namespace PowelderAPI
 					}
 					if (flag)
 					{
-						acceptation[(byte)tSPlayer.Index]((byte)tSPlayer.Index, acceptData[(byte)tSPlayer.Index]);
-						acceptData.Remove((byte)tSPlayer.Index);
-						acceptation.Remove((byte)tSPlayer.Index);
+						Acceptation[(byte)tSPlayer.Index]((byte)tSPlayer.Index, AcceptData[(byte)tSPlayer.Index]);
+						AcceptData.Remove((byte)tSPlayer.Index);
+						Acceptation.Remove((byte)tSPlayer.Index);
 					}
 					else
 					{
 						tSPlayer.SendMessage("[c/595959:»]  Anulowales zadanie.", Color.Gray);
-						acceptData.Remove((byte)tSPlayer.Index);
-						acceptation.Remove((byte)tSPlayer.Index);
+						AcceptData.Remove((byte)tSPlayer.Index);
+						Acceptation.Remove((byte)tSPlayer.Index);
 					}
 				}
 				args.Handled = true;
@@ -104,20 +104,20 @@ namespace PowelderAPI
 			{
 				if (!tSPlayer.HasPermission("server.jmod"))
 				{
-					if (antiSpam.ContainsKey(tSPlayer.Index))
+					if (_antiSpam.ContainsKey(tSPlayer.Index))
 					{
-						if (!((DateTime.Now - antiSpam[tSPlayer.Index]).TotalMilliseconds >= 800.0))
+						if (!((DateTime.Now - _antiSpam[tSPlayer.Index]).TotalMilliseconds >= 800.0))
 						{
-							antiSpam[tSPlayer.Index] = DateTime.Now;
+							_antiSpam[tSPlayer.Index] = DateTime.Now;
 							tSPlayer.SendErrorMessage("[c/595959:»]  Zwolnij troche. Za szybko piszesz.");
 							args.Handled = true;
 							return;
 						}
-						antiSpam[tSPlayer.Index] = DateTime.Now;
+						_antiSpam[tSPlayer.Index] = DateTime.Now;
 					}
 					else
 					{
-						antiSpam.Add(tSPlayer.Index, DateTime.Now);
+						_antiSpam.Add(tSPlayer.Index, DateTime.Now);
 					}
 				}
 				if (!tSPlayer.HasPermission(Permissions.canchat))
@@ -141,37 +141,37 @@ namespace PowelderAPI
 		{
 			int who = args.Who;
 
-			if (acceptation.ContainsKey((byte)who))
+			if (Acceptation.ContainsKey((byte)who))
 			{
-				acceptation.Remove((byte)who);
+				Acceptation.Remove((byte)who);
 			}
-			if (acceptData.ContainsKey((byte)who))
+			if (AcceptData.ContainsKey((byte)who))
 			{
-				acceptData.Remove((byte)who);
+				AcceptData.Remove((byte)who);
 			}
-			if (antiSpam.ContainsKey(who))
+			if (_antiSpam.ContainsKey(who))
 			{
-				antiSpam.Remove(who);
+				_antiSpam.Remove(who);
 			}
 		}
 
-		public static void addAcceptation(byte who, Action<byte, object[]> action, object[] data)
+		public static void AddAcceptation(byte who, Action<byte, object[]> action, object[] data)
 		{
-			if (acceptation.ContainsKey(who))
+			if (Acceptation.ContainsKey(who))
 			{
-				acceptation[who] = action;
+				Acceptation[who] = action;
 			}
 			else
 			{
-				acceptation.Add(who, action);
+				Acceptation.Add(who, action);
 			}
-			if (acceptData.ContainsKey(who))
+			if (AcceptData.ContainsKey(who))
 			{
-				acceptData[who] = data;
+				AcceptData[who] = data;
 			}
 			else
 			{
-				acceptData.Add(who, data);
+				AcceptData.Add(who, data);
 			}
 		}
 	}

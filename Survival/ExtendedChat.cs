@@ -69,31 +69,31 @@ namespace SurvivalCore
 			}
 		};
 
-		public static void onChat(ServerChatEventArgs args)
+		public static void OnChat(ServerChatEventArgs args)
 		{
 			TSPlayer plr = TShock.Players[args.Who];
 			string text;
 
-			if (SurvivalCore.isChatEvent && SurvivalCore.ChatEvent_Word == args.Text)
+			if (SurvivalCore.IsChatEvent && SurvivalCore.ChatEventWord == args.Text)
 			{
-				SurvivalCore.chatEventStoper.Stop();
-				TSPlayer.All.SendMessage($"[i:889] [c/595959:⮘] [c/00cc66:Event] [c/595959:⮚] [c/00cc66:{TShock.Players[args.Who].Name}] napisal najszybciej [c/00cc66:{SurvivalCore.ChatEvent_Word}] i wygral 60 €. [c/595959:(]{SurvivalCore.chatEventStoper.Elapsed.TotalSeconds} sec[c/595959:)]", new Color(128, 255, 191));
-				SurvivalCore.srvPlayers[args.Who].Money += 60;
-				SurvivalCore.isChatEvent = false;
-				SurvivalCore.chatEventTimer = DateTime.UtcNow;
-				SurvivalCore.chatEventStoper.Reset();
+				SurvivalCore.ChatEventStoper.Stop();
+				TSPlayer.All.SendMessage($"[i:889] [c/595959:⮘] [c/00cc66:Event] [c/595959:⮚] [c/00cc66:{TShock.Players[args.Who].Name}] napisal najszybciej [c/00cc66:{SurvivalCore.ChatEventWord}] i wygral 60 €. [c/595959:(]{SurvivalCore.ChatEventStoper.Elapsed.TotalSeconds} sec[c/595959:)]", new Color(128, 255, 191));
+				SurvivalCore.SrvPlayers[args.Who].Money += 60;
+				SurvivalCore.IsChatEvent = false;
+				SurvivalCore.ChatEventTimer = DateTime.UtcNow;
+				SurvivalCore.ChatEventStoper.Reset();
 			}
 			try
 			{
 				try
 				{
 					text = string.Format(ChatFormat,
-						(SurvivalCore.srvPlayers[args.Who].prefixItem == -1) ? PowelderAPI.Utils.getGroupItem(plr.Group.Name) : SurvivalCore.srvPlayers[args.Who].prefixItem, PowelderAPI.Utils.getGroupColor(plr.Group.Name), (plr.Group.Name == "Xedlefix" || plr.Group.Name == "Iwobos") ? "Administrator" : plr.Group.Name, (SurvivalCore.srvPlayers[args.Who].nickColor == null) ? PowelderAPI.Utils.getGroupColor(plr.Group.Name) : SurvivalCore.srvPlayers[args.Who].nickColor, plr.Name, args.Text);
+						(SurvivalCore.SrvPlayers[args.Who].PrefixItem == -1) ? PowelderAPI.Utils.GetGroupItem(plr.Group.Name) : SurvivalCore.SrvPlayers[args.Who].PrefixItem, PowelderAPI.Utils.GetGroupColor(plr.Group.Name), (plr.Group.Name == "Xedlefix" || plr.Group.Name == "Iwobos") ? "Administrator" : plr.Group.Name, SurvivalCore.SrvPlayers[args.Who].NickColor ?? PowelderAPI.Utils.GetGroupColor(plr.Group.Name), plr.Name, args.Text);
 				}
 				catch (NullReferenceException)
 				{
 					text = string.Format(ChatFormat,
-						PowelderAPI.Utils.getGroupItem(plr.Group.Name), PowelderAPI.Utils.getGroupColor(plr.Group.Name), plr.Group.Name, PowelderAPI.Utils.getGroupColor(plr.Group.Name), plr.Name, args.Text);
+						PowelderAPI.Utils.GetGroupItem(plr.Group.Name), PowelderAPI.Utils.GetGroupColor(plr.Group.Name), plr.Group.Name, PowelderAPI.Utils.GetGroupColor(plr.Group.Name), plr.Name, args.Text);
 				}
 				PlayerHooks.OnPlayerChat(plr, args.Text, ref text);
 				TSPlayer.All.SendMessage(text, plr.Group.R, plr.Group.G, plr.Group.B);
@@ -110,14 +110,14 @@ namespace SurvivalCore
 
 		public static void CommandItem(TShockAPI.CommandArgs args)
 		{
-			int money = SurvivalCore.srvPlayers[args.Player.Index].Money;
+			int money = SurvivalCore.SrvPlayers[args.Player.Index].Money;
 			if (args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type == 0)
 			{
 				args.Player.SendErrorMessage("[c/595959:»]  Nie znaleziono itemu.");
 				return;
 			}
 			int cost = 7500;
-			cost = Utils.costCalc(args.Player, cost);
+			cost = Utils.CostCalc(args.Player, cost);
 			if (money < cost)
 			{
 				args.Player.SendErrorMessage("[c/595959:»]  Nie stac cie na zmiane itemu w prefixie. [c/595959:(]Koszt {0} €[c/595959:)]", cost);
@@ -128,31 +128,36 @@ namespace SurvivalCore
 				cost,
 				args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type
 			};
-			Chat.addAcceptation((byte)args.Player.Index, action_CommandItem, data);
-			string msg = string.Format(ChatFormat, args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type, PowelderAPI.Utils.getGroupColor(args.Player.Group.Name), (args.Player.Group.Name == "Xedlefix" || args.Player.Group.Name == "Iwobos") ? "Administrator" : args.Player.Group.Name, (SurvivalCore.srvPlayers[args.Player.Index].nickColor == null) ? PowelderAPI.Utils.getGroupColor(args.Player.Group.Name) : SurvivalCore.srvPlayers[args.Player.Index].nickColor, args.Player.Name, "Przykladowa wiadomosc.");
+			Chat.AddAcceptation((byte)args.Player.Index, Action_CommandItem, data);
+			string msg = string.Format(
+				ChatFormat,
+				args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type, PowelderAPI.Utils.GetGroupColor(args.Player.Group.Name),
+				(args.Player.Group.Name == "Xedlefix" || args.Player.Group.Name == "Iwobos") ? "Administrator" : args.Player.Group.Name,
+SurvivalCore.SrvPlayers[args.Player.Index].NickColor ?? PowelderAPI.Utils.GetGroupColor(args.Player.Group.Name),
+				args.Player.Name,
+				"Przykladowa wiadomosc.");
 			args.Player.SendMessage(msg, Color.White);
 			args.Player.SendMessage($"[c/595959:»]  Czy zgadzasz sie na zmiane? Wpisz [c/66ff66:/tak] lub [c/ff6666:/nie] [c/595959:(][c/ffff66:Koszt {cost} €][c/595959:)]", Color.Gray);
 		}
 
-		public static void action_CommandItem(byte who, object[] data)
+		public static void Action_CommandItem(byte who, object[] data)
 		{
-			Array array = new object[2];
-			array = data;
+			Array array = data;
 			int num = (int)array.GetValue(0);
 			int num2 = (int)array.GetValue(1);
-			if (SurvivalCore.srvPlayers[who].Money < num)
+			if (SurvivalCore.SrvPlayers[who].Money < num)
 			{
 				TShock.Players[who].SendErrorMessage("[c/595959:»]  Nie stac cie na zmiane itemu w prefixie. [c/595959:(]Koszt {0} €[c/595959:)]", num);
 				return;
 			}
-			SurvivalCore.srvPlayers[who].Money -= num;
-			SurvivalCore.srvPlayers[who].prefixItem = num2;
+			SurvivalCore.SrvPlayers[who].Money -= num;
+			SurvivalCore.SrvPlayers[who].PrefixItem = num2;
 			TShock.Players[who].SendMessage($"[c/595959:»]  [c/66ff66:Oto twoj nowy item w prefixie][c/595959::] [i:{num2}]", Color.Gray);
 		}
 
 		public static void CommandNick(TShockAPI.CommandArgs args)
 		{
-			int money = SurvivalCore.srvPlayers[args.Player.Index].Money;
+			int money = SurvivalCore.SrvPlayers[args.Player.Index].Money;
 			string text = "0:0=1";
 			if (args.Parameters.Count > 0)
 			{
@@ -182,7 +187,7 @@ namespace SurvivalCore
 				return;
 			}
 			int cost = 12500;
-			cost = Utils.costCalc(args.Player, cost);
+			cost = Utils.CostCalc(args.Player, cost);
 			if (money < cost)
 			{
 				args.Player.SendErrorMessage("[c/595959:»]  Nie stac cie na zmiane koloru nicku. [c/595959:(]Koszt {0} €[c/595959:)]", cost);
@@ -193,42 +198,46 @@ namespace SurvivalCore
 				cost,
 				text
 			};
-			Chat.addAcceptation((byte)args.Player.Index, action_CommandNick, data);
-			string msg = string.Format(ChatFormat, (SurvivalCore.srvPlayers[args.Player.Index].prefixItem == -1) ? PowelderAPI.Utils.getGroupItem(args.Player.Group.Name) : SurvivalCore.srvPlayers[args.Player.Index].prefixItem, PowelderAPI.Utils.getGroupColor(args.Player.Group.Name), (args.Player.Group.Name == "Xedlefix" || args.Player.Group.Name == "Iwobos") ? "Administrator" : args.Player.Group.Name, Colors[text], args.Player.Name, "Przykladowa wiadomosc.");
+			Chat.AddAcceptation((byte)args.Player.Index, Action_CommandNick, data);
+			string msg = string.Format(ChatFormat, (
+				SurvivalCore.SrvPlayers[args.Player.Index].PrefixItem == -1) ? PowelderAPI.Utils.GetGroupItem(args.Player.Group.Name) : SurvivalCore.SrvPlayers[args.Player.Index].PrefixItem,
+				PowelderAPI.Utils.GetGroupColor(args.Player.Group.Name), (args.Player.Group.Name == "Xedlefix" || args.Player.Group.Name == "Iwobos") ? "Administrator" : args.Player.Group.Name,
+				Colors[text],
+				args.Player.Name,
+				"Przykladowa wiadomosc.");
 			args.Player.SendMessage(msg, Color.White);
 			args.Player.SendMessage($"[c/595959:»]  Czy zgadzasz sie na zmiane? Wpisz [c/66ff66:/tak] lub [c/ff6666:/nie] [c/595959:(][c/ffff66:Koszt {cost} €][c/595959:)]", Color.Gray);
 		}
 
-		public static void action_CommandNick(byte who, object[] data)
+		public static void Action_CommandNick(byte who, object[] data)
 		{
-			Array array = new object[2];
-			array = data;
+			Array array = data;
 			int num = (int)array.GetValue(0);
 			string key = (string)array.GetValue(1);
-			if (SurvivalCore.srvPlayers[who].Money < num)
+			if (SurvivalCore.SrvPlayers[who].Money < num)
 			{
 				TShock.Players[who].SendErrorMessage("[c/595959:»]  Nie stac cie na zmiane koloru nicku. [c/595959:(]Koszt {0} €[c/595959:)]", num);
 				return;
 			}
-			SurvivalCore.srvPlayers[who].Money -= num;
-			SurvivalCore.srvPlayers[who].nickColor = Colors[key];
+			SurvivalCore.SrvPlayers[who].Money -= num;
+			SurvivalCore.SrvPlayers[who].NickColor = Colors[key];
 			TShock.Players[who].SendMessage($"[c/595959:»]  [c/66ff66:Oto twoja nowa barwa nicku][c/595959::] [c/{Colors[key]}:{TShock.Players[who].Name}]", Color.Gray);
 		}
 
 
-		public static void chatEventThread()
+		public static void ChatEventThread()
 		{
-			SurvivalCore.ChatEvent_Word = RandomWord();
-			SurvivalCore.chatEventStoper.Start();
-			SurvivalCore.isChatEvent = true;
-			TSPlayer.All.SendMessage("[i:889] [c/595959:⮘] [c/00cc66:Event] [c/595959:⮚] Kto napisze najszybciej [c/00cc66:" + SurvivalCore.ChatEvent_Word + "] wygra 60 €.", new Color(128, 255, 191));
-			Thread.Sleep((SurvivalCore.ChatEvent_Word.Length + 8) * 1000);
-			if (SurvivalCore.isChatEvent)
+			SurvivalCore.ChatEventWord = RandomWord();
+			SurvivalCore.ChatEventStoper.Start();
+			SurvivalCore.IsChatEvent = true;
+			TSPlayer.All.SendMessage("[i:889] [c/595959:⮘] [c/00cc66:Event] [c/595959:⮚] Kto napisze najszybciej [c/00cc66:" + SurvivalCore.ChatEventWord + "] wygra 60 €.", new Color(128, 255, 191));
+			Thread.Sleep((SurvivalCore.ChatEventWord.Length + 8) * 1000);
+			if (SurvivalCore.IsChatEvent)
 			{
-				SurvivalCore.chatEventStoper.Reset();
-				TSPlayer.All.SendMessage("[i:889] [c/595959:⮘] [c/00cc66:Event] [c/595959:⮚] Nikt nie napisal [c/00cc66:" + SurvivalCore.ChatEvent_Word + "] w czas.", new Color(128, 255, 191));
-				SurvivalCore.isChatEvent = false;
-				SurvivalCore.chatEventTimer = DateTime.UtcNow;
+				SurvivalCore.ChatEventStoper.Reset();
+				TSPlayer.All.SendMessage("[i:889] [c/595959:⮘] [c/00cc66:Event] [c/595959:⮚] Nikt nie napisal [c/00cc66:" + SurvivalCore.ChatEventWord + "] w czas.", new Color(128, 255, 191));
+				SurvivalCore.IsChatEvent = false;
+				SurvivalCore.ChatEventTimer = DateTime.UtcNow;
 			}
 		}
 

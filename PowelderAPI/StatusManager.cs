@@ -4,38 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TShockAPI;
 
 namespace PowelderAPI
 {
     public class StatusManager
     {
+
         public struct Status
-		{
-			public bool overrideProxy;
-            public TShockAPI.TSPlayer plr;
-			public string text
-            {
-                get
-                {
-                    return text;
-                }
-                set
-                {
-                    textOld = text;
-                    text = value;
-                }
-            }
-            public string textOld;
+        {
+            public bool OverrideProxy;
+            public string Text;
 
-            public int interval;
-		}
+        }
 
-        public Status status;
+        public Status[] status = new Status[256];
 
         public StatusManager(Status status)
         {
-            this.status = status;
-
 
             new Thread(StatusUpdate)
             {
@@ -48,18 +34,14 @@ namespace PowelderAPI
         {
             while (true)
             {
-                Thread.Sleep(status.interval);
-                if (status.interval == 0 || status.text == status.textOld)
+                Thread.Sleep(1000);
+                foreach (var player in _ = TShock.Players.Where(x => x != null && x.Active))
                 {
-                    Thread.Sleep(5);
+                    player.SendData(PacketTypes.Status, $">|{(status[player.Index].OverrideProxy ? "t" : "f")}{status[player.Index].Text}", 2);
                 }
-                else
-                {
-                    status.plr.SendData(PacketTypes.Status, "/>" + status.text);           
-                }
-
             }
-		}
-
+            // ReSharper disable once FunctionNeverReturns
+        }
+        
     }
 }

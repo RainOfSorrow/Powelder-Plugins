@@ -8,9 +8,9 @@ namespace SurvivalCore
 {
 	internal class Change
 	{
-		public static ChangeConfig config;
+		public static ChangeConfig Config;
 
-		public static Dictionary<int, Recipe> recipes = new Dictionary<int, Recipe>();
+		public static Dictionary<int, Recipe> Recipes = new Dictionary<int, Recipe>();
 
 		public static void Command(CommandArgs args)
 		{
@@ -33,9 +33,9 @@ namespace SurvivalCore
 					result = 1;
 				}
 				List<string> list = new List<string>();
-				foreach (int key in recipes.Keys)
+				foreach (int key in Recipes.Keys)
 				{
-					list.Add($" [[c/dddd11:{key}]] [i/s{recipes[key].result.amount}:{recipes[key].result.id}] ← {recipes[key].getIngrediensString()}");
+					list.Add($" [[c/dddd11:{key}]] [i/s{Recipes[key].Result.Amount}:{Recipes[key].Result.Id}] ← {Recipes[key].GetIngrediensString()}");
 				}
 				PaginationTools.SendPage(args.Player, result, PaginationTools.BuildLinesFromTerms(list, null, ""), new PaginationTools.Settings
 				{
@@ -66,21 +66,21 @@ namespace SurvivalCore
 				args.Player.SendErrorMessage("[c/595959:»]  Podano niepoprawny index.");
 				return;
 			}
-			if (!recipes.ContainsKey(result3))
+			if (!Recipes.ContainsKey(result3))
 			{
 				args.Player.SendErrorMessage("[c/595959:»]  Nie ma receptury o takim indexie.");
 				return;
 			}
-			if (TShock.Utils.GetItemById(recipes[result3].result.id).maxStack < result2)
+			if (TShock.Utils.GetItemById(Recipes[result3].Result.Id).maxStack < result2)
 			{
-				result2 = TShock.Utils.GetItemById(recipes[result3].result.id).maxStack;
+				result2 = TShock.Utils.GetItemById(Recipes[result3].Result.Id).maxStack;
 			}
-			if (SurvivalCore.srvPlayers[args.Player.Index].Money < recipes[result3].cost)
+			if (SurvivalCore.SrvPlayers[args.Player.Index].Money < Recipes[result3].Cost)
 			{
-				args.Player.SendErrorMessage($"[c/595959:»]  Nie stac cie na wytworzenie [i:{recipes[result3].result.id}] w ilosci {result2}. [c/595959:(]Koszt {recipes[result3].cost * result2} €[c/595959:)]");
+				args.Player.SendErrorMessage($"[c/595959:»]  Nie stac cie na wytworzenie [i:{Recipes[result3].Result.Id}] w ilosci {result2}. [c/595959:(]Koszt {Recipes[result3].Cost * result2} €[c/595959:)]");
 				return;
 			}
-			if (!recipes[result3].isPlayerHaveIngrediens(args.Player))
+			if (!Recipes[result3].IsPlayerHaveIngrediens(args.Player))
 			{
 				args.Player.SendErrorMessage("[c/595959:»]  Brakuje wymaganych materialow do stworzenia przedmiotu.");
 				return;
@@ -90,15 +90,15 @@ namespace SurvivalCore
 				args.Player.SendErrorMessage("[c/595959:»]  Twoj ekwipunek jest pelny.");
 				return;
 			}
-			recipes[result3].Do(args.Player, result2);
-			SurvivalCore.srvPlayers[args.Player.Index].Money -= recipes[result3].cost * result2;
-			args.Player.SendMessage($"[c/595959:»]  Pomyslnie wytworzono [i:{recipes[result3].result.id}] w ilosci [c/66ff66:{recipes[result3].result.amount * result2}].", Color.Gray);
+			Recipes[result3].Do(args.Player, result2);
+			SurvivalCore.SrvPlayers[args.Player.Index].Money -= Recipes[result3].Cost * result2;
+			args.Player.SendMessage($"[c/595959:»]  Pomyslnie wytworzono [i:{Recipes[result3].Result.Id}] w ilosci [c/66ff66:{Recipes[result3].Result.Amount * result2}].", Color.Gray);
 		}
 	}
 
 	internal class ChangeConfig
 	{
-		public Recipe[] recipes = new Recipe[5]
+		public Recipe[] Recipes = new Recipe[5]
 		{
 			new Recipe(4500, new SimpleItem(1156, 1), new SimpleItem(1533, 1)),
 			new Recipe(4500, new SimpleItem(1572, 1), new SimpleItem(1537, 1)),

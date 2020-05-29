@@ -71,7 +71,7 @@ namespace PowelderAPI.TempGroup
                 TShock.UserAccounts.SetUserGroup(plrs[0].Account, actualGroup.Name);
 
 
-                TempGroupDBManage.AddTempGroup(plrs[0].Name, primaryGroup.Name, actualGroup.Name, DateTime.Now.AddSeconds(seconds));
+                TempGroupDbManage.AddTempGroup(plrs[0].Name, primaryGroup.Name, actualGroup.Name, DateTime.Now.AddSeconds(seconds));
                 Players.Add(plrs[0].Name, new TempGroupPlayer(primaryGroup.Name, actualGroup.Name, DateTime.Now.AddSeconds(seconds)));
 
                 args.Player.SendMessage($"[c/595959:»]  Pomyslnie przyznano range [c/ffff00:{actualGroup.Name}] dla [c/66ff66:{plrs[0].Name}].", Color.Gray);
@@ -93,16 +93,16 @@ namespace PowelderAPI.TempGroup
                     UserAccount user = TShock.UserAccounts.GetUserAccountByName(param2);
                     if (user != null)
                     {
-                        TempGroupPlayer TGPlayer = TempGroupDBManage.GetTempGroup(param2);
+                        TempGroupPlayer tgPlayer = TempGroupDbManage.GetTempGroup(param2);
 
-                        if (TGPlayer.actualGroup == null)
+                        if (tgPlayer.ActualGroup == null)
                         {
                             args.Player.SendErrorMessage("[c/595959:»]  Podany gracz nie ma tymczasowej rangi.");
                             return;
                         }
 
-                        TempGroupDBManage.RemoveTempGroup(param2);
-                        user.Group = TGPlayer.PrimaryGroup;
+                        TempGroupDbManage.RemoveTempGroup(param2);
+                        user.Group = tgPlayer.PrimaryGroup;
                         TShock.UserAccounts.SetUserGroup(user, user.Group);
 
                     }
@@ -115,19 +115,19 @@ namespace PowelderAPI.TempGroup
                 else
                 {
                     param2 = plrs[0].Name;
-                    TempGroupPlayer TGPlayer = TempGroupDBManage.GetTempGroup(plrs[0].Name);
+                    TempGroupPlayer tgPlayer = TempGroupDbManage.GetTempGroup(plrs[0].Name);
 
-                    if (TGPlayer.actualGroup == null)
+                    if (tgPlayer.ActualGroup == null)
                     {
                         args.Player.SendErrorMessage("[c/595959:»]  Podany gracz nie ma tymczasowej rangi.");
                         return;
                     }
 
-                    plrs[0].Account.Group = TGPlayer.PrimaryGroup;
-                    plrs[0].Group = TShock.Groups.GetGroupByName(TGPlayer.PrimaryGroup);
+                    plrs[0].Account.Group = tgPlayer.PrimaryGroup;
+                    plrs[0].Group = TShock.Groups.GetGroupByName(tgPlayer.PrimaryGroup);
 
 
-                    TempGroupDBManage.RemoveTempGroup(param2);
+                    TempGroupDbManage.RemoveTempGroup(param2);
                     TShock.UserAccounts.SetUserGroup(plrs[0].Account, plrs[0].Account.Group);
 
                     Players.Remove(plrs[0].Name);
@@ -144,7 +144,7 @@ namespace PowelderAPI.TempGroup
                     return;
                 }
 
-                TempGroupDBManage.LengthenTempGroups(seconds);
+                TempGroupDbManage.LengthenTempGroups(seconds);
 
                 args.Player.SendMessage($"[c/595959:»]  Pomyslnie wydluzono wszystkie rangi.", Color.Gray);
             }
@@ -165,7 +165,7 @@ namespace PowelderAPI.TempGroup
         {
             foreach (string player in _ = Players.Keys.ToArray())
             {
-                if ((DateTime.Now - Players[player].expireDate).TotalMilliseconds > 0)
+                if ((DateTime.Now - Players[player].ExpireDate).TotalMilliseconds > 0)
                 {
                     TSPlayer plr = TSPlayer.FindByNameOrID(player)[0];
 
@@ -176,9 +176,9 @@ namespace PowelderAPI.TempGroup
                     plr.Account.Group = Players[player].PrimaryGroup;
                     TShock.UserAccounts.SetUserGroup(plr.Account, Players[player].PrimaryGroup);
 
-                    TempGroupDBManage.RemoveTempGroup(plr.Name);
+                    TempGroupDbManage.RemoveTempGroup(plr.Name);
 
-                    plr.SendMessage($"[c/595959:»]  Waznosc twojej rangi [c/ffff66:{Players[player].actualGroup}] wygasla.", Color.Gray);
+                    plr.SendMessage($"[c/595959:»]  Waznosc twojej rangi [c/ffff66:{Players[player].ActualGroup}] wygasla.", Color.Gray);
 
                     Players.Remove(player);
                 }
@@ -192,20 +192,20 @@ namespace PowelderAPI.TempGroup
             if (plr == null)
                 return;
 
-            TempGroupPlayer tgplr = TempGroupDBManage.GetTempGroup(plr.Name);
+            TempGroupPlayer tgplr = TempGroupDbManage.GetTempGroup(plr.Name);
 
-            if (tgplr.actualGroup == null)
+            if (tgplr.ActualGroup == null)
                 return;
 
-            if ((DateTime.Now - tgplr.expireDate).TotalMilliseconds > 0)
+            if ((DateTime.Now - tgplr.ExpireDate).TotalMilliseconds > 0)
             {
                 plr.Group = TShock.Groups.GetGroupByName(tgplr.PrimaryGroup);
                 plr.Account.Group = tgplr.PrimaryGroup;
                 TShock.UserAccounts.SetUserGroup(plr.Account, tgplr.PrimaryGroup);
 
-                TempGroupDBManage.RemoveTempGroup(plr.Name);
+                TempGroupDbManage.RemoveTempGroup(plr.Name);
 
-                plr.SendMessage($"[c/595959:»]  Waznosc twojej rangi [c/ffff66:{tgplr.actualGroup}] wygasla.", Color.Gray);
+                plr.SendMessage($"[c/595959:»]  Waznosc twojej rangi [c/ffff66:{tgplr.ActualGroup}] wygasla.", Color.Gray);
                 return;
             }
 
@@ -230,20 +230,20 @@ namespace PowelderAPI.TempGroup
             if (args.Player == null)
                 return;
 
-            TempGroupPlayer tgplr = TempGroupDBManage.GetTempGroup(args.Player.Name);
+            TempGroupPlayer tgplr = TempGroupDbManage.GetTempGroup(args.Player.Name);
 
-            if (tgplr.actualGroup == null)
+            if (tgplr.ActualGroup == null)
                 return;
 
-            if ((DateTime.Now - tgplr.expireDate).TotalMilliseconds > 0)
+            if ((DateTime.Now - tgplr.ExpireDate).TotalMilliseconds > 0)
             {
                 args.Player.Group = TShock.Groups.GetGroupByName(tgplr.PrimaryGroup);
                 args.Player.Account.Group = tgplr.PrimaryGroup;
                 TShock.UserAccounts.SetUserGroup(args.Player.Account, tgplr.PrimaryGroup);
 
-                TempGroupDBManage.RemoveTempGroup(args.Player.Name);
+                TempGroupDbManage.RemoveTempGroup(args.Player.Name);
 
-                args.Player.SendMessage($"[c/595959:»]  Waznosc twojej rangi [c/ffff66:{tgplr.actualGroup}] wygasla.", Color.Gray);
+                args.Player.SendMessage($"[c/595959:»]  Waznosc twojej rangi [c/ffff66:{tgplr.ActualGroup}] wygasla.", Color.Gray);
                 return;
             }
 
@@ -256,14 +256,14 @@ namespace PowelderAPI.TempGroup
     public struct TempGroupPlayer
     {
         public string PrimaryGroup;
-        public string actualGroup;
-        public DateTime expireDate;
+        public string ActualGroup;
+        public DateTime ExpireDate;
 
         public TempGroupPlayer(string pGroup, string aGroup, DateTime eDate)
         {
             PrimaryGroup = pGroup;
-            actualGroup = aGroup;
-            expireDate = eDate;
+            ActualGroup = aGroup;
+            ExpireDate = eDate;
         }
     }
 }

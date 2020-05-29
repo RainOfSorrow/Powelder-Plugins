@@ -54,7 +54,7 @@ namespace SurvivalCore.Economy.Shop
 				{
 					foreach (Product product5 in Economy.Products)
 					{
-						list.Add($"[[c/dddd11:{product5.getIndex()}]] [i:{product5.getID()}] ([c/11bb11:K] [c/55bb55:{product5.getBuy()}] ; [c/D42A2A:S] [c/D45A5A:{product5.getSell()}])");
+						list.Add($"[[c/dddd11:{product5.GetIndex()}]] [i:{product5.GetId()}] ([c/11bb11:K] [c/55bb55:{product5.GetBuy()}] ; [c/D42A2A:S] [c/D45A5A:{product5.GetSell()}])");
 					}
 				}
 				else if (cmd2.StartsWith("[i") && cmd2.EndsWith("]"))
@@ -65,9 +65,9 @@ namespace SurvivalCore.Economy.Shop
 					text4 = text4.Remove(count);
 					foreach (Product product6 in Economy.Products)
 					{
-						if (product6.getID().ToString() == text4)
+						if (product6.GetId().ToString() == text4)
 						{
-							list.Add($"[[c/dddd11:{product6.getIndex()}]] [i:{product6.getID()}] ([c/11bb11:K] [c/55bb55:{product6.getBuy()}] ; [c/D42A2A:S] [c/D45A5A:{product6.getSell()}])");
+							list.Add($"[[c/dddd11:{product6.GetIndex()}]] [i:{product6.GetId()}] ([c/11bb11:K] [c/55bb55:{product6.GetBuy()}] ; [c/D42A2A:S] [c/D45A5A:{product6.GetSell()}])");
 						}
 					}
 				}
@@ -75,9 +75,9 @@ namespace SurvivalCore.Economy.Shop
 				{
 					foreach (Product product7 in Economy.Products)
 					{
-						if (product7.getName().ToLower().Contains(cmd2.ToLower()))
+						if (product7.GetName().ToLower().Contains(cmd2.ToLower()))
 						{
-							list.Add($"[[c/dddd11:{product7.getIndex()}]] [i:{product7.getID()}] ([c/11bb11:K] [c/55bb55:{product7.getBuy()}] ; [c/D42A2A:S] [c/D45A5A:{product7.getSell()}])");
+							list.Add($"[[c/dddd11:{product7.GetIndex()}]] [i:{product7.GetId()}] ([c/11bb11:K] [c/55bb55:{product7.GetBuy()}] ; [c/D42A2A:S] [c/D45A5A:{product7.GetSell()}])");
 						}
 					}
 				}
@@ -94,24 +94,24 @@ namespace SurvivalCore.Economy.Shop
 			case "buy":
 			case "kup":
 			{
-				if (int.TryParse(cmd2, out int Index))
+				if (int.TryParse(cmd2, out int index))
 				{
 					Product product3 = new Product(0, null, 0, 0, 0);
-					if (Economy.Products.Exists((Product x) => x.Index == Index))
+					if (Economy.Products.Exists((Product x) => x.Index == index))
 					{
-						product3 = Economy.Products.Find((Product x) => x.Index == Index);
+						product3 = Economy.Products.Find((Product x) => x.Index == index);
 					}
-					if (product3.getIndex() == 0)
+					if (product3.GetIndex() == 0)
 					{
 						player.SendErrorMessage("[c/595959:»]  Nie znaleziono przedmiotu w sklepie.");
 						break;
 					}
-					if (product3.getBuy() <= 0)
+					if (product3.GetBuy() <= 0)
 					{
 						player.SendErrorMessage("[c/595959:»]  Tego przedmiotu nie mozna zakupic.");
 						break;
 					}
-					Item item3 = TShock.Utils.GetItemByIdOrName(product3.getID().ToString())[0];
+					Item item3 = TShock.Utils.GetItemByIdOrName(product3.GetId().ToString())[0];
 					int amount = 1;
 					if (args.Parameters.Count > 1)
 					{
@@ -121,11 +121,11 @@ namespace SurvivalCore.Economy.Shop
 					{
 						amount = item3.maxStack;
 					}
-					int num3 = amount * product3.getBuy();
-					int money = SurvivalCore.srvPlayers[player.Index].Money;
+					int num3 = amount * product3.GetBuy();
+					int money = SurvivalCore.SrvPlayers[player.Index].Money;
 					if (money < num3)
 					{
-						args.Player.SendErrorMessage("[c/595959:»]  Nie stac cie na zakup {0} w ilosci {1}. [c/595959:(]Brakuje ci {2} {3}[c/595959:)]", item3.Name, amount, Math.Abs(money - num3), Economy.config.ValueName);
+						args.Player.SendErrorMessage("[c/595959:»]  Nie stac cie na zakup {0} w ilosci {1}. [c/595959:(]Brakuje ci {2} {3}[c/595959:)]", item3.Name, amount, Math.Abs(money - num3), Economy.Config.ValueName);
 					}
 					else if (args.Player.Dead)
 					{
@@ -133,10 +133,10 @@ namespace SurvivalCore.Economy.Shop
 					}
 					else if (args.Player.InventorySlotAvailable || (item3.type > 70 && item3.type < 75) || item3.ammo > 0 || item3.type == 58 || item3.type == 184)
 					{
-						SurvivalCore.srvPlayers[player.Index].Money -= num3;
+						SurvivalCore.SrvPlayers[player.Index].Money -= num3;
 						args.Player.GiveItem(item3.type, amount);
-						args.Player.SendMessage($"[c/595959:»]  Pomyslnie zakupiono [c/66ff66:{item3.Name}] w ilosci [c/66ff66:{amount}]. [c/595959:(]Wydano [c/ff6666:{num3}] {Economy.config.ValueName}[c/595959:)]", Color.Gray);
-						args.Player.SendMessage($"[c/595959:»]  [c/66ff66:Twoj nowy stan konta][c/595959::] {money - num3:N0} {Economy.config.ValueName}", Color.Gray);
+						args.Player.SendMessage($"[c/595959:»]  Pomyslnie zakupiono [c/66ff66:{item3.Name}] w ilosci [c/66ff66:{amount}]. [c/595959:(]Wydano [c/ff6666:{num3}] {Economy.Config.ValueName}[c/595959:)]", Color.Gray);
+						args.Player.SendMessage($"[c/595959:»]  [c/66ff66:Twoj nowy stan konta][c/595959::] {money - num3:N0} {Economy.Config.ValueName}", Color.Gray);
 					}
 					else
 					{
@@ -149,17 +149,17 @@ namespace SurvivalCore.Economy.Shop
 				{
 					product4 = Economy.Products.Find((Product x) => x.Name == cmd2);
 				}
-				if (product4.getIndex() == 0)
+				if (product4.GetIndex() == 0)
 				{
 					player.SendErrorMessage("[c/595959:»]  Nie znaleziono przedmiotu w sklepie.");
 					break;
 				}
-				if (product4.getBuy() <= 0)
+				if (product4.GetBuy() <= 0)
 				{
 					player.SendErrorMessage("[c/595959:»]  Tego przedmiotu nie mozna zakupic.");
 					break;
 				}
-				Item item4 = TShock.Utils.GetItemByIdOrName(product4.getID().ToString())[0];
+				Item item4 = TShock.Utils.GetItemByIdOrName(product4.GetId().ToString())[0];
 				int amount3 = 1;
 				if (args.Parameters.Count > 1)
 				{
@@ -169,11 +169,11 @@ namespace SurvivalCore.Economy.Shop
 				{
 					amount3 = item4.maxStack;
 				}
-				int num4 = amount3 * product4.getBuy();
-				int money2 = SurvivalCore.srvPlayers[player.Index].Money;
+				int num4 = amount3 * product4.GetBuy();
+				int money2 = SurvivalCore.SrvPlayers[player.Index].Money;
 				if (money2 < num4)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Nie stac cie na zakup {0} w ilosci {1}. [c/595959:(]Brakuje ci {2:N0} {3}[c/595959:)]", item4.Name, amount3, Math.Abs(money2 - num4), Economy.config.ValueName);
+					args.Player.SendErrorMessage("[c/595959:»]  Nie stac cie na zakup {0} w ilosci {1}. [c/595959:(]Brakuje ci {2:N0} {3}[c/595959:)]", item4.Name, amount3, Math.Abs(money2 - num4), Economy.Config.ValueName);
 				}
 				else if (args.Player.Dead)
 				{
@@ -181,10 +181,10 @@ namespace SurvivalCore.Economy.Shop
 				}
 				else if (args.Player.InventorySlotAvailable || (item4.type > 70 && item4.type < 75) || item4.ammo > 0 || item4.type == 58 || item4.type == 184)
 				{
-					SurvivalCore.srvPlayers[player.Index].Money -= num4;
+					SurvivalCore.SrvPlayers[player.Index].Money -= num4;
 					args.Player.GiveItem(item4.type, amount3);
-					args.Player.SendMessage($"[c/595959:»]  Pomyslnie zakupiono [c/66ff66:{item4.Name}] w ilosci [c/66ff66:{amount3}]. [c/595959:(]Wydano [c/66ff66:{num4:N0}] {Economy.config.ValueName}[c/595959:)]", Color.Gray);
-					args.Player.SendMessage($"[c/595959:»]  [c/66ff66:Twoj nowy stan konta][c/595959::] {money2 - num4:N0} {Economy.config.ValueName}", Color.Gray);
+					args.Player.SendMessage($"[c/595959:»]  Pomyslnie zakupiono [c/66ff66:{item4.Name}] w ilosci [c/66ff66:{amount3}]. [c/595959:(]Wydano [c/66ff66:{num4:N0}] {Economy.Config.ValueName}[c/595959:)]", Color.Gray);
+					args.Player.SendMessage($"[c/595959:»]  [c/66ff66:Twoj nowy stan konta][c/595959::] {money2 - num4:N0} {Economy.Config.ValueName}", Color.Gray);
 				}
 				else
 				{
@@ -195,39 +195,39 @@ namespace SurvivalCore.Economy.Shop
 			case "sell":
 			case "sprzedaj":
 			{
-				if (int.TryParse(cmd2, out int Index2))
+				if (int.TryParse(cmd2, out int index2))
 				{
 					Product product = new Product(0, null, 0, 0, 0);
-					if (Economy.Products.Exists((Product x) => x.Index == Index2))
+					if (Economy.Products.Exists((Product x) => x.Index == index2))
 					{
-						product = Economy.Products.Find((Product x) => x.Index == Index2);
+						product = Economy.Products.Find((Product x) => x.Index == index2);
 					}
-					if (product.getIndex() == 0)
+					if (product.GetIndex() == 0)
 					{
 						player.SendErrorMessage("[c/595959:»]  Nie znaleziono przedmiotu w sklepie.");
 						break;
 					}
-					if (product.getSell() <= 0)
+					if (product.GetSell() <= 0)
 					{
 						player.SendErrorMessage("[c/595959:»]  Tego przedmiotu nie mozna sprzedac.");
 						break;
 					}
-					Item item = TShock.Utils.GetItemByIdOrName(product.getID().ToString())[0];
+					Item item = TShock.Utils.GetItemByIdOrName(product.GetId().ToString())[0];
 					int result = 1;
 					if (args.Parameters.Count > 1)
 					{
 						int.TryParse(text2, out result);
 					}
-					if (result > PlayerItemAmount(args.Player, item))
+					if (result > PlayerItemCount(args.Player, item))
 					{
 						player.SendErrorMessage("[c/595959:»]  Nie masz tylu {0} w ekwipunku.", item.Name);
 						break;
 					}
-					int num = result * product.getSell();
-					SurvivalCore.srvPlayers[player.Index].Money += num;
-					PlayerRemovingItems(args.Player, item, result);
-					args.Player.SendMessage($"[c/595959:»]  Pomyslnie sprzedano [c/66ff66:{item.Name}] w ilosci [c/66ff66:{result}]. [c/595959:(]Zarobiono [c/66ff66:{num:N0}] {Economy.config.ValueName}[c/595959:)]", Color.Gray);
-					args.Player.SendMessage($"[c/595959:»]  [c/66ff66:Twoj nowy stan konta][c/595959::] {SurvivalCore.srvPlayers[player.Index].Money:N0} {Economy.config.ValueName}", Color.Gray);
+					int num = result * product.GetSell();
+					SurvivalCore.SrvPlayers[player.Index].Money += num;
+					PlayerRemoveItems(args.Player, item, result);
+					args.Player.SendMessage($"[c/595959:»]  Pomyslnie sprzedano [c/66ff66:{item.Name}] w ilosci [c/66ff66:{result}]. [c/595959:(]Zarobiono [c/66ff66:{num:N0}] {Economy.Config.ValueName}[c/595959:)]", Color.Gray);
+					args.Player.SendMessage($"[c/595959:»]  [c/66ff66:Twoj nowy stan konta][c/595959::] {SurvivalCore.SrvPlayers[player.Index].Money:N0} {Economy.Config.ValueName}", Color.Gray);
 					break;
 				}
 				Product product2 = new Product(0, null, 0, 0, 0);
@@ -235,32 +235,32 @@ namespace SurvivalCore.Economy.Shop
 				{
 					product2 = Economy.Products.Find((Product x) => x.Name == cmd2);
 				}
-				if (product2.getIndex() == 0)
+				if (product2.GetIndex() == 0)
 				{
 					player.SendErrorMessage("[c/595959:»]  Nie znaleziono przedmiotu w sklepie.");
 					break;
 				}
-				if (product2.getSell() <= 0)
+				if (product2.GetSell() <= 0)
 				{
 					player.SendErrorMessage("[c/595959:»]  Tego przedmiotu nie mozna sprzedac.");
 					break;
 				}
-				Item item2 = TShock.Utils.GetItemByIdOrName(product2.getID().ToString())[0];
+				Item item2 = TShock.Utils.GetItemByIdOrName(product2.GetId().ToString())[0];
 				int result2 = 1;
 				if (args.Parameters.Count > 1)
 				{
 					int.TryParse(text2, out result2);
 				}
-				if (result2 > PlayerItemAmount(args.Player, item2))
+				if (result2 > PlayerItemCount(args.Player, item2))
 				{
 					player.SendErrorMessage("[c/595959:»]  Nie masz tylu {0} w ekwipunku.", item2.Name);
 					break;
 				}
-				int num2 = result2 * product2.getSell();
-				SurvivalCore.srvPlayers[player.Index].Money += num2;
-				PlayerRemovingItems(args.Player, item2, result2);
-				args.Player.SendMessage($"[c/595959:»]  Pomyslnie sprzedano [c/66ff66:{item2.Name}] w ilosci [c/66ff66:{result2}]. [c/595959:(]Zarobiono [c/66ff66:{num2:N0}] {Economy.config.ValueName}[c/595959:)]", Color.Gray);
-				args.Player.SendMessage($"[c/595959:»]  [c/66ff66:Twoj nowy stan konta][c/595959::] {SurvivalCore.srvPlayers[player.Index].Money:N0} {Economy.config.ValueName}", Color.Gray);
+				int num2 = result2 * product2.GetSell();
+				SurvivalCore.SrvPlayers[player.Index].Money += num2;
+				PlayerRemoveItems(args.Player, item2, result2);
+				args.Player.SendMessage($"[c/595959:»]  Pomyslnie sprzedano [c/66ff66:{item2.Name}] w ilosci [c/66ff66:{result2}]. [c/595959:(]Zarobiono [c/66ff66:{num2:N0}] {Economy.Config.ValueName}[c/595959:)]", Color.Gray);
+				args.Player.SendMessage($"[c/595959:»]  [c/66ff66:Twoj nowy stan konta][c/595959::] {SurvivalCore.SrvPlayers[player.Index].Money:N0} {Economy.Config.ValueName}", Color.Gray);
 				break;
 			}
 			}
@@ -322,7 +322,7 @@ namespace SurvivalCore.Economy.Shop
 					args.Player.SendErrorMessage("[c/595959:»]  Wprowadz poprawny Sell.");
 					break;
 				}
-				QueryShop.addProduct(item.Name, item.type, result4, result5);
+				QueryShop.AddProduct(item.Name, item.type, result4, result5);
 				args.Player.SendMessage($"[c/595959:»]  Pomyslnie dodano [i:{item.Name}] ([c/11bb11:K] [c/55bb55:{result4}] ; [c/D42A2A:S] [c/D45A5A:{result5}])", Color.Gray);
 				break;
 			}
@@ -333,9 +333,9 @@ namespace SurvivalCore.Economy.Shop
 				{
 					args.Player.SendErrorMessage("[c/595959:»]  Wprowadz poprawny Index.");
 				}
-				else if (QueryShop.isExistIndex(result6))
+				else if (QueryShop.IsExistIndex(result6))
 				{
-					QueryShop.delProduct(result6);
+					QueryShop.DelProduct(result6);
 					args.Player.SendMessage($"[c/595959:»]  Pomyslnie usunieto.", Color.Gray);
 				}
 				else
@@ -361,9 +361,9 @@ namespace SurvivalCore.Economy.Shop
 				{
 					args.Player.SendErrorMessage("[c/595959:»]  Wprowadz poprawny Sell.");
 				}
-				else if (QueryShop.isExistIndex(result))
+				else if (QueryShop.IsExistIndex(result))
 				{
-					QueryShop.updateProduct(result, result2, result3);
+					QueryShop.UpdateProduct(result, result2, result3);
 					args.Player.SendMessage($"[c/595959:»]  Pomyslnie edytowano.", Color.Gray);
 				}
 				else
@@ -375,7 +375,7 @@ namespace SurvivalCore.Economy.Shop
 			}
 		}
 
-		private static int PlayerItemAmount(TSPlayer plr, Item item)
+		private static int PlayerItemCount(TSPlayer plr, Item item)
 		{
 			int num = 0;
 			Item[] inventory = plr.TPlayer.inventory;
@@ -389,7 +389,7 @@ namespace SurvivalCore.Economy.Shop
 			return num;
 		}
 
-		private static void PlayerRemovingItems(TSPlayer plr, Item item, int amount)
+		private static void PlayerRemoveItems(TSPlayer plr, Item item, int amount)
 		{
 			int num = 0;
 			while (true)

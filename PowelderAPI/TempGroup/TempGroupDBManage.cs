@@ -9,7 +9,7 @@ using TShockAPI.DB;
 
 namespace PowelderAPI.TempGroup
 {
-    public static class TempGroupDBManage
+    public static class TempGroupDbManage
     {
 		public static void SetupDb(IDbConnection db)
 		{
@@ -36,21 +36,21 @@ namespace PowelderAPI.TempGroup
 			sqlTableCreator.EnsureTableStructure(table);
 		}
 
-		public static void AddTempGroup(string nick, string pGroup, string aGroup, DateTime eDate) => PowelderAPI.Db.Query("INSERT INTO TempGroup (Nick, primaryGroup, actualGroup, expireDate) VALUES (@0, @1, @2, @3)", nick, pGroup, aGroup, eDate.ToString(PowelderAPI.PowelderDateFormat));
+		public static void AddTempGroup(string nick, string pGroup, string aGroup, DateTime eDate) => PowelderApi.Db.Query("INSERT INTO TempGroup (Nick, primaryGroup, actualGroup, expireDate) VALUES (@0, @1, @2, @3)", nick, pGroup, aGroup, eDate.ToString(PowelderApi.PowelderDateFormat));
 
-		public static void RemoveTempGroup(string nick) => PowelderAPI.Db.Query("DELETE FROM TempGroup WHERE `Nick`=@0", nick);
+		public static void RemoveTempGroup(string nick) => PowelderApi.Db.Query("DELETE FROM TempGroup WHERE `Nick`=@0", nick);
 
 		public static TempGroupPlayer GetTempGroup(string nick)
 		{
 			try
 			{
-				using (QueryResult queryResult = PowelderAPI.Db.QueryReader("SELECT primaryGroup, actualGroup, expireDate FROM TempGroup WHERE `Nick`=@0", nick))
+				using (QueryResult queryResult = PowelderApi.Db.QueryReader("SELECT primaryGroup, actualGroup, expireDate FROM TempGroup WHERE `Nick`=@0", nick))
 				{
 					if (queryResult.Read())
 						return new TempGroupPlayer(
 							queryResult.Get<string>("primaryGroup"),
 							queryResult.Get<string>("actualGroup"),
-							DateTime.ParseExact(queryResult.Get<string>("expireDate"), PowelderAPI.PowelderDateFormat, null)
+							DateTime.ParseExact(queryResult.Get<string>("expireDate"), PowelderApi.PowelderDateFormat, null)
 						);
 				}
 			}
@@ -64,12 +64,12 @@ namespace PowelderAPI.TempGroup
 		{
 			try
 			{
-				using (QueryResult queryResult = PowelderAPI.Db.QueryReader("SELECT expireDate, Nick FROM TempGroup"))
+				using (QueryResult queryResult = PowelderApi.Db.QueryReader("SELECT expireDate, Nick FROM TempGroup"))
 				{
 					while (queryResult.Read())
 					{
-						PowelderAPI.Db.Query("UPDATE TempGroup SET expireDate=@0 WHERE `Nick`=@1",
-							DateTime.ParseExact(queryResult.Get<string>("expireDate"),PowelderAPI.PowelderDateFormat, null).AddSeconds(seconds).ToString(PowelderAPI.PowelderDateFormat),
+						PowelderApi.Db.Query("UPDATE TempGroup SET expireDate=@0 WHERE `Nick`=@1",
+							DateTime.ParseExact(queryResult.Get<string>("expireDate"),PowelderApi.PowelderDateFormat, null).AddSeconds(seconds).ToString(PowelderApi.PowelderDateFormat),
 							queryResult.Get<string>("Nick")
 						);
 					}

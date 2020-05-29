@@ -13,19 +13,7 @@ namespace SurvivalCore.Economy.Shop
 
 		private static int CalcReforge(Item item, byte prefix)
 		{
-			int storeValue = item.GetStoreValue();
-			float num = 0f;
-			byte b = prefix;
-			byte b2 = b;
-			if (b2 != 1)
-			{
-				num = 0f;
-			}
-			else
-			{
-				num = 0.25f;
-			}
-			return storeValue;
+			return (item.Name + prefix.ToString()).Length;
 		}
 	}
 }

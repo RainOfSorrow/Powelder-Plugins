@@ -7,7 +7,7 @@ namespace PowelderAPI.CommandRegions
 {
 	public class CRegion
 	{
-		public string name;
+		public string Name;
 
 		public int PosX;
 
@@ -17,36 +17,36 @@ namespace PowelderAPI.CommandRegions
 
 		public int Width;
 
-		public string action;
+		public string Action;
 
 		public CRegion(string n, int x, int y, int h, int w, string action)
 		{
-			name = n;
+			Name = n;
 			PosX = x;
 			PosY = y;
 			Height = h;
 			Width = w;
-			this.action = action;
+			this.Action = action;
 		}
 
-		public CRegion(CRPlayer cRPlayer, string n, string action)
+		public CRegion(CrPlayer cRPlayer, string n, string action)
 		{
-			name = n;
-			this.action = action;
-			PosX = Math.Min(cRPlayer.pos1.X, cRPlayer.pos2.X);
-			PosY = Math.Min(cRPlayer.pos1.Y, cRPlayer.pos2.Y);
-			Width = Math.Abs(cRPlayer.pos1.X - cRPlayer.pos2.X);
-			Height = Math.Abs(cRPlayer.pos1.Y - cRPlayer.pos2.Y);
-			CRDatabase.addRegion(PosX, PosY, Height, Width, n, action);
+			Name = n;
+			this.Action = action;
+			PosX = Math.Min(cRPlayer.Pos1.X, cRPlayer.Pos2.X);
+			PosY = Math.Min(cRPlayer.Pos1.Y, cRPlayer.Pos2.Y);
+			Width = Math.Abs(cRPlayer.Pos1.X - cRPlayer.Pos2.X);
+			Height = Math.Abs(cRPlayer.Pos1.Y - cRPlayer.Pos2.Y);
+			CrDatabase.AddRegion(PosX, PosY, Height, Width, n, action);
 		}
 
-		public static string getCurrentRegion(TSPlayer plr)
+		public static string GetCurrentRegion(TSPlayer plr)
 		{
 			foreach (CRegion cRegion in CommandRegions.CRegions)
 			{
 				if (plr.TileX >= cRegion.PosX && plr.TileX <= cRegion.PosX + cRegion.Width && plr.TileY >= cRegion.PosY && plr.TileY <= cRegion.PosY + cRegion.Height)
 				{
-					return cRegion.name;
+					return cRegion.Name;
 				}
 			}
 			return null;
@@ -54,14 +54,14 @@ namespace PowelderAPI.CommandRegions
 
 		public void Execute(TSPlayer plr)
 		{
-			if (action.StartsWith(".warp"))
+			if (Action.StartsWith(".warp"))
 			{
-				if (action.Length <= 6)
+				if (Action.Length <= 6)
 				{
 					plr.SendErrorMessage("[c/595959:»]  Wystapil problem z portalem, napisz do kogos z kadry. Kod 0");
 					return;
 				}
-				string text = action.Remove(0, 6);
+				string text = Action.Remove(0, 6);
 				Warp warp = TShock.Warps.Find(text);
 				if (warp != null)
 				{
@@ -75,9 +75,9 @@ namespace PowelderAPI.CommandRegions
 					plr.SendErrorMessage("[c/595959:»]  Nie znaleziono takiego warpa.");
 				}
 			}
-			else if (action.StartsWith("/"))
+			else if (Action.StartsWith("/"))
 			{
-				Commands.HandleCommand(plr, action);
+				Commands.HandleCommand(plr, Action);
 			}
 			else
 			{
@@ -85,7 +85,7 @@ namespace PowelderAPI.CommandRegions
 			}
 		}
 
-		public static CRegion getRegion(int x, int y)
+		public static CRegion GetRegion(int x, int y)
 		{
 			foreach (CRegion cRegion in CommandRegions.CRegions)
 			{

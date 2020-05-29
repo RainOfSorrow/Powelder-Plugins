@@ -7,7 +7,7 @@ using TShockAPI.DB;
 
 namespace PowelderAPI.CommandRegions
 {
-	internal class CRDatabase
+	internal class CrDatabase
 	{
 		public static void SetupDb(IDbConnection db)
 		{
@@ -31,12 +31,12 @@ namespace PowelderAPI.CommandRegions
 			sqlTableCreator.EnsureTableStructure(table);
 		}
 
-		public static List<CRegion> getRegions()
+		public static List<CRegion> GetRegions()
 		{
 			List<CRegion> list = new List<CRegion>();
 			try
 			{
-				using (QueryResult queryResult = PowelderAPI.Db.QueryReader("SELECT * FROM CommandRegions WHERE WorldID=@0", Main.worldID))
+				using (QueryResult queryResult = PowelderApi.Db.QueryReader("SELECT * FROM CommandRegions WHERE WorldID=@0", Main.worldID))
 				{
 					while (queryResult.Read())
 					{
@@ -50,19 +50,19 @@ namespace PowelderAPI.CommandRegions
 			return list;
 		}
 
-		public static void addRegion(int x, int y, int h, int w, string n, string cmd)
+		public static void AddRegion(int x, int y, int h, int w, string n, string cmd)
 		{
-			PowelderAPI.Db.Query("INSERT INTO CommandRegions (X, Y, Height, Width, Name, Command, WorldID) VALUES (@0, @1, @2, @3, @4, @5, @6)", x, y, h, w, n, cmd, Main.worldID);
+			PowelderApi.Db.Query("INSERT INTO CommandRegions (X, Y, Height, Width, Name, Command, WorldID) VALUES (@0, @1, @2, @3, @4, @5, @6)", x, y, h, w, n, cmd, Main.worldID);
 		}
 
-		public static void destroyRegion(string name)
+		public static void DestroyRegion(string name)
 		{
-			PowelderAPI.Db.Query("DELETE FROM CommandRegions WHERE `Name`=@0 AND `WorldID`=@1", name, Main.worldID);
+			PowelderApi.Db.Query("DELETE FROM CommandRegions WHERE `Name`=@0 AND `WorldID`=@1", name, Main.worldID);
 		}
 
-		public static void modifyRegion(string name, string command)
+		public static void ModifyRegion(string name, string command)
 		{
-			PowelderAPI.Db.Query("UPDATE CommandRegions SET Command=@0 WHERE `Name`=@1 AND `WorldID`=@2", command, name, Main.worldID);
+			PowelderApi.Db.Query("UPDATE CommandRegions SET Command=@0 WHERE `Name`=@1 AND `WorldID`=@2", command, name, Main.worldID);
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace SurvivalCore.Economy
 {
 	public class ECommands
 	{
-		public static void admin(CommandArgs args)
+		public static void Admin(CommandArgs args)
 		{
 			TSPlayer player = args.Player;
 			string text = null;
@@ -54,7 +54,7 @@ namespace SurvivalCore.Economy
 					}
 					else
 					{
-						Operations.setMoney(args.Player, list2[0], result2);
+						Operations.SetMoney(args.Player, list2[0], result2);
 					}
 				}
 				else
@@ -92,7 +92,7 @@ namespace SurvivalCore.Economy
 					}
 					else
 					{
-						Operations.addMoney(args.Player, list3[0], result3);
+						Operations.AddMoney(args.Player, list3[0], result3);
 					}
 				}
 				else
@@ -130,7 +130,7 @@ namespace SurvivalCore.Economy
 					}
 					else
 					{
-						Operations.takeMoney(args.Player, list[0], result);
+						Operations.TakeMoney(args.Player, list[0], result);
 					}
 				}
 				else
@@ -142,7 +142,7 @@ namespace SurvivalCore.Economy
 			}
 		}
 
-		public static void currency(CommandArgs args)
+		public static void Currency(CommandArgs args)
 		{
 			if (args.Parameters.Count > 0)
 			{
@@ -157,16 +157,16 @@ namespace SurvivalCore.Economy
 				}
 				else
 				{
-					args.Player.SendMessage(string.Format("[c/595959:»]  [c/66ff66:Stan konta {0}][c/595959::] {1} {2}", list[0].Name, SurvivalCore.srvPlayers[list[0].Index].Money.ToString("N0").Replace(' ', ','), Economy.config.ValueName), Color.Gray);
+					args.Player.SendMessage(string.Format("[c/595959:»]  [c/66ff66:Stan konta {0}][c/595959::] {1} {2}", list[0].Name, SurvivalCore.SrvPlayers[list[0].Index].Money.ToString("N0").Replace(' ', ','), Economy.Config.ValueName), Color.Gray);
 				}
 			}
 			else
 			{
-				args.Player.SendMessage(string.Format("[c/595959:»]  [c/66ff66:Stan twojego konta][c/595959::] {0} {1}", SurvivalCore.srvPlayers[args.Player.Index].Money.ToString("N0").Replace(' ', ','), Economy.config.ValueName), Color.Gray);
+				args.Player.SendMessage(string.Format("[c/595959:»]  [c/66ff66:Stan twojego konta][c/595959::] {0} {1}", SurvivalCore.SrvPlayers[args.Player.Index].Money.ToString("N0").Replace(' ', ','), Economy.Config.ValueName), Color.Gray);
 			}
 		}
 
-		public static void transfer(CommandArgs args)
+		public static void Transfer(CommandArgs args)
 		{
 			if (args.Parameters.Count <= 0)
 			{
@@ -195,7 +195,7 @@ namespace SurvivalCore.Economy
 				}
 				else
 				{
-					Operations.sendMoney(args.Player, list[0], result);
+					Operations.SendMoney(args.Player, list[0], result);
 				}
 			}
 			else
@@ -204,29 +204,29 @@ namespace SurvivalCore.Economy
 			}
 		}
 
-		public static void collectMoney(CommandArgs args)
+		public static void CollectMoney(CommandArgs args)
 		{
 			TSPlayer player = args.Player;
 
-			if (QueryDly.loadNext(player) == null)
+			if (QueryDly.LoadNext(player) == null)
 			{
-				QueryDly.createRecord(player, DateTime.Now.AddDays(1.0));
-				SurvivalCore.srvPlayers[args.Player.Index].Money += Economy.config.DailyAmount;
-				player.SendMessage($"[c/595959:»]  Pomyslne odebrano swoje pierwsze kieszonkowe wynoszace [c/66ff66:{Economy.config.DailyAmount}] {Economy.config.ValueName}.", Color.Gray);
-				player.SendMessage(string.Format("[c/595959:»]  [c/66ff66:Twoj nowy stan konta][c/595959::] {0} {1}", SurvivalCore.srvPlayers[args.Player.Index].Money.ToString("N0").Replace(' ', ','), Economy.config.ValueName), Color.Gray);
+				QueryDly.CreateRecord(player, DateTime.Now.AddDays(1.0));
+				SurvivalCore.SrvPlayers[args.Player.Index].Money += Economy.Config.DailyAmount;
+				player.SendMessage($"[c/595959:»]  Pomyslne odebrano swoje pierwsze kieszonkowe wynoszace [c/66ff66:{Economy.Config.DailyAmount}] {Economy.Config.ValueName}.", Color.Gray);
+				player.SendMessage(string.Format("[c/595959:»]  [c/66ff66:Twoj nowy stan konta][c/595959::] {0} {1}", SurvivalCore.SrvPlayers[args.Player.Index].Money.ToString("N0").Replace(' ', ','), Economy.Config.ValueName), Color.Gray);
 				return;
 			}
-			else if ((DateTime.Now - DateTime.ParseExact(QueryDly.loadNext(player), Economy.DFormat, null)).TotalMilliseconds > 0)
+			else if ((DateTime.Now - DateTime.ParseExact(QueryDly.LoadNext(player), Economy.DFormat, null)).TotalMilliseconds > 0)
 			{
-				SurvivalCore.srvPlayers[args.Player.Index].Money += Economy.config.DailyAmount;
-				player.SendMessage($"[c/595959:»]  Pomyslne odebrano swoje kieszonkowe wynoszace [c/66ff66:{Economy.config.DailyAmount}] {Economy.config.ValueName}.", Color.Gray);
-				player.SendMessage(string.Format("[c/595959:»]  [c/66ff66:Twoj nowy stan konta][c/595959::] {0} {1}", SurvivalCore.srvPlayers[args.Player.Index].Money.ToString("N0").Replace(' ', ','), Economy.config.ValueName), Color.Gray);
-				QueryDly.updateNext(player, DateTime.Now.AddDays(1));
+				SurvivalCore.SrvPlayers[args.Player.Index].Money += Economy.Config.DailyAmount;
+				player.SendMessage($"[c/595959:»]  Pomyslne odebrano swoje kieszonkowe wynoszace [c/66ff66:{Economy.Config.DailyAmount}] {Economy.Config.ValueName}.", Color.Gray);
+				player.SendMessage(string.Format("[c/595959:»]  [c/66ff66:Twoj nowy stan konta][c/595959::] {0} {1}", SurvivalCore.SrvPlayers[args.Player.Index].Money.ToString("N0").Replace(' ', ','), Economy.Config.ValueName), Color.Gray);
+				QueryDly.UpdateNext(player, DateTime.Now.AddDays(1));
 			}
 			else
 			{
 				player.SendErrorMessage("[c/595959:»]  Kieszonkowe mozna odbierac co 24h.");
-				player.SendMessage($"[c/595959:»]  Nastepny odbior bedzie mozliwy za [c/66ff66:{ExpireCountDown(QueryDly.loadNext(player))}].", Color.Gray);
+				player.SendMessage($"[c/595959:»]  Nastepny odbior bedzie mozliwy za [c/66ff66:{ExpireCountDown(QueryDly.LoadNext(player))}].", Color.Gray);
 			}
 		}
 

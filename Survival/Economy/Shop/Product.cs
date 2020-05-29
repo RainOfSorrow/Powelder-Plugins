@@ -6,44 +6,44 @@ namespace SurvivalCore.Economy.Shop
 
 		public string Name;
 
-		private int ID;
+		private int _id;
 
-		private int Buy;
+		private int _buy;
 
-		private int Sell;
+		private int _sell;
 
-		public int getIndex()
+		public int GetIndex()
 		{
 			return Index;
 		}
 
-		public string getName()
+		public string GetName()
 		{
 			return Name;
 		}
 
-		public int getID()
+		public int GetId()
 		{
-			return ID;
+			return _id;
 		}
 
-		public int getBuy()
+		public int GetBuy()
 		{
-			return Buy;
+			return _buy;
 		}
 
-		public int getSell()
+		public int GetSell()
 		{
-			return Sell;
+			return _sell;
 		}
 
 		public Product(int index, string name, int id, int buy, int sell)
 		{
 			Index = index;
 			Name = name;
-			ID = id;
-			Buy = buy;
-			Sell = sell;
+			_id = id;
+			_buy = buy;
+			_sell = sell;
 		}
 	}
 }

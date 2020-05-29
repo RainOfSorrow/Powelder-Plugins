@@ -13,7 +13,7 @@ namespace PowelderAPI.CommandRegions
 	{
 		public static List<CRegion> CRegions = new List<CRegion>();
 
-		public static CRPlayer[] Players = new CRPlayer[256];
+		public static CrPlayer[] Players = new CrPlayer[256];
 
 		public static void CommandInitialize()
 		{
@@ -30,37 +30,37 @@ namespace PowelderAPI.CommandRegions
 				{
 					try
 					{
-						name = CRegion.getCurrentRegion(player);
-						Players[player.Index].currentRegion = name;
+						name = CRegion.GetCurrentRegion(player);
+						Players[player.Index].CurrentRegion = name;
 						if (name == null)
 						{
-							Players[player.Index].seconds = -1;
+							Players[player.Index].Seconds = -1;
 						}
 						else
 						{
-							if (Players[player.Index].seconds == -1)
+							if (Players[player.Index].Seconds == -1)
 							{
-								Players[player.Index].seconds = 5;
-								Players[player.Index].oldRegion = name;
+								Players[player.Index].Seconds = 5;
+								Players[player.Index].OldRegion = name;
 							}
-							if (Players[player.Index].currentRegion == Players[player.Index].oldRegion)
+							if (Players[player.Index].CurrentRegion == Players[player.Index].OldRegion)
 							{
-								if (Players[player.Index].seconds == 0)
+								if (Players[player.Index].Seconds == 0)
 								{
-									Players[player.Index].seconds = -1;
-									CRegions.Find((CRegion c) => c.name == name).Execute(player);
+									Players[player.Index].Seconds = -1;
+									CRegions.Find((CRegion c) => c.Name == name).Execute(player);
 									player.SendData(PacketTypes.CreateCombatTextExtended, name + "!", (int)new Color(169, 55, 255).PackedValue, player.TPlayer.Center.X, player.TPlayer.Center.Y);
 								}
 								else
 								{
-									player.SendData(PacketTypes.CreateCombatTextExtended, Players[player.Index].seconds.ToString(), (int)new Color(169, 55, 255).PackedValue, player.TPlayer.Center.X, player.TPlayer.Center.Y);
-									Players[player.Index].seconds--;
+									player.SendData(PacketTypes.CreateCombatTextExtended, Players[player.Index].Seconds.ToString(), (int)new Color(169, 55, 255).PackedValue, player.TPlayer.Center.X, player.TPlayer.Center.Y);
+									Players[player.Index].Seconds--;
 								}
 							}
 							else
 							{
-								Players[player.Index].seconds = 5;
-								Players[player.Index].oldRegion = name;
+								Players[player.Index].Seconds = 5;
+								Players[player.Index].OldRegion = name;
 							}
 						}
 					}
@@ -71,17 +71,17 @@ namespace PowelderAPI.CommandRegions
 			}
 		}
 
-		public static void onJoin(JoinEventArgs args)
+		public static void OnJoin(JoinEventArgs args)
 		{
-			Players[args.Who] = new CRPlayer(args.Who);
+			Players[args.Who] = new CrPlayer(args.Who);
 		}
 
-		public static void onLeave(LeaveEventArgs args)
+		public static void OnLeave(LeaveEventArgs args)
 		{
 			Players[args.Who] = null;
 		}
 
-		public static void onGetData(GetDataEventArgs args)
+		public static void OnGetData(GetDataEventArgs args)
 		{
 			if (!args.Handled && !args.Handled && args.MsgID == PacketTypes.Tile)
 			{
@@ -93,29 +93,29 @@ namespace PowelderAPI.CommandRegions
 					short y = binaryReader.ReadInt16();
 					if ((type == 0 || type == 1) && tSPlayer.HasPermission("server.admin"))
 					{
-						if (Players[tSPlayer.Index].set[0])
+						if (Players[tSPlayer.Index].Set[0])
 						{
-							Players[tSPlayer.Index].pos1.X = x;
-							Players[tSPlayer.Index].pos1.Y = y;
-							Players[tSPlayer.Index].set[0] = false;
-							Players[tSPlayer.Index].set[1] = true;
+							Players[tSPlayer.Index].Pos1.X = x;
+							Players[tSPlayer.Index].Pos1.Y = y;
+							Players[tSPlayer.Index].Set[0] = false;
+							Players[tSPlayer.Index].Set[1] = true;
 							tSPlayer.SendMessage($"[c/595959:»]  Ustawiono punkt pierwszy. ({x}, {y})", Color.Gray);
 							tSPlayer.SendMessage("[c/595959:»]  Teraz ustaw drugi punkt w prawym dolnym rogu.", Color.Gray);
 							tSPlayer.SendTileSquare(x, y);
 							args.Handled = true;
 						}
-						else if (Players[tSPlayer.Index].set[1])
+						else if (Players[tSPlayer.Index].Set[1])
 						{
-							Players[tSPlayer.Index].pos2.X = x;
-							Players[tSPlayer.Index].pos2.Y = y;
-							Players[tSPlayer.Index].set[1] = false;
+							Players[tSPlayer.Index].Pos2.X = x;
+							Players[tSPlayer.Index].Pos2.Y = y;
+							Players[tSPlayer.Index].Set[1] = false;
 							tSPlayer.SendMessage($"[c/595959:»]  Ustawiono punkt drugi. ({x}, {y})", Color.Gray);
 							tSPlayer.SendTileSquare(x, y);
 							args.Handled = true;
 						}
-						else if (Players[tSPlayer.Index].destroy)
+						else if (Players[tSPlayer.Index].Destroy)
 						{
-							CRegion region = CRegion.getRegion(x, y);
+							CRegion region = CRegion.GetRegion(x, y);
 							if (region == null)
 							{
 								tSPlayer.SendErrorMessage("[c/595959:»]  Nie znaleziono regionu.");
@@ -123,27 +123,27 @@ namespace PowelderAPI.CommandRegions
 							else
 							{
 								CRegions.Remove(region);
-								CRDatabase.destroyRegion(region.name);
-								tSPlayer.SendMessage("[c/595959:»]  Pomyslnie usunieto region [c/66ff66:" + region.name + "].", Color.Gray);
+								CrDatabase.DestroyRegion(region.Name);
+								tSPlayer.SendMessage("[c/595959:»]  Pomyslnie usunieto region [c/66ff66:" + region.Name + "].", Color.Gray);
 							}
-							Players[tSPlayer.Index].destroy = false;
+							Players[tSPlayer.Index].Destroy = false;
 							tSPlayer.SendTileSquare(x, y);
 							args.Handled = true;
 						}
-						else if (Players[tSPlayer.Index].modify)
+						else if (Players[tSPlayer.Index].Modify)
 						{
-							CRegion region = CRegion.getRegion(x, y);
+							CRegion region = CRegion.GetRegion(x, y);
 							if (region == null)
 							{
 								tSPlayer.SendErrorMessage("[c/595959:»]  Nie znaleziono regionu.");
 							}
 							else
 							{
-								CRegions.Find((CRegion c) => c == region).action = Players[tSPlayer.Index].cmd;
-								CRDatabase.modifyRegion(region.name, Players[tSPlayer.Index].cmd);
-								tSPlayer.SendMessage("[c/595959:»]  Pomyslnie zmodyfikowano region [c/66ff66:" + region.name + "].", Color.Gray);
+								CRegions.Find((CRegion c) => c == region).Action = Players[tSPlayer.Index].Cmd;
+								CrDatabase.ModifyRegion(region.Name, Players[tSPlayer.Index].Cmd);
+								tSPlayer.SendMessage("[c/595959:»]  Pomyslnie zmodyfikowano region [c/66ff66:" + region.Name + "].", Color.Gray);
 							}
-							Players[tSPlayer.Index].modify = false;
+							Players[tSPlayer.Index].Modify = false;
 							tSPlayer.SendTileSquare(x, y);
 							args.Handled = true;
 						}
@@ -185,10 +185,10 @@ namespace PowelderAPI.CommandRegions
 				break;
 			case "set":
 				args.Player.SendMessage("[c/595959:»]  Ustaw pierwszy punkt w lewym gornym rogu.", Color.Gray);
-				Players[args.Player.Index].set[0] = true;
+				Players[args.Player.Index].Set[0] = true;
 				break;
 			case "define":
-				if (Players[args.Player.Index].pos1 == Point.Zero || Players[args.Player.Index].pos2 == Point.Zero)
+				if (Players[args.Player.Index].Pos1 == Point.Zero || Players[args.Player.Index].Pos2 == Point.Zero)
 				{
 					args.Player.SendErrorMessage("[c/595959:»]  Nie masz ustawionych punktow.");
 					args.Player.SendMessage("[c/595959:»]  Wpisz [c/66ff66:/cregion set], aby zaczac ustawiac.", Color.Gray);
@@ -206,12 +206,12 @@ namespace PowelderAPI.CommandRegions
 				}
 				args.Player.SendMessage("[c/595959:»]  Pomyslnie ustawiono region [c/66ff66:" + text2 + "].", Color.Gray);
 				CRegions.Add(new CRegion(Players[args.Player.Index], text2, text3));
-				Players[args.Player.Index].pos1 = Point.Zero;
-				Players[args.Player.Index].pos2 = Point.Zero;
+				Players[args.Player.Index].Pos1 = Point.Zero;
+				Players[args.Player.Index].Pos2 = Point.Zero;
 				break;
 			case "destroy":
 				args.Player.SendMessage("[c/595959:»]  Zmodyfikuj obiekt wewnatrz regionu, aby go usunac.", Color.Gray);
-				Players[args.Player.Index].destroy = true;
+				Players[args.Player.Index].Destroy = true;
 				break;
 			case "modify":
 				if (text2 == null)
@@ -220,8 +220,8 @@ namespace PowelderAPI.CommandRegions
 					break;
 				}
 				args.Player.SendMessage("[c/595959:»]  Zmodyfikuj obiekt wewnatrz regionu, aby go zmodyfikowac.", Color.Gray);
-				Players[args.Player.Index].cmd = text2;
-				Players[args.Player.Index].modify = true;
+				Players[args.Player.Index].Cmd = text2;
+				Players[args.Player.Index].Modify = true;
 				break;
 			}
 		}

@@ -2,34 +2,34 @@ using Microsoft.Xna.Framework;
 
 namespace PowelderAPI.CommandRegions
 {
-	public class CRPlayer
+	public class CrPlayer
 	{
-		public bool[] set;
+		public bool[] Set;
 
-		public bool destroy;
+		public bool Destroy;
 
-		public bool modify;
+		public bool Modify;
 
-		public string cmd;
+		public string Cmd;
 
-		public string currentRegion;
+		public string CurrentRegion;
 
-		public string oldRegion;
+		public string OldRegion;
 
-		public short seconds;
+		public short Seconds;
 
-		public Point pos1;
+		public Point Pos1;
 
-		public Point pos2;
+		public Point Pos2;
 
-		public CRPlayer(int Index)
+		public CrPlayer(int index)
 		{
-			pos1 = Point.Zero;
-			pos2 = Point.Zero;
-			set = new bool[2];
-			currentRegion = null;
-			oldRegion = null;
-			seconds = -1;
+			Pos1 = Point.Zero;
+			Pos2 = Point.Zero;
+			Set = new bool[2];
+			CurrentRegion = null;
+			OldRegion = null;
+			Seconds = -1;
 		}
 	}
 }

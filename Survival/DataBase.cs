@@ -27,37 +27,37 @@ namespace SurvivalCore
 			//sqlTableCreator.EnsureTableStructure(table2);
 		}
 
-		public static void createPlayTime(UserAccount plr)
+		public static void CreatePlayTime(UserAccount plr)
 		{
-			PowelderAPI.PowelderAPI.Db.Query("INSERT INTO PlayerPlayTime (ID, Nick, playTime) VALUES (@0, @1, @2)", plr.ID, plr.Name, 0);
+			PowelderAPI.PowelderApi.Db.Query("INSERT INTO PlayerPlayTime (ID, Nick, playTime) VALUES (@0, @1, @2)", plr.ID, plr.Name, 0);
 		}
 
-		public static void createSrvPlayer(UserAccount plr)
+		public static void CreateSrvPlayer(UserAccount plr)
 		{
-			PowelderAPI.PowelderAPI.Db.Query("INSERT INTO Powelder_Players (ID, Nick, prefixItem, colorNick, Deaths, Money, statusOptions, pvpKills, pvpDeaths) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8)", plr.ID, plr.Name, -1, null, 0, 0, "11111111111111111111", 0, 0);
+			PowelderAPI.PowelderApi.Db.Query("INSERT INTO Powelder_Players (ID, Nick, prefixItem, colorNick, Deaths, Money, statusOptions, pvpKills, pvpDeaths) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8)", plr.ID, plr.Name, -1, null, 0, 0, "11111111111111111111", 0, 0);
 		}
 
-		public static void removePlayTime(UserAccount plr)
+		public static void RemovePlayTime(UserAccount plr)
 		{
-			PowelderAPI.PowelderAPI.Db.Query("DELETE FROM PlayerPlayTime WHERE ID=@0", plr.ID);
+			PowelderAPI.PowelderApi.Db.Query("DELETE FROM PlayerPlayTime WHERE ID=@0", plr.ID);
 		}
 
-		public static void removeSrvPlayer(UserAccount plr)
+		public static void RemoveSrvPlayer(UserAccount plr)
 		{
-			PowelderAPI.PowelderAPI.Db.Query("DELETE FROM Powelder_Players WHERE ID=@0", plr.ID);
+			PowelderAPI.PowelderApi.Db.Query("DELETE FROM Powelder_Players WHERE ID=@0", plr.ID);
 		}
 
-		public static SrvPlayer getSrvPlayer(UserAccount plr)
+		public static SrvPlayer GetSrvPlayer(UserAccount plr)
 		{
 			long pt = 0L;
-			using (QueryResult queryResult = PowelderAPI.PowelderAPI.Db.QueryReader("SELECT * FROM PlayerPlayTime WHERE ID='" + plr.ID + "'"))
+			using (QueryResult queryResult = PowelderAPI.PowelderApi.Db.QueryReader("SELECT * FROM PlayerPlayTime WHERE ID='" + plr.ID + "'"))
 			{
 				if (queryResult.Read())
 				{
 					pt = queryResult.Get<long>("playTime");
 				}
 			}
-			using (QueryResult queryResult2 = PowelderAPI.PowelderAPI.Db.QueryReader("SELECT * FROM Powelder_Players WHERE ID='" + plr.ID + "'"))
+			using (QueryResult queryResult2 = PowelderAPI.PowelderApi.Db.QueryReader("SELECT * FROM Powelder_Players WHERE ID='" + plr.ID + "'"))
 			{
 				if (queryResult2.Read())
 				{
@@ -68,17 +68,17 @@ namespace SurvivalCore
 			return new SrvPlayer(0, null, -1, null, 0, 0, null, 0, 0, pt);
 		}
 
-		public static SrvPlayer getSrvPlayer(string plr)
+		public static SrvPlayer GetSrvPlayer(string plr)
 		{
 			long pt = 0L;
-			using (QueryResult queryResult = PowelderAPI.PowelderAPI.Db.QueryReader("SELECT * FROM PlayerPlayTime WHERE Nick='" + plr + "'"))
+			using (QueryResult queryResult = PowelderAPI.PowelderApi.Db.QueryReader("SELECT * FROM PlayerPlayTime WHERE Nick='" + plr + "'"))
 			{
 				if (queryResult.Read())
 				{
 					pt = queryResult.Get<long>("playTime");
 				}
 			}
-			using (QueryResult queryResult2 = PowelderAPI.PowelderAPI.Db.QueryReader("SELECT * FROM Powelder_Players WHERE Nick='" + plr + "'"))
+			using (QueryResult queryResult2 = PowelderAPI.PowelderApi.Db.QueryReader("SELECT * FROM Powelder_Players WHERE Nick='" + plr + "'"))
 			{
 				if (queryResult2.Read())
 				{
@@ -88,26 +88,26 @@ namespace SurvivalCore
 			return new SrvPlayer(0, null, -1, null, 0, 0, null, 0, 0, pt);
 		}
 
-		public static void updatePlayTime(UserAccount plr, long play)
+		public static void UpdatePlayTime(UserAccount plr, long play)
 		{
-			PowelderAPI.PowelderAPI.Db.Query("UPDATE PlayerPlayTime SET playTime=@0 WHERE ID=@1", play, plr.ID);
+			PowelderAPI.PowelderApi.Db.Query("UPDATE PlayerPlayTime SET playTime=@0 WHERE ID=@1", play, plr.ID);
 		}
 
 		public static void SrvPlayerUpdate(SrvPlayer plr)
 		{
-			PowelderAPI.PowelderAPI.Db.Query("UPDATE Powelder_Players SET prefixItem=@0, colorNick=@1, Deaths=@2, Money=@3, statusOptions=@4, pvpKills=@5, pvpDeaths=@6 WHERE ID=@7", plr.prefixItem, plr.nickColor, plr.Deaths, plr.Money, plr.statusOptions, plr.pvpKills, plr.pvpDeaths, plr.ID);
+			PowelderAPI.PowelderApi.Db.Query("UPDATE Powelder_Players SET prefixItem=@0, colorNick=@1, Deaths=@2, Money=@3, statusOptions=@4, pvpKills=@5, pvpDeaths=@6 WHERE ID=@7", plr.PrefixItem, plr.NickColor, plr.Deaths, plr.Money, plr.StatusOptions, plr.PvpKills, plr.PvpDeaths, plr.Id);
 		}
 
-		public static Dictionary<string, double[]> GetTopPvp(string Nick)
+		public static Dictionary<string, double[]> GetTopPvp(string nick)
 		{
 			Dictionary<string, double[]> dictionary = new Dictionary<string, double[]>();
-			List<string> excluded = SurvivalCore.excluded;
+			List<string> excluded = SurvivalCore.Excluded;
 			string str = "SELECT Nick, pvpKills, pvpDeaths, (pvpKills/pvpDeaths) AS ratio FROM Powelder_Players WHERE Nick != 'Xedlefix'";
 			foreach (string item in excluded)
 			{
 				str = str + " and Nick != '" + item + "'";
 			}
-			using (QueryResult queryResult = PowelderAPI.PowelderAPI.Db.QueryReader(str + " ORDER BY pvpKills DESC LIMIT 5"))
+			using (QueryResult queryResult = PowelderAPI.PowelderApi.Db.QueryReader(str + " ORDER BY pvpKills DESC LIMIT 5"))
 			{
 				while (queryResult.Read())
 				{
@@ -122,16 +122,16 @@ namespace SurvivalCore
 			return dictionary;
 		}
 
-		public static Dictionary<string, TimeSpan> GetTopCzasGry(string Nick)
+		public static Dictionary<string, TimeSpan> GetTopCzasGry(string nick)
 		{
 			Dictionary<string, TimeSpan> dictionary = new Dictionary<string, TimeSpan>();
-			List<string> excluded = SurvivalCore.excluded;
+			List<string> excluded = SurvivalCore.Excluded;
 			string str = "SELECT Nick, playTime FROM PlayerPlayTime WHERE Nick != 'Xedlefix'";
 			foreach (string item in excluded)
 			{
 				str = str + " and Nick != '" + item + "'";
 			}
-			using (QueryResult queryResult = PowelderAPI.PowelderAPI.Db.QueryReader(str + " ORDER BY playTime DESC LIMIT 5"))
+			using (QueryResult queryResult = PowelderAPI.PowelderApi.Db.QueryReader(str + " ORDER BY playTime DESC LIMIT 5"))
 			{
 				while (queryResult.Read())
 				{

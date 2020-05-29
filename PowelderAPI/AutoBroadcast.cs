@@ -8,35 +8,35 @@ namespace PowelderAPI
 {
 	internal class AutoBroadcast
 	{
-		private static AutoConfig config;
+		private static AutoConfig _config;
 
-		private static int nr = 0;
+		private static int _nr = 0;
 
 		public static void StartBroadcast()
 		{
-			config = AutoConfig.Read("powelder/broadcast.json");
+			_config = AutoConfig.Read("powelder/broadcast.json");
 			if (!File.Exists("powelder/broadcast.json"))
 			{
-				config.Write("powelder/broadcast.json");
+				_config.Write("powelder/broadcast.json");
 			}
 			while (true)
 			{
-				Thread.Sleep(config.interval * 1000);
-				TSPlayer.All.SendMessage(config.Messages[nr], new Color(config.Red, config.Green, config.Blue));
-				nr++;
-				if (nr == config.Messages.Length)
+				Thread.Sleep(_config.Interval * 1000);
+				TSPlayer.All.SendMessage(_config.Messages[_nr], new Color(_config.Red, _config.Green, _config.Blue));
+				_nr++;
+				if (_nr == _config.Messages.Length)
 				{
-					nr = 0;
+					_nr = 0;
 				}
 			}
 		}
 
 		public static void Reload(CommandArgs args)
 		{
-			config = AutoConfig.Read("powelder/broadcast.json");
+			_config = AutoConfig.Read("powelder/broadcast.json");
 			if (!File.Exists("powelder/broadcast.json"))
 			{
-				config.Write("powelder/broadcast.json");
+				_config.Write("powelder/broadcast.json");
 			}
 			args.Player.SendMessage("[c/595959:»]  Broadcast zostal przeladowany.", Color.Gray);
 		}
@@ -44,7 +44,7 @@ namespace PowelderAPI
 
 	internal class AutoConfig
 	{
-		public int interval = 240;
+		public int Interval = 240;
 
 		public int Red = 192;
 

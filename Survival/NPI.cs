@@ -8,18 +8,19 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.Localization;
 using TShockAPI;
+using System.Runtime.InteropServices;
 
 namespace SurvivalCore
 {
-	public class NPI
+	public class Npi
 	{
-		public static bool passwordSend(BinaryReader read, TSPlayer who)
+		public static bool PasswordSend(BinaryReader read, TSPlayer who)
 		{
 			string text = read.ReadString();
 			return false;
 		}
 
-		public static bool itemOwner(BinaryReader read, TSPlayer who)
+		public static bool ItemOwner(BinaryReader read, TSPlayer who)
 		{
 			short num = read.ReadInt16();
 			read.ReadByte();
@@ -27,7 +28,7 @@ namespace SurvivalCore
 			{
 				try
 				{
-					SurvivalCore.stoper[(byte)who.Index].Stop();
+					SurvivalCore.Stoper[(byte)who.Index].Stop();
 				}
 				catch (KeyNotFoundException)
 				{
@@ -37,7 +38,7 @@ namespace SurvivalCore
 				if (!SurvivalCore.PingMeasure.ContainsKey((byte)who.Index))
 					SurvivalCore.PingMeasure.Add((byte)who.Index, new int[5]);
 
-				SurvivalCore.PingMeasure[(byte)who.Index][SurvivalCore.tickPing] = (int)SurvivalCore.stoper[(byte)who.Index].Elapsed.TotalMilliseconds;
+				SurvivalCore.PingMeasure[(byte)who.Index][SurvivalCore.TickPing] = (int)SurvivalCore.Stoper[(byte)who.Index].Elapsed.TotalMilliseconds;
 
 				if (!Array.Exists(SurvivalCore.PingMeasure[(byte)who.Index], x => x == 0))
 				{
@@ -46,30 +47,21 @@ namespace SurvivalCore
 					SurvivalCore.Ping[(byte)who.Index] = SurvivalCore.PingMeasure[(byte)who.Index][2];
 				}
 
-				SurvivalCore.stoper.Remove((byte)who.Index);
+				SurvivalCore.Stoper.Remove((byte)who.Index);
 			}
 			return false;
 		}
 
-		public static bool playerInfo(BinaryReader read, TSPlayer who)
+		public static bool PlayerInfo(BinaryReader read, TSPlayer who)
 		{
 			read.ReadByte();
 			read.ReadByte();
 			read.ReadByte();
-			string text = read.ReadString();
-			TSPlayer[] players = TShock.Players;
-			foreach (TSPlayer tSPlayer in players)
-			{
-				if (tSPlayer != null && text.ToLower() == tSPlayer.Name.ToLower() && tSPlayer.IsLoggedIn)
-				{
-					who.SendData(PacketTypes.Disconnect, "Na serwerze jest juz gracz o nicku \"" + text + "\".");
-					return true;
-				}
-			}
+			read.ReadString();
 			return false;
 		}
 
-		public static bool togglePvP(BinaryReader read, TSPlayer who)
+		public static bool TogglePvP(BinaryReader read, TSPlayer who)
 		{
 			read.ReadByte();
 			bool flag = read.ReadBoolean();
@@ -109,7 +101,7 @@ namespace SurvivalCore
 			return true;
 		}
 
-		public static bool playerTeam(BinaryReader read, TSPlayer who)
+		public static bool PlayerTeam(BinaryReader read, TSPlayer who)
 		{
 			read.ReadByte();
 			byte b = read.ReadByte();
@@ -188,7 +180,7 @@ namespace SurvivalCore
 			return true;
 		}
 
-		public static bool updatePlayer(BinaryReader read, TSPlayer who)
+		public static bool UpdatePlayer(BinaryReader read, TSPlayer who)
 		{
 			byte b = read.ReadByte();
 			byte b2 = read.ReadByte();
@@ -197,14 +189,14 @@ namespace SurvivalCore
 			return false;
 		}
 
-		public static bool playMusic(BinaryReader read, TSPlayer who)
+		public static bool PlayMusic(BinaryReader read, TSPlayer who)
 		{
 			byte b = read.ReadByte();
 			float num = read.ReadSingle();
 			return false;
 		}
 
-		public static bool itemDrop(BinaryReader read, TSPlayer who)
+		public static bool ItemDrop(BinaryReader read, TSPlayer who)
 		{
 			short num = read.ReadInt16();
 			read.ReadSingle();
@@ -223,26 +215,26 @@ namespace SurvivalCore
 			return false;
 		}
 
-		public static bool specialNPCEffect(BinaryReader read, TSPlayer who)
+		public static bool SpecialNpcEffect(BinaryReader read, TSPlayer who)
 		{
 			byte b = read.ReadByte();
 			byte b2 = read.ReadByte();
 			if (b2 == 1)
 			{
 				int cost = 1100;
-				cost = Utils.costCalc(who, cost);
-				if (SurvivalCore.srvPlayers[b].Money < cost)
+				cost = Utils.CostCalc(who, cost);
+				if (SurvivalCore.SrvPlayers[b].Money < cost)
 				{
 					who.SendErrorMessage("[c/595959:»]  Nie stac cie na przywolanie Skeletrona. [c/595959:(]Koszt {0} €[c/595959:)]", cost);
 					return true;
 				}
-				SurvivalCore.srvPlayers[b].Money -= cost;
+				SurvivalCore.SrvPlayers[b].Money -= cost;
 				TSPlayer.All.SendInfoMessage("[c/595959:»]  {0} przywolal Skeletrona.", who.Name);
 			}
 			return false;
 		}
 
-		public static bool bossorinvasionstart(BinaryReader read)
+		public static bool BossOrInvasionStart(BinaryReader read)
 		{
 			TSPlayer tSPlayer = TShock.Players[read.ReadInt16()];
 			int npcid = read.ReadInt16();
@@ -252,9 +244,9 @@ namespace SurvivalCore
 			}
 			bool isBoss = false;
 			int cost = 0;
-			NPC nPC = new NPC();
-			nPC.SetDefaults(npcid);
-			isBoss = nPC.boss;
+			NPC nPc = new NPC();
+			nPc.SetDefaults(npcid);
+			isBoss = nPc.boss;
 			if (!isBoss)
 			{
 				switch (npcid)
@@ -281,6 +273,7 @@ namespace SurvivalCore
 				case 493:
 				case 507:
 				case 517:
+				case 657:
 					isBoss = true;
 					break;
 				}
@@ -311,6 +304,9 @@ namespace SurvivalCore
 			case -8:
 				cost = 6000;
 				break;
+			case -10:
+				cost = 500;
+				break;;
 			case 4:
 				cost = 300;
 				break;
@@ -355,19 +351,32 @@ namespace SurvivalCore
 			case 398:
 				cost = 6000;
 				break;
+			case 657: //Queen slime
+				cost = 300;
+				break;
 			}
-			cost = Utils.costCalc(tSPlayer, cost);
-			if (SurvivalCore.srvPlayers[tSPlayer.Index].Money < cost)
+
+			if (cost > 0)
 			{
-				tSPlayer.SendErrorMessage("[c/595959:»]  Nie stac cie na {0}. [c/595959:(]Koszt {1} €[c/595959:)]", isBoss ? ("przywolanie " + nPC.FullName) : ("rozpoczecie " + getInvasion(npcid)), cost);
-				if (sItemID(npcid) != -1)
+				cost = Utils.CostCalc(tSPlayer, cost);
+				if (SurvivalCore.SrvPlayers[tSPlayer.Index].Money < cost)
 				{
-					PowelderAPI.Utils.GiveItemWithoutSpawn(tSPlayer, TShock.Utils.GetItemById(sItemID(npcid)), 1);
+					tSPlayer.SendErrorMessage("[c/595959:»]  Nie stac cie na {0}. [c/595959:(]Koszt {1} €[c/595959:)]",
+						isBoss ? ("przywolanie " + nPc.FullName) : ("rozpoczecie " + GetInvasion(npcid)), cost);
+					if (SpawnItemId(npcid) != -1)
+					{
+						PowelderAPI.Utils.GiveItemWithoutSpawn(tSPlayer, TShock.Utils.GetItemById(SpawnItemId(npcid)),
+							1);
+					}
+
+					return true;
 				}
-				return true;
+
+				SurvivalCore.SrvPlayers[tSPlayer.Index].Money -= cost;
+				TSPlayer.All.SendInfoMessage("[c/595959:»]  {0} {1}.", tSPlayer.Name,
+					isBoss ? ("przywolal " + nPc.FullName) : ("rozpoczal " + GetInvasion(npcid)));
 			}
-			SurvivalCore.srvPlayers[tSPlayer.Index].Money -= cost;
-			TSPlayer.All.SendInfoMessage("[c/595959:»]  {0} {1}.", tSPlayer.Name, isBoss ? ("przywolal " + nPC.FullName) : ("rozpoczal " + getInvasion(npcid)));
+
 			return false;
 		}
 
@@ -400,7 +409,7 @@ namespace SurvivalCore
 						if (random.Next(0, 1550) <= 2)
 						{
 							int num4 = random.Next(25, 75);
-							SurvivalCore.srvPlayers[who.Index].Money += num4;
+							SurvivalCore.SrvPlayers[who.Index].Money += num4;
 							who.SendMessage($"[c/595959:»]  Znalazles mieszek, a w nim [c/66ff66:{num4}] €.", Color.Gray);
 						}
 					}
@@ -408,14 +417,14 @@ namespace SurvivalCore
 				case 238:
 				{
 					int cost = 3300;
-					cost = Utils.costCalc(who, cost);
-					if (SurvivalCore.srvPlayers[who.Index].Money < cost)
+					cost = Utils.CostCalc(who, cost);
+					if (SurvivalCore.SrvPlayers[who.Index].Money < cost)
 					{
 						who.SendErrorMessage("[c/595959:»]  Nie stac cie na przywolanie Plantery. [c/595959:(]Koszt {0} €[c/595959:)]", cost);
 						TSPlayer.All.SendTileSquare(x, y);
 						return true;
 					}
-					SurvivalCore.srvPlayers[who.Index].Money -= cost;
+					SurvivalCore.SrvPlayers[who.Index].Money -= cost;
 					TSPlayer.All.SendInfoMessage("[c/595959:»]  {0} przywolal Plantere.", who.Name);
 					break;
 				}
@@ -424,7 +433,7 @@ namespace SurvivalCore
 			return false;
 		}
 
-		public static bool itemFrame(BinaryReader read, TSPlayer who)
+		public static bool ItemFrame(BinaryReader read, TSPlayer who)
 		{
 			read.ReadInt16();
 			read.ReadInt16();
@@ -438,29 +447,46 @@ namespace SurvivalCore
 			return false;
 		}
 
-		public static bool strikeNPC(BinaryReader read, TSPlayer who)
+		public static bool StrikeNpc(BinaryReader read, TSPlayer who)
 		{
-			short num = read.ReadInt16();
-			short num2 = read.ReadInt16();
-			float num3 = read.ReadSingle();
+			short npcid = read.ReadInt16();
+			short damage = read.ReadInt16();
+			float knockback = read.ReadSingle();
 			read.ReadByte();
-			bool flag = read.ReadBoolean();
-			NPC nPC = Main.npc[num];
-			int num4 = flag ? ((int)(((float)num2 - (float)((double)nPC.defense * 0.5)) * 2f)) : ((int)((float)num2 - (float)((double)nPC.defense * 0.5)));
-			bool flag2 = false;
-			if (nPC.life - num4 <= 0)
+			bool crit = read.ReadBoolean();
+			NPC npc = Main.npc[npcid];
+			double endDamage = Main.CalculateDamageNPCsTake(damage, npc.defense);
+			if (crit)
+				endDamage *= 2.0;
+
+			bool isDead = false || npc.life - endDamage <= 0;
+			if (npc.type == 66 && isDead)
 			{
-				flag2 = true;
-			}
-			if (nPC.type == 66 && flag2)
-			{
-				Main.npc[num].active = false;
+				Main.npc[npcid].active = false;
 				PowelderAPI.Utils.GiveItemWithoutSpawn(who, TShock.Utils.GetItemById(267), 1);
+			}
+			else if (npc.type == 661)
+			{
+				if (Main.dayTime)
+				{
+					who.SendErrorMessage("[c/595959:»]  Wolimy uniknąć masowej rzeźni.");
+					return true;
+				}
+				
+				int cost = 4300;
+				cost = Utils.CostCalc(who, cost);
+				if (SurvivalCore.SrvPlayers[who.Index].Money < cost)
+				{
+					who.SendErrorMessage("[c/595959:»]  Nie stac cie na przywolanie Empress of Light. [c/595959:(]Koszt {0} €[c/595959:)]", cost);
+					return true;
+				}
+				SurvivalCore.SrvPlayers[who.Index].Money -= cost;
+				TSPlayer.All.SendInfoMessage("[c/595959:»]  {0} przywolal Empress of Light.", who.Name);
 			}
 			return false;
 		}
 
-		public static bool playerDeath(BinaryReader read, TSPlayer who)
+		public static bool PlayerDeath(BinaryReader read, TSPlayer who)
 		{
 			byte b = read.ReadByte();
 			PlayerDeathReason playerDeathReason = PlayerDeathReason.FromReader(read);
@@ -496,9 +522,9 @@ namespace SurvivalCore
 			//	who.warpWait = 0;
 			//}
 			NPC[] npc = Main.npc;
-			foreach (NPC nPC in npc)
+			foreach (NPC nPc in npc)
 			{
-				if (nPC.active && (nPC.boss || nPC.type == 13 || nPC.type == 14 || nPC.type == 15) && Math.Abs(who.TPlayer.Center.X - nPC.Center.X) + Math.Abs(who.TPlayer.Center.Y - nPC.Center.Y) < 4000f)
+				if (nPc.active && (nPc.boss || nPc.type == 13 || nPc.type == 14 || nPc.type == 15) && Math.Abs(who.TPlayer.Center.X - nPc.Center.X) + Math.Abs(who.TPlayer.Center.Y - nPc.Center.Y) < 4000f)
 				{
 					who.RespawnTimer = TShock.Config.RespawnBossSeconds;
 					Main.player[who.Index].respawnTimer = TShock.Config.RespawnSeconds;
@@ -534,15 +560,15 @@ namespace SurvivalCore
 			NetMessage.SendPlayerDeath(who.Index, PlayerDeathReason.LegacyEmpty(), num, direction, flag);
 			NetMessage.SendPlayerDeath(who.Index, PlayerDeathReason.LegacyEmpty(), num, direction, flag, who.Index);
 			int num2 = 1173;
-			if (SurvivalCore.srvPlayers[who.Index].Money >= 22500)
+			if (SurvivalCore.SrvPlayers[who.Index].Money >= 22500)
 			{
 				num2 = 3231;
 			}
-			else if (SurvivalCore.srvPlayers[who.Index].Money >= 7500)
+			else if (SurvivalCore.SrvPlayers[who.Index].Money >= 7500)
 			{
 				num2 = 3229;
 			}
-			else if (SurvivalCore.srvPlayers[who.Index].Money >= 2500)
+			else if (SurvivalCore.SrvPlayers[who.Index].Money >= 2500)
 			{
 				num2 = 1175;
 			}
@@ -556,35 +582,25 @@ namespace SurvivalCore
 						tSPlayer.SendMessage($"[c/66ff66:{TShock.Players[playerDeathReason._sourcePlayerIndex].Name}] [i/p{playerDeathReason._sourceItemPrefix}:{playerDeathReason._sourceItemType}] [c/595959:→] [c/ff6666:{who.Name}] [i:{num2}]", Color.SlateGray);
 					}
 				}
-				SurvivalCore.srvPlayers[who.Index].pvpDeaths++;
-				SurvivalCore.srvPlayers[playerDeathReason._sourcePlayerIndex].pvpKills++;
+				SurvivalCore.SrvPlayers[who.Index].PvpDeaths++;
+				SurvivalCore.SrvPlayers[playerDeathReason._sourcePlayerIndex].PvpKills++;
 			}
 			else
 			{
 				TSPlayer[] players2 = TShock.Players;
 				foreach (TSPlayer tSPlayer2 in players2)
 				{
-					if (tSPlayer2 != null && SurvivalCore.isDeathMessage[tSPlayer2.Index])
+					if (tSPlayer2 != null && SurvivalCore.IsDeathMessage[tSPlayer2.Index])
 					{
 						tSPlayer2.SendMessage(string.Format("[i:{0}] {1} ", num2, playerDeathReason.GetDeathText("[c/ff6666:" + who.Name + "]")), Color.Gray);
 					}
 				}
-				SurvivalCore.srvPlayers[who.Index].Deaths++;
+				SurvivalCore.SrvPlayers[who.Index].Deaths++;
 			}
 			return true;
 		}
 
-		public static bool connectRequest(int who)
-		{
-			Thread thread = new Thread(SendStatus)
-			{
-				IsBackground = true
-			};
-			thread.Start(who);
-			return false;
-		}
-
-		protected static string getInvasion(int type)
+		protected static string GetInvasion(int type)
 		{
 			switch (type)
 			{
@@ -604,12 +620,14 @@ namespace SurvivalCore
 				return "Martian Invasion";
 			case -8:
 				return "Moon Lord";
+			case -10:
+				return "Blood Moon";
 			default:
 				return "null";
 			}
 		}
 
-		protected static int sItemID(int type)
+		protected static int SpawnItemId(int type)
 		{
 			switch (type)
 			{
@@ -627,6 +645,8 @@ namespace SurvivalCore
 				return 2767;
 			case -8:
 				return 3601;
+			case -10:
+				return 4271;
 			case 4:
 				return 43;
 			case 13:
@@ -654,26 +674,11 @@ namespace SurvivalCore
 				return 2673;
 			case 398:
 				return 3601;
+			case 657:
+				return 4988;
 			default:
 				return 0;
 			}
-		}
-
-		public static void SendStatus(object who)
-		{
-			int num = (int)who;
-			while (Netplay.Clients[num].IsActive)
-			{
-				Netplay.Clients[num].StatusText = "⮘ Powelder ⮚ Witamy na naszym serwerze!\n\n» Ladowanie";
-				Netplay.Clients[num].StatusText2 = "⮘ Powelder ⮚ Witamy na naszym serwerze!\n\n» Ladowanie";
-				NetMessage.SendData(9, num, -1, NetworkText.FromLiteral("⮘ Powelder ⮚ Witamy na naszym serwerze!\n\n» Ladowanie"));
-				if (Netplay.Clients[num].State >= 10)
-				{
-					break;
-				}
-				Thread.Sleep(15);
-			}
-			NetMessage.SendData(9, num, -1, NetworkText.Empty);
 		}
 
 		protected static bool OnKillMe(byte plr, byte direction, short damage, bool pvp)

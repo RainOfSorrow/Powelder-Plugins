@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using SurvivalCore.Economy.Database;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using TShockAPI;
 using TShockAPI.DB;
@@ -9,7 +10,7 @@ namespace SurvivalCore.Economy.Gambling
 {
 	public class Casino
 	{
-		public static void casino(CommandArgs args)
+		public static void CasinoCommand(CommandArgs args)
 		{
 			string text = null;
 			string a = null;
@@ -26,6 +27,8 @@ namespace SurvivalCore.Economy.Gambling
 			{
 				text2 = args.Parameters[2].ToLower();
 			}
+			
+			
 			string text3 = text;
 			string text4 = text3;
 			if (text4 == null || !(text4 == "slots"))
@@ -35,20 +38,20 @@ namespace SurvivalCore.Economy.Gambling
 			}
 			else if (a == "start")
 			{
-				if (!SurvivalCore.isStatusBusy[args.Player.Index])
+				if (!SurvivalCore.IsStatusBusy[args.Player.Index])
 				{
-					if (SurvivalCore.srvPlayers[args.Player.Index].Money < 75)
+					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < 75)
 					{
 						args.Player.SendErrorMessage("[c/595959:»]  Nie stac cie na los.");
 						return;
 					}
-					SurvivalCore.srvPlayers[args.Player.Index].Money -= 75;
+					SurvivalCore.SrvPlayers[args.Player.Index].Money -= 75;
 					object parameter = new object[2]
 					{
 						args.Player,
 						args.Player.Account
 					};
-					Thread thread = new Thread(slotsThread)
+					Thread thread = new Thread(SlotsThread)
 					{
 						IsBackground = true
 					};
@@ -75,35 +78,35 @@ namespace SurvivalCore.Economy.Gambling
 			}
 		}
 
-		private static void slotsThread(object packet)
+		private static void SlotsThread(object packet)
 		{
 			TSPlayer tSPlayer = (TSPlayer)((Array)packet).GetValue(0);
 			UserAccount plr = (UserAccount)((Array)packet).GetValue(1);
 			byte b = (byte)tSPlayer.Index;
-			SurvivalCore.isStatusBusy[b] = true;
+			SurvivalCore.IsStatusBusy[b] = true;
 			Slots slots = new Slots();
 			for (int i = 1; i != 62; i++)
 			{
 				if (TShock.Players[b] != tSPlayer || TShock.ShuttingDown)
 				{
-					QueryPlr.setMoney(plr, DataBase.getSrvPlayer(plr).Money + 75);
-					SurvivalCore.isStatusBusy[b] = false;
+					QueryPlr.SetMoney(plr, DataBase.GetSrvPlayer(plr).Money + 75);
+					SurvivalCore.IsStatusBusy[b] = false;
 					return;
 				}
-				slots.moveSlots();
-				tSPlayer.SendData(PacketTypes.Status, slots.getStatus());
+				slots.MoveSlots();
+				tSPlayer.SendData(PacketTypes.Status, slots.GetStatus());
 				tSPlayer.SendData(PacketTypes.PlayHarp, null, tSPlayer.Index, 1f);
 				Thread.Sleep(22 * (int)((double)(float)i * 0.3));
 			}
-			tSPlayer.SendMessage($"[c/595959:»]  [c/66ff66:Slots - Wygrales][c/595959::] {slots.getResult()} {Economy.config.ValueName}", Color.Gray);
-			SurvivalCore.srvPlayers[b].Money += slots.getResult();
-			tSPlayer.SendData(PacketTypes.Status, slots.getStatus(true));
-			if (slots.special() != null)
+			tSPlayer.SendMessage($"[c/595959:»]  [c/66ff66:Slots - Wygrales][c/595959::] {slots.GetResult()} {Economy.Config.ValueName}", Color.Gray);
+			SurvivalCore.SrvPlayers[b].Money += slots.GetResult();
+			tSPlayer.SendData(PacketTypes.Status, slots.GetStatus(true));
+			if (slots.Special() != null)
 			{
-				TSPlayer.All.SendMessage(string.Format(slots.special(), tSPlayer.Name), new Color(205, 101, 205));
+				TSPlayer.All.SendMessage(string.Format(slots.Special(), tSPlayer.Name), new Color(205, 101, 205));
 			}
 			Thread.Sleep(4000);
-			SurvivalCore.isStatusBusy[b] = false;
+			SurvivalCore.IsStatusBusy[b] = false;
 		}
 	}
 }

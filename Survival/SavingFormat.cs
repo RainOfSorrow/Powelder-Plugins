@@ -4,7 +4,7 @@ namespace SurvivalCore
 {
 	internal class SavingFormat
 	{
-		public static string generateFormat(int elements)
+		public static string GenerateFormat(int elements)
 		{
 			if (elements <= 0)
 			{

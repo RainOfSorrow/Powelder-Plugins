@@ -6,7 +6,7 @@ namespace SurvivalCore
 	public class Config
 	{
 
-		public bool isGolemDowned = false;
+		public bool IsGolemDowned = false;
 
 		public void Write(string file)
 		{

@@ -11,7 +11,7 @@ namespace PowelderAPI
 {
 	public class Utils
 	{
-		public static int PlayerItemAmount(TSPlayer plr, Item item)
+		public static int PlayerItemCount(TSPlayer plr, Item item)
 		{
 			int num = 0;
 			Item[] inventory = plr.TPlayer.inventory;
@@ -25,7 +25,7 @@ namespace PowelderAPI
 			return num;
 		}
 
-		public static void PlayerRemovingItems(TSPlayer plr, Item item, int amount)
+		public static void PlayerRemoveItems(TSPlayer plr, Item item, int amount)
 		{
 			int num = 0;
 			while (true)
@@ -102,12 +102,17 @@ namespace PowelderAPI
 			NetMessage.SendData(5, plr.Index, -1, NetworkText.FromLiteral(plr.TPlayer.inventory[num2].Name), plr.Index, num2, (int)plr.TPlayer.inventory[num2].prefix);
 		}
 
+		public static void SetItemInventory(TSPlayer plr, Item item, int amount)
+		{
+			
+		}
+
 		public static bool IsNpcOnWorld(int type)
 		{
 			NPC[] npc = Main.npc;
-			foreach (NPC nPC in npc)
+			foreach (NPC nPc in npc)
 			{
-				if (nPC.type == type)
+				if (nPc.type == type)
 				{
 					return true;
 				}
@@ -115,7 +120,7 @@ namespace PowelderAPI
 			return false;
 		}
 
-		public static string getGroupColor(string group)
+		public static string GetGroupColor(string group)
 		{
 			string result = "cccccc";
 			if (group == "Iwobos")
@@ -157,7 +162,7 @@ namespace PowelderAPI
 			return result;
 		}
 
-		public static int getGroupItem(string itemm)
+		public static int GetGroupItem(string itemm)
 		{
 			int result = 1;
 			if (itemm == "Iwobos")
@@ -199,22 +204,22 @@ namespace PowelderAPI
 			return result;
 		}
 
-		public static string getShortPrefix(string group)
+		public static string GetShortPrefix(string group)
 		{
 			switch (group)
 			{
 				case "Xedlefix":
-					return "[c/595959:(][c/" + Utils.getGroupColor(group) + ":Admin][c/595959:)] ";
+					return "[c/595959:(][c/" + Utils.GetGroupColor(group) + ":Admin][c/595959:)] ";
 				case "Iwobos":
-					return "[c/595959:(][c/" + Utils.getGroupColor(group) + ":Admin][c/595959:)] ";
+					return "[c/595959:(][c/" + Utils.GetGroupColor(group) + ":Admin][c/595959:)] ";
 				case "GlobalMod":
-					return "[c/595959:(][c/" + Utils.getGroupColor(group) + ":GlobalMod][c/595959:)] ";
+					return "[c/595959:(][c/" + Utils.GetGroupColor(group) + ":GlobalMod][c/595959:)] ";
 				case "Moderator":
-					return "[c/595959:(][c/" + Utils.getGroupColor(group) + ":Mod][c/595959:)] ";
+					return "[c/595959:(][c/" + Utils.GetGroupColor(group) + ":Mod][c/595959:)] ";
 				case "JuniorMod":
-					return "[c/595959:(][c/" + Utils.getGroupColor(group) + ":JuniorMod][c/595959:)] ";
+					return "[c/595959:(][c/" + Utils.GetGroupColor(group) + ":JuniorMod][c/595959:)] ";
 				case "Special":
-					return "[c/595959:(][c/" + Utils.getGroupColor(group) + ":Special][c/595959:)] ";
+					return "[c/595959:(][c/" + Utils.GetGroupColor(group) + ":Special][c/595959:)] ";
 				default:
 					return null;
 			}
