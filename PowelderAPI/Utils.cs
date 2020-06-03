@@ -102,9 +102,12 @@ namespace PowelderAPI
 			NetMessage.SendData(5, plr.Index, -1, NetworkText.FromLiteral(plr.TPlayer.inventory[num2].Name), plr.Index, num2, (int)plr.TPlayer.inventory[num2].prefix);
 		}
 
-		public static void SetItemInventory(TSPlayer plr, Item item, int amount)
+		public static void SetItemInventory(TSPlayer plr, Item item, short slot)
 		{
+			plr.TPlayer.inventory[slot] = item;
 			
+			NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(plr.TPlayer.inventory[slot].Name), plr.Index, slot, (int)plr.TPlayer.inventory[slot].prefix);
+			NetMessage.SendData(5, plr.Index, -1, NetworkText.FromLiteral(plr.TPlayer.inventory[slot].Name), plr.Index, slot, (int)plr.TPlayer.inventory[slot].prefix);
 		}
 
 		public static bool IsNpcOnWorld(int type)

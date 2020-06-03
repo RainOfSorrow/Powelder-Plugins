@@ -11,64 +11,6 @@ namespace SurvivalCore
 {
 	public class SrvCommands
 	{
-		public static void BroadcastXedlefix(CommandArgs args)
-		{
-			string str = string.Join(" ", args.Parameters);
-			TSPlayer.All.SendMessage("[i:3570] [c/595959:⮘] [c/18B690:Serwer] [c/595959:⮚] [c/18B690:Xedlefix][c/595959::] " + str, byte.MaxValue, byte.MaxValue, byte.MaxValue);
-		}
-
-		public static void BroadcastIwobos(CommandArgs args)
-		{
-			string str = string.Join(" ", args.Parameters);
-			TSPlayer.All.SendMessage("[i:3570] [c/595959:⮘] [c/27AD34:Serwer] [c/595959:⮚] [c/27AD34:Iwobos][c/595959::] " + str, byte.MaxValue, byte.MaxValue, byte.MaxValue);
-		}
-
-		public static void Vanish(CommandArgs args)
-		{
-			args.TPlayer.active = !args.TPlayer.active;
-			SurvivalCore.SrvPlayers[args.Player.Index].IsVanished = !SurvivalCore.SrvPlayers[args.Player.Index].IsVanished;
-			NetMessage.SendData(14, -1, args.Player.Index, null, args.Player.Index, args.TPlayer.active.GetHashCode());
-			if (args.TPlayer.active)
-			{
-				NetMessage.SendData(4, -1, args.Player.Index, null, args.Player.Index);
-				NetMessage.SendData(13, -1, args.Player.Index, null, args.Player.Index);
-				for (int i = 0; i < NetItem.MaxInventory; i++)
-				{
-					if (i < NetItem.InventorySlots)
-					{
-						int num = i;
-						NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(args.Player.TPlayer.inventory[num].Name), args.Player.Index, i, (int)args.Player.TPlayer.inventory[num].prefix);
-						NetMessage.SendData(5, args.Player.Index, -1, NetworkText.FromLiteral(args.Player.TPlayer.inventory[num].Name), args.Player.Index, i, (int)args.Player.TPlayer.inventory[num].prefix);
-					}
-					else if (i < NetItem.InventorySlots + NetItem.ArmorSlots)
-					{
-						int num = i - NetItem.InventorySlots;
-						NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(args.Player.TPlayer.armor[num].Name), args.Player.Index, i, (int)args.Player.TPlayer.armor[num].prefix);
-						NetMessage.SendData(5, args.Player.Index, -1, NetworkText.FromLiteral(args.Player.TPlayer.armor[num].Name), args.Player.Index, i, (int)args.Player.TPlayer.armor[num].prefix);
-					}
-					else if (i < NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots)
-					{
-						int num = i - (NetItem.InventorySlots + NetItem.ArmorSlots);
-						NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(args.Player.TPlayer.dye[num].Name), args.Player.Index, i, (int)args.Player.TPlayer.dye[num].prefix);
-						NetMessage.SendData(5, args.Player.Index, -1, NetworkText.FromLiteral(args.Player.TPlayer.dye[num].Name), args.Player.Index, i, (int)args.Player.TPlayer.dye[num].prefix);
-					}
-					else if (i < NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots)
-					{
-						int num = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots);
-						NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(args.Player.TPlayer.miscEquips[num].Name), args.Player.Index, i, (int)args.Player.TPlayer.miscEquips[num].prefix);
-						NetMessage.SendData(5, args.Player.Index, -1, NetworkText.FromLiteral(args.Player.TPlayer.miscEquips[num].Name), args.Player.Index, i, (int)args.Player.TPlayer.miscEquips[num].prefix);
-					}
-					else if (i < NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots + NetItem.MiscDyeSlots)
-					{
-						int num = i - (NetItem.InventorySlots + NetItem.ArmorSlots + NetItem.DyeSlots + NetItem.MiscEquipSlots);
-						NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(args.Player.TPlayer.miscDyes[num].Name), args.Player.Index, i, (int)args.Player.TPlayer.miscDyes[num].prefix);
-						NetMessage.SendData(5, args.Player.Index, -1, NetworkText.FromLiteral(args.Player.TPlayer.miscDyes[num].Name), args.Player.Index, i, (int)args.Player.TPlayer.miscDyes[num].prefix);
-					}
-				}
-			}
-			args.Player.SendMessage("[c/595959:»]  Vanish zostal " + (args.TPlayer.active ? "[c/ff6666:wylaczony]" : "[c/66ff66:wlaczony]") + ".", Color.Gray);
-		}
-
 		public static void Top(TShockAPI.CommandArgs args)
 		{
 			string text = null;

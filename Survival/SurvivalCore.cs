@@ -94,12 +94,8 @@ namespace SurvivalCore
 			{
 				IsDeathMessage[j] = false;
 			}
-			Commands.ChatCommands.Add(new Command("server.owner", SrvCommands.BroadcastXedlefix, "cxed"));
-			Commands.ChatCommands.Add(new Command("server.owner", SrvCommands.BroadcastIwobos, "ciwo"));
-
 			Commands.ChatCommands.Add(new Command("server.jmod", SrvCommands.StaffChat, "staff", "s"));
 			Commands.ChatCommands.Add(new Command("server.jmod", SrvCommands.ClearChat, "clearchat", "cc"));
-			Commands.ChatCommands.Add(new Command("server.jmod", SrvCommands.Vanish, "vanish", "v"));
 
 			Commands.ChatCommands.Add(new Command("server.gracz", Change.Command, "wytworz"));
 			Commands.ChatCommands.Add(new Command("server.gracz", SrvCommands.HelpOp, "adminhelp", "ah"));

@@ -58,7 +58,20 @@ namespace PowelderAPI
 			ServerApi.Hooks.ServerChat.Register(this, Chat.OnChat);
 			ServerApi.Hooks.GameInitialize.Register(this, OnInitialize);
 			ServerApi.Hooks.GamePostInitialize.Register(this, PostInitialize);
+			
+			Commands.ChatCommands.Add(new Command("server.owner", PowelderCommands.BroadcastXedlefix, "cxed"));
+			Commands.ChatCommands.Add(new Command("server.owner", PowelderCommands.BroadcastIwobos, "ciwo"));
+			
 			Commands.ChatCommands.Add(new Command("server.admin", AutoBroadcast.Reload, "broadcastreload"));
+			
+			Commands.ChatCommands.Remove(Commands.ChatCommands.Find(x => x.Name == "broadcast"));
+			Commands.ChatCommands.Add(new Command("server.gmod", PowelderCommands.Broadcast, "broadcast", "bc", "say"));
+			
+			Commands.ChatCommands.Remove(Commands.ChatCommands.Find(x => x.Name == "tempgroup"));
+			Commands.ChatCommands.Add(new Command("server.admin", TempGroup.TempGroup.TempGroupCommand, "tempgroup"));
+			
+
+			
 
 			//TempGroup
 			Commands.ChatCommands.Remove(Commands.ChatCommands.Find(x => x.Name == "tempgroup"));

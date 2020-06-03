@@ -68,6 +68,7 @@
     <Compile Include="CommandRegions\CRDatabase.cs" />
     <Compile Include="CommandRegions\CRegion.cs" />
     <Compile Include="CommandRegions\CRPlayer.cs" />
+    <Compile Include="PowelderCommands.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ItemPrefix.cs" />
     <Compile Include="ItemSlot.cs" />
