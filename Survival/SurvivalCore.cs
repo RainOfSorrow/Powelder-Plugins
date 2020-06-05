@@ -45,7 +45,7 @@ namespace SurvivalCore
 		public static bool IsChatEvent = false;
 
 		public static byte TickPing = 0;
-		public static Dictionary<byte, int> Ping = new Dictionary<byte, int>();
+		public static Dictionary<byte, string> Ping = new Dictionary<byte, string>();
 		public static Dictionary<byte, int[]> PingMeasure = new Dictionary<byte, int[]>();
 
 		public static Dictionary<byte, Stopwatch> Stoper = new Dictionary<byte, Stopwatch>();
@@ -368,7 +368,8 @@ namespace SurvivalCore
 			UserAccount user = tSPlayer.Account;
 			try
 			{
-				PlayTime.Add((byte)args.Who, new Stopwatch());
+				if (!PlayTime.ContainsKey((byte)args.Who))
+					PlayTime.Add((byte)args.Who, new Stopwatch());
 				user = TShock.UserAccounts.GetUserAccountByName(tSPlayer.Name);
 				tSPlayer.Group = TShock.Groups.GetGroupByName(user.Group);
 				tSPlayer.Account = user;
@@ -580,7 +581,7 @@ namespace SurvivalCore
 										num++;
 									}
 								}
-								TSPlayer.All.SendMessage($"[i:536] [c/595959:⮘] [c/0099ff:Clean Bot] [c/595959:⮚] Usunieto [c/0099ff:{num}] przedmiotow z ziemi.", new Color(102, 153, 255));
+								TSPlayer.All.SendMessage($"[i:536] [c/595959:;] [c/0099ff:Clean Bot] [c/595959:;] Usunieto [c/0099ff:{num}] przedmiotow z ziemi.", new Color(102, 153, 255));
 								_isClean = false;
 							}
 						}
@@ -591,30 +592,31 @@ namespace SurvivalCore
 							{
 								if (SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 0) && !IsStatusBusy[tSPlayer.Index])
 								{
-									string text2 = string.Format("{9}{0}{1}{2}{3}{4}{5}{6}{7}",
-										SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 1)
-											? $"\n\rOnline: {TShock.Utils.GetActivePlayerCount()}"
+									string text2 = string.Format(">|{7} [c/595959:───── «] [c/52e092:Powelder] [c/595959:» ───── ]{0}{1}{2}{3}{4}{5}{6} \n\r [c/595959:───── «] [c/52e092:Survival] [c/595959:» ───── ]",
+										SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 1) //0
+											? $"\n\r[c/66ff66:Online][c/595959::] {TShock.Utils.GetActivePlayerCount()}"
 											: null,
-										(!SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 7))
+										(!SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 7)) //1
 											? null
 											: (Ping.ContainsKey((byte) tSPlayer.Index)
-												? ("\n\rPing: " + Ping[(byte) tSPlayer.Index] + "ms")
-												: "\n\rPing: -ms"),
-										SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 2)
-											? $"\n\rKonto: {SrvPlayers[tSPlayer.Index].Money:n0} {Economy.Economy.Config.ValueName}"
+												? ("\n\r[c/66ff66:Ping][c/595959::] " + Ping[(byte)tSPlayer.Index])
+												: "\n\r[c/66ff66:Ping][c/595959::] -ms"),
+										SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 2) //2
+											? $"\n\r[c/66ff66:Konto][c/595959::] {SrvPlayers[tSPlayer.Index].Money:n0} {Economy.Economy.Config.ValueName}"
 											: null,
-										SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 3)
-											? $"\n\rZgony: {SrvPlayers[tSPlayer.Index].Deaths}"
+										SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 3) //3
+											? $"\n\r[c/66ff66:Zgony][c/595959::] {SrvPlayers[tSPlayer.Index].Deaths}"
 											: null,
-										SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 6)
-											? $"\n\rPVP: {SrvPlayers[tSPlayer.Index].PvpKills}/{SrvPlayers[tSPlayer.Index].PvpDeaths} | {((SrvPlayers[tSPlayer.Index].PvpDeaths == 0) ? ((double) SrvPlayers[tSPlayer.Index].PvpKills) : Math.Round((double) SrvPlayers[tSPlayer.Index].PvpKills / (double) SrvPlayers[tSPlayer.Index].PvpDeaths, 2))}"
+										SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 6) //4
+											? $"\n\r[c/66ff66:PvP][c/595959::] {SrvPlayers[tSPlayer.Index].PvpKills}/{SrvPlayers[tSPlayer.Index].PvpDeaths} | {((SrvPlayers[tSPlayer.Index].PvpDeaths == 0) ? ((double) SrvPlayers[tSPlayer.Index].PvpKills) : Math.Round((double) SrvPlayers[tSPlayer.Index].PvpKills / (double) SrvPlayers[tSPlayer.Index].PvpDeaths, 2))}"
 											: null,
 										null,
-										(!SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 5))
+										(!SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 5)) //5
 											? null
-											: (_isClean ? ("\n\rClean: " + _cleancount + " sec") : null)
+											: (_isClean ? ("\n\rClean: " + _cleancount + " sec") : null),
+										RepeatLineBreaks(10)
 									);
-										tSPlayer.SendData(PacketTypes.Status, text2);
+										tSPlayer.SendData(PacketTypes.Status, text2, 0 , 3);
 								}
 							}
 						}
@@ -650,6 +652,16 @@ namespace SurvivalCore
 				{
 				}
 			}
+		}
+		
+		private static string RepeatLineBreaks(int number)
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+			for (int i = 0; i < number; i++)
+			{
+				stringBuilder.Append("\r\n");
+			}
+			return stringBuilder.ToString();
 		}
 	}
 }

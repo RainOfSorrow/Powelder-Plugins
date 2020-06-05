@@ -34,7 +34,7 @@
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
       <HintPath>..\..\..\Test1\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OTAPI, Version=1.4.0.4, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="OTAPI, Version=1.4.0.5, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Test1\OTAPI.dll</HintPath>
     </Reference>
     <Reference Include="System.Data">
@@ -49,7 +49,7 @@
     <Reference Include="System">
       <HintPath>C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll</HintPath>
     </Reference>
-    <Reference Include="TerrariaServer, Version=1.4.0.4, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="TerrariaServer, Version=1.4.0.5, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Test1\TerrariaServer.exe</HintPath>
     </Reference>
     <Reference Include="TProxy-Plugin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -73,7 +73,6 @@
     <Compile Include="ItemPrefix.cs" />
     <Compile Include="ItemSlot.cs" />
     <Compile Include="Chat.cs" />
-    <Compile Include="StatusManager.cs" />
     <Compile Include="TempGroup\TempGroup.cs" />
     <Compile Include="PowelderAPI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

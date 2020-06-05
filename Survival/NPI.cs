@@ -44,7 +44,20 @@ namespace SurvivalCore
 				{
 					Array.Sort(SurvivalCore.PingMeasure[(byte)who.Index]);
 
-					SurvivalCore.Ping[(byte)who.Index] = SurvivalCore.PingMeasure[(byte)who.Index][2];
+					
+
+					if (SurvivalCore.PingMeasure[(byte) who.Index].Length > 2)
+					{
+						string color = "ffffff";
+
+						if (SurvivalCore.PingMeasure[(byte) who.Index][2] > 120)
+							color = "ff0000";
+						else if (SurvivalCore.PingMeasure[(byte) who.Index][2] > 65)
+							color = "ffff00";
+						
+						SurvivalCore.Ping[(byte) who.Index] =
+							$"[c/{color}:{SurvivalCore.PingMeasure[(byte) who.Index][2]}ms]";
+					}
 				}
 
 				SurvivalCore.Stoper.Remove((byte)who.Index);
@@ -103,96 +116,17 @@ namespace SurvivalCore
 
 		public static bool PlayerTeam(BinaryReader read, TSPlayer who)
 		{
-			read.ReadByte();
-			byte b = read.ReadByte();
-			string text;
-			switch (b)
-			{
-			default:
-				text = "ffffff";
-				who.SendMessage("[c/595959:»]  Przestajesz byc w jakiejkolwiek druzynie.", Color.Gray);
-				break;
-			case 1:
-				text = "C33434";
-				who.SendMessage("[c/595959:»]  Dolaczasz do [c/" + text + ":Czerwonej] druzyny.", Color.Gray);
-				break;
-			case 2:
-				text = "34C34C";
-				who.SendMessage("[c/595959:»]  Dolaczasz do [c/" + text + ":Zielonej] druzyny.", Color.Gray);
-				break;
-			case 3:
-				text = "3485C3";
-				who.SendMessage("[c/595959:»]  Dolaczasz do [c/" + text + ":Niebieskiej] druzyny.", Color.Gray);
-				break;
-			case 4:
-				text = "D9C659";
-				who.SendMessage("[c/595959:»]  Dolaczasz do [c/" + text + ":Zoltej] druzyny.", Color.Gray);
-				break;
-			case 5:
-				text = "C959D9";
-				who.SendMessage("[c/595959:»]  Dolaczasz do [c/" + text + ":Rozowej] druzyny.", Color.Gray);
-				break;
-			}
-			string text2;
-			switch (who.Team)
-			{
-			default:
-				text2 = "ffffff";
-				break;
-			case 1:
-				text2 = "C33434";
-				break;
-			case 2:
-				text2 = "34C34C";
-				break;
-			case 3:
-				text2 = "3485C3";
-				break;
-			case 4:
-				text2 = "D9C659";
-				break;
-			case 5:
-				text2 = "C959D9";
-				break;
-			}
-			if (b != 0)
-			{
-				TSPlayer[] players = TShock.Players;
-				foreach (TSPlayer tSPlayer in players)
-				{
-					if (tSPlayer != null && tSPlayer.Team == b)
-					{
-						tSPlayer.SendMessage("[c/595959:»]  [c/" + text + ":" + who.Name + "] dolaczyl do waszej druzyny.", Color.Gray);
-					}
-				}
-			}
-			TSPlayer[] players2 = TShock.Players;
-			foreach (TSPlayer tSPlayer2 in players2)
-			{
-				if (tSPlayer2 != null && tSPlayer2.Team == who.Team && tSPlayer2 != who && tSPlayer2.Team != 0)
-				{
-					tSPlayer2.SendMessage("[c/595959:»]  [c/" + text2 + ":" + who.Name + "] odszedl z waszej druzyny.", Color.Gray);
-				}
-			}
-			Main.player[who.Index].team = b;
-			NetMessage.SendData(45, -1, -1, NetworkText.Empty, who.Index);
-			NetMessage.SendData(45, -1, who.Index, NetworkText.Empty, who.Index);
-			return true;
+
+			return false;
 		}
 
 		public static bool UpdatePlayer(BinaryReader read, TSPlayer who)
 		{
-			byte b = read.ReadByte();
-			byte b2 = read.ReadByte();
-			byte b3 = read.ReadByte();
-			byte b4 = read.ReadByte();
 			return false;
 		}
 
 		public static bool PlayMusic(BinaryReader read, TSPlayer who)
 		{
-			byte b = read.ReadByte();
-			float num = read.ReadSingle();
 			return false;
 		}
 

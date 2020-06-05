@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Localization;
+using TerrariaApi.Server;
 using TShockAPI;
 
 namespace SurvivalCore
@@ -468,6 +469,88 @@ namespace SurvivalCore
 				TSPlayer.All.SendInfoMessage("[c/595959:»]  {0} przywolal Skeletrona.", args.Player.Name);
 				break;
 			}
+			}
+		}
+
+		public static readonly Dictionary<string, KeyValuePair<byte, int>> avalibleBuffs = new Dictionary<string, KeyValuePair<byte, int>>()
+		{
+			{
+				"iron skin", //pelna nazwa
+				new KeyValuePair<byte, int>(5, 100) //ID
+			},
+			{
+				"regeneration",
+				new KeyValuePair<byte, int>(3, 100) 
+			},
+			{
+				"well fed",
+				new KeyValuePair<byte, int>(26, 100) 
+			},
+			{
+				"mana regeneration",
+				new KeyValuePair<byte, int>(6, 100) 
+			},
+			{
+				"imbue cursed flames",
+				new KeyValuePair<byte, int>(73, 100)
+			},
+			{
+				"imbue fire",
+				new KeyValuePair<byte, int>(74, 100)
+			},
+			{
+				"imbue gold",
+				new KeyValuePair<byte, int>(75, 100)
+			},
+			{
+				"imbue ichor",
+				new KeyValuePair<byte, int>(76, 100) 
+			},
+			{
+				"imbue nanites",
+				new KeyValuePair<byte, int>(77, 100)
+			},
+			{
+				"imbue confetti",
+				new KeyValuePair<byte, int>(78, 100)
+			},
+			{
+				"imbue poison",
+				new KeyValuePair<byte, int>(79, 100)
+			},
+			{
+				"builder",
+				new KeyValuePair<byte, int>(107, 100)
+			},
+			{
+				"night owl",
+				new KeyValuePair<byte, int>(79, 100)
+			},
+		};
+			
+		public static void BoostCommand(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendErrorMessage("Uzycie: /boost <nazwa buffa/list>");
+			}
+			else if (args.Parameters[0] == "list")
+			{
+				List<string> list = new List<string>();
+				foreach (string key in avalibleBuffs.Keys)
+				{
+					//list.Add($"[c/{Colors[key]}:{key}]");
+				}
+
+				args.Player.SendSuccessMessage($"Lista dostepnych kolorow:");
+				PaginationTools.SendPage(args.Player, 0, PaginationTools.BuildLinesFromTerms(list, null, ", ", 140), new PaginationTools.Settings
+				{
+					IncludeHeader = false,
+					LineTextColor = new Color(192, 192, 192),
+					IncludeFooter = false,
+					NothingToDisplayString = "Error 404."
+				});
+				return;
 			}
 		}
 	}

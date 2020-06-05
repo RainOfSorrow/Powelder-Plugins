@@ -37,21 +37,21 @@ namespace SurvivalCore.Economy.Gambling
 			switch (id)
 			{
 			default:
-				return "☠";
+				return "[i:20]";
 			case 2:
-				return "⛏";
+				return "[i:19]";
 			case 3:
-				return "♣";
+				return "[i:57]";
 			case 4:
-				return "♫";
+				return "[i:175]";
 			case 5:
-				return "⚡";
+				return "[i:382]";
 			case 6:
-				return "♖";
+				return "[i:1225]";
 			case 7:
-				return "☯";
+				return "[i:1006]";
 			case 8:
-				return "♕";
+				return "[i:3467]";
 			}
 		}
 
@@ -191,7 +191,8 @@ namespace SurvivalCore.Economy.Gambling
 
 		public string GetStatus(bool isLast = false)
 		{
-			return string.Format("{0}    « Slots » \r\n   {1}   {2}   {3}\r\n> [{4}] [{5}] [{6}] <\r\n   {7}   {8}   {9}\r\n\r\n{10}{11}---------", RepeatLineBreaks(11), GetPoolSymbol((_actualpool1 == 19) ? _pool1[0] : _pool1[_actualpool1 + 1]), GetPoolSymbol((_actualpool2 == 19) ? _pool2[0] : _pool2[_actualpool2 + 1]), GetPoolSymbol((_actualpool3 == 19) ? _pool3[0] : _pool3[_actualpool3 + 1]), GetPoolSymbol(_pool1[_actualpool1]), GetPoolSymbol(_pool2[_actualpool2]), GetPoolSymbol(_pool3[_actualpool3]), GetPoolSymbol((_actualpool1 == 0) ? _pool1[19] : _pool1[_actualpool1 - 1]), GetPoolSymbol((_actualpool2 == 0) ? _pool2[19] : _pool2[_actualpool2 - 1]), GetPoolSymbol((_actualpool3 == 0) ? _pool3[19] : _pool3[_actualpool3 - 1]), isLast ? ("Wygrales: " + GetResult() + " " + Economy.Config.ValueName) : null, RepeatLineBreaks(70));
+			return string.Format(">|{0}[c/595959:─── «] [c/52e092:Slots] [c/595959:» ───]  " +
+			                     " \r\n    {1}   {2}   {3}\r\n[c/ffdf00:>] [c/595959:[]{4}[c/595959:]] [c/595959:[]{5}[c/595959:]] [c/595959:[]{6}[c/595959:]] [c/ffdf00:<]\r\n    {7}   {8}   {9}\r\n\r\n{10}", RepeatLineBreaks(10), GetPoolSymbol((_actualpool1 == 19) ? _pool1[0] : _pool1[_actualpool1 + 1]), GetPoolSymbol((_actualpool2 == 19) ? _pool2[0] : _pool2[_actualpool2 + 1]), GetPoolSymbol((_actualpool3 == 19) ? _pool3[0] : _pool3[_actualpool3 + 1]), GetPoolSymbol(_pool1[_actualpool1]), GetPoolSymbol(_pool2[_actualpool2]), GetPoolSymbol(_pool3[_actualpool3]), GetPoolSymbol((_actualpool1 == 0) ? _pool1[19] : _pool1[_actualpool1 - 1]), GetPoolSymbol((_actualpool2 == 0) ? _pool2[19] : _pool2[_actualpool2 - 1]), GetPoolSymbol((_actualpool3 == 0) ? _pool3[19] : _pool3[_actualpool3 - 1]), isLast ? ("[c/66ff66:Wygrales][c/595959::] " + GetResult() + " " + Economy.Config.ValueName) : null);
 		}
 
 		public string Special()

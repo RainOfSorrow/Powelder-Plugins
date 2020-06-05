@@ -10,7 +10,7 @@ namespace SurvivalCore
 	{
 		public static void DoTrees()
 		{
-			for (int i = 0; (double)i < (double)Main.maxTilesX * 0.002; i++)
+			for (int i = 0; (double)i < (double)Main.maxTilesX * 0.001; i++)
 			{
 				int num = WorldGen.genRand.Next(50, Main.maxTilesX - 50);
 				int num2 = WorldGen.genRand.Next(25, 50);

@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
+using Terraria;
 using TShockAPI;
 using TShockAPI.DB;
 
@@ -67,13 +68,25 @@ namespace PowelderAPI.CommandRegions
 				{
 					if (plr.Teleport(warp.Position.X * 16, warp.Position.Y * 16, 1))
 					{
-						plr.SendMessage("[c/595959:»]  Przeteleportowano do [c/66FF66:" + text + "].", new Color(128, 128, 128));
+						plr.SendMessage("Przeteleportowano do [c/66FF66:" + text + "].", new Color(128, 128, 128));
 					}
 				}
 				else
 				{
-					plr.SendErrorMessage("[c/595959:»]  Nie znaleziono takiego warpa.");
+					plr.SendErrorMessage("Nie znaleziono takiego warpa.");
 				}
+			}
+			else if (Action.StartsWith(".server"))
+			{
+				if (Action.Length <= 8)
+				{
+					plr.SendErrorMessage("Wystapil problem z portalem, napisz do kogos z kadry. Kod 0");
+					return;
+				}
+				string text = Action.Remove(0, 8);
+				
+				
+				
 			}
 			else if (Action.StartsWith("/"))
 			{
@@ -81,7 +94,7 @@ namespace PowelderAPI.CommandRegions
 			}
 			else
 			{
-				plr.SendErrorMessage("[c/595959:»]  Wystapil problem z portalem, napisz do kogos z kadry. Kod 1");
+				plr.SendErrorMessage("Wystapil problem z portalem, napisz do kogos z kadry. Kod 1");
 			}
 		}
 
