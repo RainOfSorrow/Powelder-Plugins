@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Localization;
@@ -76,42 +77,7 @@ namespace SurvivalCore
 
 		public static bool TogglePvP(BinaryReader read, TSPlayer who)
 		{
-			read.ReadByte();
-			bool flag = read.ReadBoolean();
-			who.TPlayer.hostile = flag;
-			who.SendData(PacketTypes.TogglePvp, "", who.Index);
-			if (flag)
-			{
-				TSPlayer[] players = TShock.Players;
-				foreach (TSPlayer tSPlayer in players)
-				{
-					if (tSPlayer != null)
-					{
-						tSPlayer.SendData(PacketTypes.TogglePvp, "", who.Index);
-						if (tSPlayer.TPlayer.hostile)
-						{
-							tSPlayer.SendMessage("[c/595959:»]  [c/66ff66:" + who.Name + "] dolacza do trybu PVP.", Color.Gray);
-						}
-					}
-				}
-			}
-			else
-			{
-				TSPlayer[] players2 = TShock.Players;
-				foreach (TSPlayer tSPlayer2 in players2)
-				{
-					if (tSPlayer2 != null)
-					{
-						tSPlayer2.SendData(PacketTypes.TogglePvp, "", who.Index);
-						if (tSPlayer2.TPlayer.hostile)
-						{
-							tSPlayer2.SendMessage("[c/595959:»]  [c/66ff66:" + who.Name + "] wychodzi z trybu PVP.", Color.Gray);
-						}
-					}
-				}
-				who.SendMessage("[c/595959:»]  Wychodzisz z trybu PVP.", Color.Gray);
-			}
-			return true;
+			return false;
 		}
 
 		public static bool PlayerTeam(BinaryReader read, TSPlayer who)
@@ -159,11 +125,11 @@ namespace SurvivalCore
 				cost = Utils.CostCalc(who, cost);
 				if (SurvivalCore.SrvPlayers[b].Money < cost)
 				{
-					who.SendErrorMessage("[c/595959:»]  Nie stac cie na przywolanie Skeletrona. [c/595959:(]Koszt {0} €[c/595959:)]", cost);
+					who.SendErrorMessage("Nie stac cie na przywolanie Skeletrona. Koszt {0} €.", cost);
 					return true;
 				}
 				SurvivalCore.SrvPlayers[b].Money -= cost;
-				TSPlayer.All.SendInfoMessage("[c/595959:»]  {0} przywolal Skeletrona.", who.Name);
+				TSPlayer.All.SendInfoMessage("{0} przywolal Skeletrona.", who.Name);
 			}
 			return false;
 		}
@@ -295,7 +261,7 @@ namespace SurvivalCore
 				cost = Utils.CostCalc(tSPlayer, cost);
 				if (SurvivalCore.SrvPlayers[tSPlayer.Index].Money < cost)
 				{
-					tSPlayer.SendErrorMessage("[c/595959:»]  Nie stac cie na {0}. [c/595959:(]Koszt {1} €[c/595959:)]",
+					tSPlayer.SendErrorMessage("Nie stac cie na {0}. Koszt {1} €",
 						isBoss ? ("przywolanie " + nPc.FullName) : ("rozpoczecie " + GetInvasion(npcid)), cost);
 					if (SpawnItemId(npcid) != -1)
 					{
@@ -307,7 +273,7 @@ namespace SurvivalCore
 				}
 
 				SurvivalCore.SrvPlayers[tSPlayer.Index].Money -= cost;
-				TSPlayer.All.SendInfoMessage("[c/595959:»]  {0} {1}.", tSPlayer.Name,
+				TSPlayer.All.SendInfoMessage("{0} {1}.", tSPlayer.Name,
 					isBoss ? ("przywolal " + nPc.FullName) : ("rozpoczal " + GetInvasion(npcid)));
 			}
 
@@ -344,7 +310,7 @@ namespace SurvivalCore
 						{
 							int num4 = random.Next(25, 75);
 							SurvivalCore.SrvPlayers[who.Index].Money += num4;
-							who.SendMessage($"[c/595959:»]  Znalazles mieszek, a w nim [c/66ff66:{num4}] €.", Color.Gray);
+							who.SendInfoMessage($"Znalazles mieszek, a w nim {num4} €.");
 						}
 					}
 					break;
@@ -354,12 +320,12 @@ namespace SurvivalCore
 					cost = Utils.CostCalc(who, cost);
 					if (SurvivalCore.SrvPlayers[who.Index].Money < cost)
 					{
-						who.SendErrorMessage("[c/595959:»]  Nie stac cie na przywolanie Plantery. [c/595959:(]Koszt {0} €[c/595959:)]", cost);
+						who.SendErrorMessage("Nie stac cie na przywolanie Plantery. Koszt {0} €", cost);
 						TSPlayer.All.SendTileSquare(x, y);
 						return true;
 					}
 					SurvivalCore.SrvPlayers[who.Index].Money -= cost;
-					TSPlayer.All.SendInfoMessage("[c/595959:»]  {0} przywolal Plantere.", who.Name);
+					TSPlayer.All.SendInfoMessage("{0} przywolal Plantere.", who.Name);
 					break;
 				}
 				}
@@ -375,7 +341,7 @@ namespace SurvivalCore
 			if (num == 267)
 			{
 				PowelderAPI.Utils.GiveItemWithoutSpawn(who, TShock.Utils.GetItemById(267), 1);
-				who.SendErrorMessage("[c/595959:»]  Nie mozna wlozyc Guide Voodoo Doll do item frame.");
+				who.SendErrorMessage("Nie mozna wlozyc Guide Voodoo Doll do item frame.");
 				return true;
 			}
 			return false;
@@ -403,7 +369,7 @@ namespace SurvivalCore
 			{
 				if (Main.dayTime)
 				{
-					who.SendErrorMessage("[c/595959:»]  Wolimy uniknąć masowej rzeźni.");
+					who.SendErrorMessage("Wolimy uniknac masowej rzezni.");
 					return true;
 				}
 				
@@ -411,113 +377,101 @@ namespace SurvivalCore
 				cost = Utils.CostCalc(who, cost);
 				if (SurvivalCore.SrvPlayers[who.Index].Money < cost)
 				{
-					who.SendErrorMessage("[c/595959:»]  Nie stac cie na przywolanie Empress of Light. [c/595959:(]Koszt {0} €[c/595959:)]", cost);
+					who.SendErrorMessage("Nie stac cie na przywolanie Empress of Light. Koszt {0} €", cost);
 					return true;
 				}
 				SurvivalCore.SrvPlayers[who.Index].Money -= cost;
-				TSPlayer.All.SendInfoMessage("[c/595959:»]  {0} przywolal Empress of Light.", who.Name);
+				TSPlayer.All.SendInfoMessage("{0} przywolal Empress of Light", who.Name);
 			}
 			return false;
 		}
 
-		public static bool PlayerDeath(BinaryReader read, TSPlayer who)
+		public static void PlayerDeath(object sender, GetDataHandlers.KillMeEventArgs args)
 		{
-			byte b = read.ReadByte();
-			PlayerDeathReason playerDeathReason = PlayerDeathReason.FromReader(read);
-			short num = read.ReadInt16();
-			byte direction = (byte)(read.ReadByte() - 1);
-			bool flag = ((BitsByte)read.ReadByte())[0];
-			if (num > 20000)
+
+			args.Player.Dead = true;
+			args.Player.RespawnTimer = TShock.Config.RespawnSeconds;
+
+			foreach (NPC npc in Main.npc)
 			{
-				who.Kick("Ogarnij sie i nie cwaniacz /shrug \n\n- Xedlefix", true);
-				TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", num);
-				return false;
-			}
-			if (b >= byte.MaxValue)
-			{
-				return true;
-			}
-			if (OnKillMe(b, direction, num, flag))
-			{
-				return true;
-			}
-			if (playerDeathReason.GetDeathText(TShock.Players[b].Name).ToString().Length > 500)
-			{
-				who.Kick("Ogarnij sie i nie cwaniacz /shrug \n\n- Xedlefix", true);
-				return true;
-			}
-			who.Dead = true;
-			who.RespawnTimer = TShock.Config.RespawnSeconds;
-			Main.player[who.Index].respawnTimer = TShock.Config.RespawnSeconds;
-			//if (who.TpCoords != Point.Zero)
-			//{
-			//	who.SendInfoMessage("[c/595959:»]  W wyniku smierci twoja teleportacja zostala anulowana.");
-			//	who.TpCoords = Point.Zero;
-			//	who.warpWait = 0;
-			//}
-			NPC[] npc = Main.npc;
-			foreach (NPC nPc in npc)
-			{
-				if (nPc.active && (nPc.boss || nPc.type == 13 || nPc.type == 14 || nPc.type == 15) && Math.Abs(who.TPlayer.Center.X - nPc.Center.X) + Math.Abs(who.TPlayer.Center.Y - nPc.Center.Y) < 4000f)
+				if (npc.active && (npc.boss || npc.type == 13 || npc.type == 14 || npc.type == 15) &&
+					Math.Abs(args.Player.TPlayer.Center.X - npc.Center.X) + Math.Abs(args.Player.TPlayer.Center.Y - npc.Center.Y) < 4000f)
 				{
-					who.RespawnTimer = TShock.Config.RespawnBossSeconds;
-					Main.player[who.Index].respawnTimer = TShock.Config.RespawnSeconds;
+					args.Player.RespawnTimer = TShock.Config.RespawnBossSeconds;
 					break;
 				}
 			}
-			if (who.TPlayer.difficulty == 2 && (TShock.Config.KickOnHardcoreDeath || TShock.Config.BanOnHardcoreDeath))
+
+			// Handle kicks/bans on mediumcore/hardcore deaths.
+			if (args.Player.TPlayer.difficulty == 1 || args.Player.TPlayer.difficulty == 2) // Player is not softcore
 			{
-				if (TShock.Config.BanOnHardcoreDeath)
+				bool mediumcore = args.Player.TPlayer.difficulty == 1;
+				bool shouldBan = mediumcore ? TShock.Config.BanOnMediumcoreDeath : TShock.Config.BanOnHardcoreDeath;
+				bool shouldKick = mediumcore ? TShock.Config.KickOnMediumcoreDeath : TShock.Config.KickOnHardcoreDeath;
+				string banReason = mediumcore ? TShock.Config.MediumcoreBanReason : TShock.Config.HardcoreBanReason;
+				string kickReason = mediumcore ? TShock.Config.MediumcoreKickReason : TShock.Config.HardcoreKickReason;
+
+				if (shouldBan)
 				{
-					if (who.Ban(TShock.Config.HardcoreBanReason, false, "hardcore-death"))
+					if (!args.Player.Ban(banReason, false, "TShock"))
 					{
-						who.Ban("Death results in a ban, but you are immune to bans.", true);
+						TShock.Log.ConsoleDebug("GetDataHandlers / HandlePlayerKillMeV2 kicked with difficulty {0} {1}", args.Player.Name, args.Player.TPlayer.difficulty);
+						args.Player.Kick("You died! Normally, you'd be banned.", true, true);
 					}
 				}
-				else
+				else if (shouldKick)
 				{
-					who.Kick(TShock.Config.HardcoreKickReason, true);
+					TShock.Log.ConsoleDebug("GetDataHandlers / HandlePlayerKillMeV2 kicked with difficulty {0} {1}", args.Player.Name, args.Player.TPlayer.difficulty);
+					args.Player.Kick(kickReason, true, true, null, false);
 				}
 			}
-			if (who.TPlayer.difficulty == 2 && Main.ServerSideCharacter && who.IsLoggedIn && TShock.CharacterDB.RemovePlayer(who.Account.ID))
+
+			if (args.Player.TPlayer.difficulty == 2 && Main.ServerSideCharacter && args.Player.IsLoggedIn)
 			{
-				TShock.CharacterDB.SeedInitialData(who.Account);
+				if (TShock.CharacterDB.RemovePlayer(args.Player.Account.ID))
+				{
+					TShock.Log.ConsoleDebug("GetDataHandlers / HandlePlayerKillMeV2 ssc delete {0} {1}", args.Player.Name, args.Player.TPlayer.difficulty);
+					args.Player.SendErrorMessage("You have fallen in hardcore mode, and your items have been lost forever.");
+					TShock.CharacterDB.SeedInitialData(args.Player.Account);
+				}
 			}
-			if (who.HasPermission("server.admin"))
+			
+			if (args.Player.HasPermission("server.gmod"))
 			{
-				Main.player[who.Index].respawnTimer = 1;
-				who.RespawnTimer = 1;
-				who.TPlayer.respawnTimer = 1;
+				Main.player[args.Player.Index].respawnTimer = 1;
+				args.Player.RespawnTimer = 1;
+				args.Player.TPlayer.respawnTimer = 1;
 			}
-			who.TPlayer.dead = true;
-			Main.player[who.Index].dead = true;
-			NetMessage.SendPlayerDeath(who.Index, PlayerDeathReason.LegacyEmpty(), num, direction, flag);
-			NetMessage.SendPlayerDeath(who.Index, PlayerDeathReason.LegacyEmpty(), num, direction, flag, who.Index);
+			
+			args.Player.TPlayer.dead = true;
+			Main.player[args.Player.Index].dead = true;
+			NetMessage.SendPlayerDeath(args.Player.Index, PlayerDeathReason.LegacyEmpty(), args.Damage, args.Direction, args.Pvp);
+			NetMessage.SendPlayerDeath(args.Player.Index, PlayerDeathReason.LegacyEmpty(), args.Damage, args.Direction, args.Pvp, args.Player.Index);
 			int num2 = 1173;
-			if (SurvivalCore.SrvPlayers[who.Index].Money >= 22500)
+			if (SurvivalCore.SrvPlayers[args.Player.Index].Money >= 22500)
 			{
 				num2 = 3231;
 			}
-			else if (SurvivalCore.SrvPlayers[who.Index].Money >= 7500)
+			else if (SurvivalCore.SrvPlayers[args.Player.Index].Money >= 7500)
 			{
 				num2 = 3229;
 			}
-			else if (SurvivalCore.SrvPlayers[who.Index].Money >= 2500)
+			else if (SurvivalCore.SrvPlayers[args.Player.Index].Money >= 2500)
 			{
 				num2 = 1175;
 			}
-			if (flag)
+			if (args.Pvp)
 			{
 				TSPlayer[] players = TShock.Players;
 				foreach (TSPlayer tSPlayer in players)
 				{
 					if (tSPlayer?.TPlayer.hostile ?? false)
 					{
-						tSPlayer.SendMessage($"[c/66ff66:{TShock.Players[playerDeathReason._sourcePlayerIndex].Name}] [i/p{playerDeathReason._sourceItemPrefix}:{playerDeathReason._sourceItemType}] [c/595959:→] [c/ff6666:{who.Name}] [i:{num2}]", Color.SlateGray);
+						tSPlayer.SendMessage($"[c/66ff66:{TShock.Players[args.PlayerDeathReason._sourcePlayerIndex].Name}] [i/p{args.PlayerDeathReason._sourceItemPrefix}:{args.PlayerDeathReason._sourceItemType}] [c/595959:→] [c/ff6666:{args.Player.Name}] [i:{num2}]", Color.SlateGray);
 					}
 				}
-				SurvivalCore.SrvPlayers[who.Index].PvpDeaths++;
-				SurvivalCore.SrvPlayers[playerDeathReason._sourcePlayerIndex].PvpKills++;
+				SurvivalCore.SrvPlayers[args.Player.Index].PvpDeaths++;
+				SurvivalCore.SrvPlayers[args.PlayerDeathReason._sourcePlayerIndex].PvpKills++;
 			}
 			else
 			{
@@ -526,12 +480,14 @@ namespace SurvivalCore
 				{
 					if (tSPlayer2 != null && SurvivalCore.IsDeathMessage[tSPlayer2.Index])
 					{
-						tSPlayer2.SendMessage(string.Format("[i:{0}] {1} ", num2, playerDeathReason.GetDeathText("[c/ff6666:" + who.Name + "]")), Color.Gray);
+						tSPlayer2.SendMessage(string.Format("[i:{0}] {1} ", num2, args.PlayerDeathReason.GetDeathText("[c/ff6666:" + args.Player.Name + "]")), Color.Gray);
 					}
 				}
-				SurvivalCore.SrvPlayers[who.Index].Deaths++;
+				SurvivalCore.SrvPlayers[args.Player.Index].Deaths++;
 			}
-			return true;
+
+
+			args.Handled = true;
 		}
 
 		protected static string GetInvasion(int type)
@@ -613,23 +569,6 @@ namespace SurvivalCore
 			default:
 				return 0;
 			}
-		}
-
-		protected static bool OnKillMe(byte plr, byte direction, short damage, bool pvp)
-		{
-			if (GetDataHandlers.KillMe == null)
-			{
-				return false;
-			}
-			GetDataHandlers.KillMeEventArgs killMeEventArgs = new GetDataHandlers.KillMeEventArgs
-			{
-				PlayerId = plr,
-				Direction = direction,
-				Damage = damage,
-				Pvp = pvp
-			};
-			GetDataHandlers.KillMe.Invoke(null, killMeEventArgs);
-			return killMeEventArgs.Handled;
 		}
 	}
 }

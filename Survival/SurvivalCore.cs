@@ -126,6 +126,7 @@ namespace SurvivalCore
 			ServerApi.Hooks.ServerConnect.Register(this, OnConnect);
 			ServerApi.Hooks.GamePostInitialize.Register(this, PostInitialize);
 			ServerApi.Hooks.NetSendData.Register(this, OnSendData);
+			GetDataHandlers.KillMe += Npi.PlayerDeath;
 			AccountHooks.AccountCreate += OnAccountC;
 			AccountHooks.AccountDelete += OnAccountD;
 			PlayerHooks.PlayerPostLogin += OnPlayerPostLogin;
@@ -417,13 +418,6 @@ namespace SurvivalCore
 		{
 			if (!args.Handled)
 			{
-				if (!args.Handled && args.MsgID == PacketTypes.PlayerDeathV2)
-				{
-					using (BinaryReader read = new BinaryReader(new MemoryStream(args.Msg.readBuffer, args.Index, args.Length)))
-					{
-						args.Handled = Npi.PlayerDeath(read, TShock.Players[args.Msg.whoAmI]);
-					}
-				}
 				if (!args.Handled && args.MsgID == PacketTypes.ItemOwner)
 				{
 					using (BinaryReader read2 = new BinaryReader(new MemoryStream(args.Msg.readBuffer, args.Index, args.Length)))
@@ -450,13 +444,6 @@ namespace SurvivalCore
 					using (BinaryReader read5 = new BinaryReader(new MemoryStream(args.Msg.readBuffer, args.Index, args.Length)))
 					{
 						args.Handled = Npi.PlayerTeam(read5, TShock.Players[args.Msg.whoAmI]);
-					}
-				}
-				if (!args.Handled && args.MsgID == PacketTypes.TogglePvp)
-				{
-					using (BinaryReader read6 = new BinaryReader(new MemoryStream(args.Msg.readBuffer, args.Index, args.Length)))
-					{
-						args.Handled = Npi.TogglePvP(read6, TShock.Players[args.Msg.whoAmI]);
 					}
 				}
 				if (!args.Handled && args.MsgID == PacketTypes.PlayerInfo)

@@ -39,12 +39,12 @@ namespace SurvivalCore
 				}
 				PaginationTools.SendPage(args.Player, result, PaginationTools.BuildLinesFromTerms(list, null, ""), new PaginationTools.Settings
 				{
-					HeaderTextColor = new Color(128, 128, 128),
+					HeaderTextColor = new Color(0, 255, 0),
 					FooterTextColor = new Color(128, 128, 128),
-					HeaderFormat = "Lista dostepnych receptur[c/595959::]",
+					HeaderFormat = "Lista dostepnych receptur:",
 					MaxLinesPerPage = 4,
 					LineTextColor = new Color(192, 192, 192),
-					FooterFormat = $"Wpisz [c/66FF66:/wytworz list {result + 1}], aby zobaczyc nastepna strone.",
+					FooterFormat = $"Wpisz /wytworz list {result + 1}], aby zobaczyc nastepna strone.",
 					NothingToDisplayString = "Error 404."
 				});
 				return;
@@ -57,18 +57,18 @@ namespace SurvivalCore
 			}
 			if (text == null)
 			{
-				args.Player.SendMessage("[c/595959:»]  [c/66ff66:Uzycie][c/595959::] /wytworz <index> <ilosc>", Color.Gray);
-				args.Player.SendMessage("[c/595959:»]  [c/66ff66:Uzycie][c/595959::] /wytworz list <strona>", Color.Gray);
+				args.Player.SendMessage("Uzycie: /wytworz <index> <ilosc>", Color.Gray);
+				args.Player.SendMessage("Uzycie: /wytworz list <strona>", Color.Gray);
 				return;
 			}
 			if (!int.TryParse(text, out int result3))
 			{
-				args.Player.SendErrorMessage("[c/595959:»]  Podano niepoprawny index.");
+				args.Player.SendErrorMessage("Podano niepoprawny index.");
 				return;
 			}
 			if (!Recipes.ContainsKey(result3))
 			{
-				args.Player.SendErrorMessage("[c/595959:»]  Nie ma receptury o takim indexie.");
+				args.Player.SendErrorMessage("Nie ma receptury o takim indexie.");
 				return;
 			}
 			if (TShock.Utils.GetItemById(Recipes[result3].Result.Id).maxStack < result2)
@@ -77,22 +77,22 @@ namespace SurvivalCore
 			}
 			if (SurvivalCore.SrvPlayers[args.Player.Index].Money < Recipes[result3].Cost)
 			{
-				args.Player.SendErrorMessage($"[c/595959:»]  Nie stac cie na wytworzenie [i:{Recipes[result3].Result.Id}] w ilosci {result2}. [c/595959:(]Koszt {Recipes[result3].Cost * result2} €[c/595959:)]");
+				args.Player.SendErrorMessage($"Nie stac cie na wytworzenie [i:{Recipes[result3].Result.Id}] w ilosci {result2}. Koszt {Recipes[result3].Cost * result2} €.");
 				return;
 			}
 			if (!Recipes[result3].IsPlayerHaveIngrediens(args.Player))
 			{
-				args.Player.SendErrorMessage("[c/595959:»]  Brakuje wymaganych materialow do stworzenia przedmiotu.");
+				args.Player.SendErrorMessage("Brakuje wymaganych materialow do stworzenia przedmiotu.");
 				return;
 			}
 			if (!args.Player.InventorySlotAvailable)
 			{
-				args.Player.SendErrorMessage("[c/595959:»]  Twoj ekwipunek jest pelny.");
+				args.Player.SendErrorMessage("Twoj ekwipunek jest pelny.");
 				return;
 			}
 			Recipes[result3].Do(args.Player, result2);
 			SurvivalCore.SrvPlayers[args.Player.Index].Money -= Recipes[result3].Cost * result2;
-			args.Player.SendMessage($"[c/595959:»]  Pomyslnie wytworzono [i:{Recipes[result3].Result.Id}] w ilosci [c/66ff66:{Recipes[result3].Result.Amount * result2}].", Color.Gray);
+			args.Player.SendSuccessMessage($"Pomyslnie wytworzono [i:{Recipes[result3].Result.Id}] w ilosci [c/66ff66:{Recipes[result3].Result.Amount * result2}].", Color.Gray);
 		}
 	}
 

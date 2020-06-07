@@ -199,15 +199,15 @@ namespace SurvivalCore.Economy.Gambling
 		{
 			if (_pool1[_actualpool1] == 8 && _pool2[_actualpool2] == 8 && _pool3[_actualpool3] == 8)
 			{
-				return "[i:3312] [c/595959:⮘] [c/9f339f:Kasyno] [c/595959:⮚] {0} trafil [c/9f339f:3x♕] w slotach!!!";
+				return "[i:3312] [c/595959:;] [c/9f339f:Kasyno] [c/595959:;] {0} trafil [c/9f339f:3x♕] w slotach!!!";
 			}
 			if ((_pool1[_actualpool1] == 8 && _pool2[_actualpool2] == 8) || (_pool1[_actualpool1] == 8 && _pool3[_actualpool3] == 8) || (_pool2[_actualpool2] == 8 && _pool3[_actualpool3] == 8))
 			{
-				return "[i:3312] [c/595959:⮘] [c/9f339f:Kasyno] [c/595959:⮚] {0} trafil [c/9f339f:2x♕] w slotach!";
+				return "[i:3312] [c/595959:;] [c/9f339f:Kasyno] [c/595959:;] {0} trafil [c/9f339f:2x♕] w slotach!";
 			}
 			if (_pool1[_actualpool1] == 7 && _pool2[_actualpool2] == 7 && _pool3[_actualpool3] == 7)
 			{
-				return "[i:3312] [c/595959:⮘] [c/9f339f:Kasyno] [c/595959:⮚] {0} trafil [c/9f339f:3x☯] w slotach!";
+				return "[i:3312] [c/595959:;] [c/9f339f:Kasyno] [c/595959:;] {0} trafil [c/9f339f:3x☯] w slotach!";
 			}
 			return null;
 		}

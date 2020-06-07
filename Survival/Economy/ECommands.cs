@@ -20,37 +20,37 @@ namespace SurvivalCore.Economy
 			switch (text)
 			{
 			default:
-				player.SendMessage("[c/66ff66:Ekonomia][c/595959::]", Color.Gray);
-				player.SendMessage("[c/595959:»]  set <nick> <ilość> - Ustawianie stanu konta", Color.Gray);
-				player.SendMessage("[c/595959:»]  add <nick> <ilość> - Dodawanie do stanu konta", Color.Gray);
-				player.SendMessage("[c/595959:»]  take <nick> <ilość> - Zabieranie ze stanu konta", Color.Gray);
+				player.SendMessage("Ekonomia:", Color.Green);
+				player.SendInfoMessage("/eco set <nick> <ilosc> - Ustawianie stanu konta");
+				player.SendInfoMessage("/eco add <nick> <ilosc> - Dodawanie do stanu konta");
+				player.SendInfoMessage("/eco take <nick> <ilosc> - Zabieranie ze stanu konta");
 				break;
 			case "set":
 			{
 				if (args.Parameters.Count < 2)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Nie podano gracza.");
+					args.Player.SendErrorMessage("Nie podano gracza.");
 					break;
 				}
 				List<TSPlayer> list2 = TSPlayer.FindByNameOrID(args.Parameters[1]);
 				int result2;
 				if (list2.Count < 1)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Nie mozna bylo znalezc gracza {0}.", args.Parameters[1]);
+					args.Player.SendErrorMessage("Nie mozna bylo znalezc gracza {0}.", args.Parameters[1]);
 				}
 				else if (list2.Count > 1)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Znaleziono wiecej niz jednego gracza.", args.Parameters[1]);
+					args.Player.SendErrorMessage("Znaleziono wiecej niz jednego gracza.", args.Parameters[1]);
 				}
 				else if (args.Parameters.Count < 3)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Nie podano ilosci pieniedzy.");
+					args.Player.SendErrorMessage("Nie podano ilosci pieniedzy.");
 				}
 				else if (int.TryParse(args.Parameters[2], out result2))
 				{
 					if (result2 <= 0)
 					{
-						args.Player.SendErrorMessage("[c/595959:»]  Podana wartosc nie moze byc rowna 0 lub mniejsza.");
+						args.Player.SendErrorMessage("Podana wartosc nie moze byc rowna 0 lub mniejsza.");
 					}
 					else
 					{
@@ -59,7 +59,7 @@ namespace SurvivalCore.Economy
 				}
 				else
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Podano zla wartosc.");
+					args.Player.SendErrorMessage("Podano zla wartosc.");
 				}
 				break;
 			}
@@ -67,28 +67,28 @@ namespace SurvivalCore.Economy
 			{
 				if (args.Parameters.Count < 2)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Nie podano gracza.");
+					args.Player.SendErrorMessage("Nie podano gracza.");
 					break;
 				}
 				List<TSPlayer> list3 = TSPlayer.FindByNameOrID(args.Parameters[1]);
 				int result3;
 				if (list3.Count < 1)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Nie mozna bylo znalezc gracza {0}.", args.Parameters[1]);
+					args.Player.SendErrorMessage("Nie mozna bylo znalezc gracza {0}.", args.Parameters[1]);
 				}
 				else if (list3.Count > 1)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Znaleziono wiecej niz jednego gracza.", args.Parameters[1]);
+					args.Player.SendErrorMessage("Znaleziono wiecej niz jednego gracza.", args.Parameters[1]);
 				}
 				else if (args.Parameters.Count < 3)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Nie podano ilosci pieniedzy.");
+					args.Player.SendErrorMessage("Nie podano ilosci pieniedzy.");
 				}
 				else if (int.TryParse(args.Parameters[2], out result3))
 				{
 					if (result3 <= 0)
 					{
-						args.Player.SendErrorMessage("[c/595959:»]  Podana wartosc nie moze byc rowna 0 lub mniejsza.");
+						args.Player.SendErrorMessage("Podana wartosc nie moze byc rowna 0 lub mniejsza.");
 					}
 					else
 					{
@@ -97,7 +97,7 @@ namespace SurvivalCore.Economy
 				}
 				else
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Podano zla wartosc.");
+					args.Player.SendErrorMessage("Podano zla wartosc.");
 				}
 				break;
 			}
@@ -105,28 +105,28 @@ namespace SurvivalCore.Economy
 			{
 				if (args.Parameters.Count < 2)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Nie podano gracza.");
+					args.Player.SendErrorMessage("Nie podano gracza.");
 					break;
 				}
 				List<TSPlayer> list = TSPlayer.FindByNameOrID(args.Parameters[1]);
 				int result;
 				if (list.Count < 1)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Nie mozna bylo znalezc gracza {0}.", args.Parameters[1]);
+					args.Player.SendErrorMessage("Nie mozna bylo znalezc gracza {0}.", args.Parameters[1]);
 				}
 				else if (list.Count > 1)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Znaleziono wiecej niz jednego gracza.", args.Parameters[1]);
+					args.Player.SendErrorMessage("Znaleziono wiecej niz jednego gracza.", args.Parameters[1]);
 				}
 				else if (args.Parameters.Count < 3)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Nie podano ilosci pieniedzy.");
+					args.Player.SendErrorMessage("Nie podano ilosci pieniedzy.");
 				}
 				else if (int.TryParse(args.Parameters[2], out result))
 				{
 					if (result <= 0)
 					{
-						args.Player.SendErrorMessage("[c/595959:»]  Podana wartosc nie moze byc rowna 0 lub mniejsza.");
+						args.Player.SendErrorMessage("Podana wartosc nie moze byc rowna 0 lub mniejsza.");
 					}
 					else
 					{
@@ -135,7 +135,7 @@ namespace SurvivalCore.Economy
 				}
 				else
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Podano zla wartosc.");
+					args.Player.SendErrorMessage("Podano zla wartosc.");
 				}
 				break;
 			}
@@ -149,20 +149,20 @@ namespace SurvivalCore.Economy
 				List<TSPlayer> list = TSPlayer.FindByNameOrID(args.Parameters[0]);
 				if (list.Count < 1)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Nie mozna bylo znalezc gracza {0}.", args.Parameters[0]);
+					args.Player.SendErrorMessage("Nie mozna bylo znalezc gracza {0}.", args.Parameters[0]);
 				}
 				else if (list.Count > 1)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Znaleziono wiecej niz jednego gracza.", args.Parameters[0]);
+					args.Player.SendErrorMessage("Znaleziono wiecej niz jednego gracza.", args.Parameters[0]);
 				}
 				else
 				{
-					args.Player.SendMessage(string.Format("[c/595959:»]  [c/66ff66:Stan konta {0}][c/595959::] {1} {2}", list[0].Name, SurvivalCore.SrvPlayers[list[0].Index].Money.ToString("N0").Replace(' ', ','), Economy.Config.ValueName), Color.Gray);
+					args.Player.SendInfoMessage(string.Format("Stan konta {0}: {1} {2}", list[0].Name, SurvivalCore.SrvPlayers[list[0].Index].Money.ToString("N0").Replace(' ', ','), Economy.Config.ValueName));
 				}
 			}
 			else
 			{
-				args.Player.SendMessage(string.Format("[c/595959:»]  [c/66ff66:Stan twojego konta][c/595959::] {0} {1}", SurvivalCore.SrvPlayers[args.Player.Index].Money.ToString("N0").Replace(' ', ','), Economy.Config.ValueName), Color.Gray);
+				args.Player.SendInfoMessage(string.Format("Stan twojego konta: {0} {1}", SurvivalCore.SrvPlayers[args.Player.Index].Money.ToString("N0").Replace(' ', ','), Economy.Config.ValueName));
 			}
 		}
 
@@ -170,28 +170,28 @@ namespace SurvivalCore.Economy
 		{
 			if (args.Parameters.Count <= 0)
 			{
-				args.Player.SendMessage("[c/595959:»]  [c/66ff66:Uzycie][c/595959::] /przelej <nick> <ilosc>", Color.Gray);
+				args.Player.SendErrorMessage("Uzycie: /przelej <nick> <ilosc>");
 				return;
 			}
 			List<TSPlayer> list = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			int result;
 			if (list.Count < 1)
 			{
-				args.Player.SendErrorMessage("[c/595959:»]  Nie mozna bylo znalezc gracza {0}.", args.Parameters[0]);
+				args.Player.SendErrorMessage("Nie mozna bylo znalezc gracza {0}.", args.Parameters[0]);
 			}
 			else if (list.Count > 1)
 			{
-				args.Player.SendErrorMessage("[c/595959:»]  Znaleziono wiecej niz jednego gracza.", args.Parameters[0]);
+				args.Player.SendErrorMessage("Znaleziono wiecej niz jednego gracza.", args.Parameters[0]);
 			}
 			else if (list[0] == args.Player)
 			{
-				args.Player.SendErrorMessage("[c/595959:»]  Nie mozna przelac pieniedzy samemu sobie.");
+				args.Player.SendErrorMessage("Nie mozna przelac pieniedzy samemu sobie.");
 			}
 			else if (int.TryParse(args.Parameters[1], out result))
 			{
 				if (result <= 0)
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Podana wartosc nie moze byc rowna 0 lub mniejsza.");
+					args.Player.SendErrorMessage("Podana wartosc nie moze byc rowna 0 lub mniejsza.");
 				}
 				else
 				{
@@ -200,7 +200,7 @@ namespace SurvivalCore.Economy
 			}
 			else
 			{
-				args.Player.SendErrorMessage("[c/595959:»]  Podano zla wartosc.");
+				args.Player.SendErrorMessage("Podano zla wartosc.");
 			}
 		}
 
@@ -212,21 +212,21 @@ namespace SurvivalCore.Economy
 			{
 				QueryDly.CreateRecord(player, DateTime.Now.AddDays(1.0));
 				SurvivalCore.SrvPlayers[args.Player.Index].Money += Economy.Config.DailyAmount;
-				player.SendMessage($"[c/595959:»]  Pomyslne odebrano swoje pierwsze kieszonkowe wynoszace [c/66ff66:{Economy.Config.DailyAmount}] {Economy.Config.ValueName}.", Color.Gray);
-				player.SendMessage(string.Format("[c/595959:»]  [c/66ff66:Twoj nowy stan konta][c/595959::] {0} {1}", SurvivalCore.SrvPlayers[args.Player.Index].Money.ToString("N0").Replace(' ', ','), Economy.Config.ValueName), Color.Gray);
+				player.SendSuccessMessage($"Pomyslne odebrano swoje pierwsze kieszonkowe wynoszace: {Economy.Config.DailyAmount}] {Economy.Config.ValueName}.");
+				player.SendInfoMessage(string.Format("Twoj nowy stan konta: {0} {1}", SurvivalCore.SrvPlayers[args.Player.Index].Money.ToString("N0").Replace(' ', ','), Economy.Config.ValueName));
 				return;
 			}
 			else if ((DateTime.Now - DateTime.ParseExact(QueryDly.LoadNext(player), Economy.DFormat, null)).TotalMilliseconds > 0)
 			{
 				SurvivalCore.SrvPlayers[args.Player.Index].Money += Economy.Config.DailyAmount;
-				player.SendMessage($"[c/595959:»]  Pomyslne odebrano swoje kieszonkowe wynoszace [c/66ff66:{Economy.Config.DailyAmount}] {Economy.Config.ValueName}.", Color.Gray);
-				player.SendMessage(string.Format("[c/595959:»]  [c/66ff66:Twoj nowy stan konta][c/595959::] {0} {1}", SurvivalCore.SrvPlayers[args.Player.Index].Money.ToString("N0").Replace(' ', ','), Economy.Config.ValueName), Color.Gray);
+				player.SendSuccessMessage($"Pomyslne odebrano swoje kieszonkowe wynoszace {Economy.Config.DailyAmount} {Economy.Config.ValueName}.");
+				player.SendInfoMessage(string.Format("Twoj nowy stan konta: {0} {1}", SurvivalCore.SrvPlayers[args.Player.Index].Money.ToString("N0").Replace(' ', ','), Economy.Config.ValueName));
 				QueryDly.UpdateNext(player, DateTime.Now.AddDays(1));
 			}
 			else
 			{
-				player.SendErrorMessage("[c/595959:»]  Kieszonkowe mozna odbierac co 24h.");
-				player.SendMessage($"[c/595959:»]  Nastepny odbior bedzie mozliwy za [c/66ff66:{ExpireCountDown(QueryDly.LoadNext(player))}].", Color.Gray);
+				player.SendErrorMessage("Kieszonkowe mozna odbierac co 24h.");
+				player.SendErrorMessage($"Nastepny odbior bedzie mozliwy za {ExpireCountDown(QueryDly.LoadNext(player))}.");
 			}
 		}
 
