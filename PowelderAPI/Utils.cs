@@ -212,17 +212,17 @@ namespace PowelderAPI
 			switch (group)
 			{
 				case "Xedlefix":
-					return "[c/595959:(][c/" + Utils.GetGroupColor(group) + ":Admin][c/595959:)] ";
+					return "[c/595959:;][c/" + Utils.GetGroupColor(group) + ":Zalozyciel][c/595959:;] ";
 				case "Iwobos":
-					return "[c/595959:(][c/" + Utils.GetGroupColor(group) + ":Admin][c/595959:)] ";
+					return "[c/595959:;][c/" + Utils.GetGroupColor(group) + ":Zalozyciel][c/595959:;] ";
 				case "GlobalMod":
-					return "[c/595959:(][c/" + Utils.GetGroupColor(group) + ":GlobalMod][c/595959:)] ";
+					return "[c/595959:;][c/" + Utils.GetGroupColor(group) + ":GlobalMod][c/595959:;] ";
 				case "Moderator":
-					return "[c/595959:(][c/" + Utils.GetGroupColor(group) + ":Mod][c/595959:)] ";
+					return "[c/595959:;][c/" + Utils.GetGroupColor(group) + ":Mod][c/595959:;] ";
 				case "JuniorMod":
-					return "[c/595959:(][c/" + Utils.GetGroupColor(group) + ":JuniorMod][c/595959:)] ";
+					return "[c/595959:;][c/" + Utils.GetGroupColor(group) + ":JuniorMod][c/595959:;] ";
 				case "Special":
-					return "[c/595959:(][c/" + Utils.GetGroupColor(group) + ":Special][c/595959:)] ";
+					return "[c/595959:;][c/" + Utils.GetGroupColor(group) + ":Special][c/595959:;] ";
 				default:
 					return null;
 			}

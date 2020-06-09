@@ -1,3 +1,5 @@
+using System;
+
 namespace SurvivalCore
 {
 	public class SrvPlayer
@@ -20,6 +22,8 @@ namespace SurvivalCore
 		public int PvpDeaths;
 
 		public long PlayTime;
+
+		public DateTime BoostCooldown;
 
 
 		public SrvPlayer(int id, string nick, int prefixitem, string nickcolor, int deaths, int money, string statusoptions, int pk, int pd, long pt)

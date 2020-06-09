@@ -36,9 +36,9 @@ namespace PowelderAPI
 				args.Handled = true;
 				return;
 			}
-			if (args.Text.Length > 500)
+			if (args.Text.Length > 300)
 			{
-				tSPlayer.SendErrorMessage("[c/595959:»]  Twoja wiadomosc jest zbyt dluga.");
+				tSPlayer.SendErrorMessage("Twoja wiadomosc jest zbyt dluga.");
 				args.Handled = true;
 				return;
 			}
@@ -75,7 +75,7 @@ namespace PowelderAPI
 					}
 					else
 					{
-						tSPlayer.SendMessage("[c/595959:»]  Anulowales zadanie.", Color.Gray);
+						tSPlayer.SendInfoMessage("Anulowales zadanie.");
 						AcceptData.Remove((byte)tSPlayer.Index);
 						Acceptation.Remove((byte)tSPlayer.Index);
 					}
@@ -109,7 +109,7 @@ namespace PowelderAPI
 						if (!((DateTime.Now - _antiSpam[tSPlayer.Index]).TotalMilliseconds >= 800.0))
 						{
 							_antiSpam[tSPlayer.Index] = DateTime.Now;
-							tSPlayer.SendErrorMessage("[c/595959:»]  Zwolnij troche. Za szybko piszesz.");
+							tSPlayer.SendErrorMessage("Zwolnij troche. Za szybko piszesz.");
 							args.Handled = true;
 							return;
 						}
@@ -126,7 +126,7 @@ namespace PowelderAPI
 				}
 				else if (tSPlayer.mute)
 				{
-					tSPlayer.SendErrorMessage("[c/595959:»]  Jestes wyciszony.");
+					tSPlayer.SendErrorMessage("Jestes wyciszony.");
 					args.Handled = true;
 				}
 				else

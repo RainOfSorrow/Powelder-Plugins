@@ -4,10 +4,13 @@ using SurvivalCore.Economy.Database;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
 using Terraria;
 using Terraria.ID;
 using TerrariaApi.Server;
@@ -27,6 +30,8 @@ namespace SurvivalCore
 			"Momo"
 		};
 
+		public static byte BoostBuffType = 0;
+		public static DateTime BoostBuffEndTime;
 
 		private static byte _cleancount = 0;
 
@@ -104,6 +109,7 @@ namespace SurvivalCore
 			Commands.ChatCommands.Add(new Command("server.gracz", SrvCommands.GetPlayTime, "czasgry"));
 			Commands.ChatCommands.Add(new Command("server.gracz", SrvCommands.Top, "top"));
 			Commands.ChatCommands.Add(new Command("server.gracz", SrvCommands.Przywolywanie, "przywolaj", "przyw"));
+			Commands.ChatCommands.Add(new Command("server.booster", SrvCommands.BoostCommand, "boost"));
 			Commands.ChatCommands.Add(new Command("server.gracz", ExtendedChat.CommandItem, "prefixitem", "pitem"));
 			Commands.ChatCommands.Add(new Command("server.gracz", ExtendedChat.CommandNick, "nickcolor", "ncolor"));
 			Commands.ChatCommands.Add(new Command("server.debug", ExtendedChat.Debug, "srvdebug"));
@@ -133,6 +139,7 @@ namespace SurvivalCore
 			PlayerHooks.PlayerLogout += OnPlayerLogout;
 			GeneralHooks.ReloadEvent += OnReload;
 			Hooks.Npc.PostUpdate += NpcPostUpdate;
+			
 		}
 
 		private void OnReload(ReloadEventArgs args)
@@ -239,6 +246,11 @@ namespace SurvivalCore
 				IsBackground = true
 			};
 			thread4.Start();
+
+			System.Timers.Timer task = new System.Timers.Timer();
+			task.Elapsed += BuffBoostTask;
+			task.Interval = 3000;
+			task.Enabled = true;
 		}
 
 		private void PingThread()
@@ -332,6 +344,29 @@ namespace SurvivalCore
 				if (tSPlayer != null && tSPlayer.Account != null)
 				{
 					DataBase.SrvPlayerUpdate(SrvPlayers[tSPlayer.Index]);
+				}
+			}
+		}
+
+		private static void BuffBoostTask(object source, ElapsedEventArgs args)
+		{
+			if (BoostBuffType != 0)
+			{
+				if ((DateTime.Now - BoostBuffEndTime).Seconds > 0)
+				{
+					TSPlayer.All.SendWarningMessage("Boost zostal zakonczony.");
+					BoostBuffType = 0;
+					return;
+				}
+				
+				Console.WriteLine("Control");
+
+				for (int i = 0; i < 255; i++)
+				{
+					if (TShock.Players[i] != null)
+					{
+						TShock.Players[i].SetBuff(BoostBuffType, 330, true);
+					}
 				}
 			}
 		}
@@ -503,7 +538,7 @@ namespace SurvivalCore
 			{
 				_isClean = true;
 				_cleancount = 60;
-				TSPlayer.All.SendMessage($"[i:536] [c/595959:⮘] [c/0099ff:Clean Bot] [c/595959:⮚] Za [c/0099ff:{_cleancount}] sekund zostana usuniete wszystkie przedmioty z ziemi.", new Color(102, 153, 255));
+				TSPlayer.All.SendMessage($"[i:536] [c/595959:;] [c/0099ff:Clean Bot] [c/595959:;] Za [c/0099ff:{_cleancount}] sekund zostana usuniete wszystkie przedmioty z ziemi.", new Color(102, 153, 255));
 			}
 		}
 
@@ -529,6 +564,9 @@ namespace SurvivalCore
 					while (true)
 					{
 						Thread.Sleep(1000);
+						
+						
+						
 						byte[] array = new byte[201];
 						foreach (int key2 in Guardians.Keys)
 						{
@@ -600,7 +638,7 @@ namespace SurvivalCore
 										null,
 										(!SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 5)) //5
 											? null
-											: (_isClean ? ("\n\rClean: " + _cleancount + " sec") : null),
+											: (_isClean ? ("\n\r[c/66ff66:Clean][c/595959::] " + _cleancount + " sec") : null),
 										RepeatLineBreaks(10)
 									);
 										tSPlayer.SendData(PacketTypes.Status, text2, 0 , 3);

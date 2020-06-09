@@ -77,7 +77,7 @@ namespace SurvivalCore
 			if (SurvivalCore.IsChatEvent && SurvivalCore.ChatEventWord == args.Text)
 			{
 				SurvivalCore.ChatEventStoper.Stop();
-				TSPlayer.All.SendMessage($"[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] [c/00cc66:{TShock.Players[args.Who].Name}] napisal najszybciej [c/00cc66:{SurvivalCore.ChatEventWord}] i wygral 60 €. [c/595959:(]{SurvivalCore.ChatEventStoper.Elapsed.TotalSeconds} sec[c/595959:)]", new Color(128, 255, 191));
+				TSPlayer.All.SendMessage($"[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] [c/00cc66:{TShock.Players[args.Who].Name}] napisal najszybciej [c/00cc66:{SurvivalCore.ChatEventWord}] i wygral 60 €. [c/595959:(]{Math.Round(SurvivalCore.ChatEventStoper.Elapsed.TotalSeconds, 3)} sec[c/595959:)]", new Color(128, 255, 191));
 				SurvivalCore.SrvPlayers[args.Who].Money += 60;
 				SurvivalCore.IsChatEvent = false;
 				SurvivalCore.ChatEventTimer = DateTime.UtcNow;
@@ -88,7 +88,7 @@ namespace SurvivalCore
 				try
 				{
 					text = string.Format(ChatFormat,
-						(SurvivalCore.SrvPlayers[args.Who].PrefixItem == -1) ? PowelderAPI.Utils.GetGroupItem(plr.Group.Name) : SurvivalCore.SrvPlayers[args.Who].PrefixItem, PowelderAPI.Utils.GetGroupColor(plr.Group.Name), (plr.Group.Name == "Xedlefix" || plr.Group.Name == "Iwobos") ? "Administrator" : plr.Group.Name, SurvivalCore.SrvPlayers[args.Who].NickColor ?? PowelderAPI.Utils.GetGroupColor(plr.Group.Name), plr.Name, args.Text);
+						(SurvivalCore.SrvPlayers[args.Who].PrefixItem == -1) ? PowelderAPI.Utils.GetGroupItem(plr.Group.Name) : SurvivalCore.SrvPlayers[args.Who].PrefixItem, PowelderAPI.Utils.GetGroupColor(plr.Group.Name), (plr.Group.Name == "Xedlefix" || plr.Group.Name == "Iwobos") ? "Zalozyciel" : plr.Group.Name, SurvivalCore.SrvPlayers[args.Who].NickColor ?? PowelderAPI.Utils.GetGroupColor(plr.Group.Name), plr.Name, args.Text);
 				}
 				catch (NullReferenceException)
 				{

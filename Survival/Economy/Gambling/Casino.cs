@@ -13,19 +13,19 @@ namespace SurvivalCore.Economy.Gambling
 		public static void CasinoCommand(CommandArgs args)
 		{
 			string text = null;
-			string a = null;
-			string text2 = null;
+			string arg1 = null;
+			string arg2 = null;
 			if (args.Parameters.Count > 0)
 			{
 				text = args.Parameters[0].ToLower();
 			}
 			if (args.Parameters.Count > 1)
 			{
-				a = args.Parameters[1].ToLower();
+				arg1 = args.Parameters[1].ToLower();
 			}
 			if (args.Parameters.Count > 2)
 			{
-				text2 = args.Parameters[2].ToLower();
+				arg2 = args.Parameters[2].ToLower();
 			}
 			
 			
@@ -33,16 +33,16 @@ namespace SurvivalCore.Economy.Gambling
 			string text4 = text3;
 			if (text4 == null || !(text4 == "slots"))
 			{
-				args.Player.SendMessage("            [c/595959:«]Kasyno[c/595959:»]", new Color(192, 192, 192));
-				args.Player.SendMessage("[c/595959:»]  [c/66ff66:/kasyno slots] [c/595959:-] Gra w sloty.", Color.Gray);
+				args.Player.SendMessage("Kasyno:", Color.Green);
+				args.Player.SendMessage("/kasyno slots] [c/595959:-] Gra w sloty.", Color.Gray);
 			}
-			else if (a == "start")
+			else if (arg1 == "start")
 			{
 				if (!SurvivalCore.IsStatusBusy[args.Player.Index])
 				{
 					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < 75)
 					{
-						args.Player.SendErrorMessage("[c/595959:»]  Nie stac cie na los.");
+						args.Player.SendErrorMessage("Nie stac cie na los.");
 						return;
 					}
 					SurvivalCore.SrvPlayers[args.Player.Index].Money -= 75;
@@ -56,25 +56,27 @@ namespace SurvivalCore.Economy.Gambling
 						IsBackground = true
 					};
 					thread.Start(parameter);
-					args.Player.SendMessage("[c/595959:»]  Zaczynam losowanie. Mozesz obserwowac proces losowania w miejscu statusu.", Color.Gray);
+					args.Player.SendMessage("[i:3312] [c/595959:;] [c/9f339f:Kasyno] [c/595959:;] Zaczynam losowanie. Mozesz obserwowac proces losowania w miejscu statusu.", new Color(205, 101, 205));
 				}
 				else
 				{
-					args.Player.SendErrorMessage("[c/595959:»]  Status jest zajety.");
+					args.Player.SendErrorMessage("Status jest zajety.");
 				}
 			}
-			else if (a == "nagrody")
+			else if (arg1 == "nagrody")
 			{
-				args.Player.SendMessage("                    [c/595959:«]Slots - Nagrody[c/595959:»]", new Color(192, 192, 192));
-				args.Player.SendMessage(" [c/66ff66:☠]  [c/595959:-] 100 € [c/595959:|] [c/66ff66:⛏] [c/595959:-] 150 € [c/595959:|] [c/66ff66:♣] [c/595959:-] 200 € [c/595959:|] [c/66ff66:♫] [c/595959:-] 250 €", Color.Gray);
-				args.Player.SendMessage(" [c/66ff66:⚡]  [c/595959:-] 350 € [c/595959:|] [c/66ff66:♖] [c/595959:-] 400 € [c/595959:|] [c/66ff66:☯] [c/595959:-] 450 € [c/595959:|] [c/66ff66:♕] [c/595959:-] 500 €", Color.Gray);
+				args.Player.SendMessage("Slots - Nagrody:", Color.Green);
+				args.Player.SendMessage(" [i:20]  - 100 €  [i:19] - 150 €\n" +
+				                             " [i:57] - 250 €  [i:175] - 400 €", Color.Yellow);
+				args.Player.SendMessage(" [i:382]  - 600 €  [i:1225] - 400 €\n" +
+				                             " [i:1006] - 450 €  [i:3467] - 500 €", Color.Yellow);
 			}
 			else
 			{
-				args.Player.SendMessage("                                                [c/595959:«]Slots - Zasady[c/595959:»]", new Color(192, 192, 192));
-				args.Player.SendMessage("Aby zaczac losowanie wpisz [c/66ff66:/kasyno slots start]. Koszt za kazdorazowy los [c/66ff66:75 €]. Wylosowane zostana 3 pola", Color.Gray);
-				args.Player.SendMessage("z symbolami. Jezeli wszystkie pola beda takie same, otrzymasz nagrode - [c/66ff66:/kasyno slots nagrody]. Jezeli", Color.Gray);
-				args.Player.SendMessage("tylko dwa pola beda takie same, to otrzymasz polowe nagrody.", Color.Gray);
+				args.Player.SendMessage("Slots - Zasady:", Color.Green);
+				args.Player.SendMessage("Aby zaczac losowanie wpisz /kasyno slots start. Koszt za kazdorazowy los 75 €. Wylosowane zostana 3 pola", Color.Yellow);
+				args.Player.SendMessage("ze sztabkami. Jezeli wszystkie pola beda takie same, otrzymasz nagrode - /kasyno slots nagrody. Jezeli", Color.Yellow);
+				args.Player.SendMessage("tylko dwa pola beda takie same, to otrzymasz polowe nagrody.", Color.Yellow);
 			}
 		}
 
@@ -95,12 +97,11 @@ namespace SurvivalCore.Economy.Gambling
 				}
 				slots.MoveSlots();
 				tSPlayer.SendData(PacketTypes.Status, slots.GetStatus());
-				tSPlayer.SendData(PacketTypes.PlayHarp, null, tSPlayer.Index, 1f);
 				Thread.Sleep(22 * (int)((double)(float)i * 0.3));
 			}
-			tSPlayer.SendMessage($"[c/595959:»]  [c/66ff66:Slots - Wygrales][c/595959::] {slots.GetResult()} {Economy.Config.ValueName}", Color.Gray);
+			tSPlayer.SendMessage($"[i:3312] [c/595959:;] [c/9f339f:Kasyno] [c/595959:;] Wygrales {slots.GetResult()} {Economy.Config.ValueName}", new Color(205, 101, 205));
 			SurvivalCore.SrvPlayers[b].Money += slots.GetResult();
-			tSPlayer.SendData(PacketTypes.Status, slots.GetStatus(true));
+			tSPlayer.SendData(PacketTypes.Status, slots.GetStatus(true), 0 , 3);
 			if (slots.Special() != null)
 			{
 				TSPlayer.All.SendMessage(string.Format(slots.Special(), tSPlayer.Name), new Color(205, 101, 205));

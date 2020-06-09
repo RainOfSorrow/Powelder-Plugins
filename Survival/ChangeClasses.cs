@@ -43,9 +43,9 @@ namespace SurvivalCore
 
 		public bool IsPlayerHaveIngrediens(TSPlayer plr, int amount = 1)
 		{
-			foreach (SimpleItem ingredien in Ingrediens)
+			foreach (SimpleItem ingredient in Ingrediens)
 			{
-				if (PowelderAPI.Utils.PlayerItemCount(plr, TShock.Utils.GetItemById(ingredien.Id)) < ingredien.Amount * amount)
+				if (PowelderAPI.Utils.PlayerItemCount(plr, TShock.Utils.GetItemById(ingredient.Id)) < ingredient.Amount * amount)
 				{
 					return false;
 				}
@@ -57,16 +57,16 @@ namespace SurvivalCore
 		{
 			for (int i = 0; i < amount; i++)
 			{
-				foreach (SimpleItem ingredien in Ingrediens)
+				foreach (SimpleItem ingredient in Ingrediens)
 				{
-					PowelderAPI.Utils.PlayerRemoveItems(plr, TShock.Utils.GetItemById(ingredien.Id), ingredien.Amount);
+					PowelderAPI.Utils.PlayerRemoveItems(plr, TShock.Utils.GetItemById(ingredient.Id), ingredient.Amount);
 				}
 				PowelderAPI.Utils.GiveItemWithoutSpawn(plr, TShock.Utils.GetItemById(Result.Id), Result.Amount);
 			}
 		}
 	}
 
-	internal class SimpleItem
+	internal struct SimpleItem
 	{
 		public string Name;
 

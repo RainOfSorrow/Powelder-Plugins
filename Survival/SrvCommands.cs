@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using SurvivalCore.Economy.Database;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using Terraria;
 using Terraria.Localization;
@@ -121,7 +122,7 @@ namespace SurvivalCore
 				string text2 = (timeSpan.Seconds == 1) ? "sekunde" : ((timeSpan.Seconds <= 1 || timeSpan.Seconds >= 5) ? "sekund" : "sekundy");
 				string text3 = (timeSpan.Minutes == 1) ? "minute" : ((timeSpan.Minutes <= 1 || timeSpan.Minutes >= 5) ? "minut" : "minuty");
 				string text4 = ((int)timeSpan.TotalHours == 1) ? "godzine" : (((int)timeSpan.TotalHours <= 1 || (int)timeSpan.TotalHours >= 5) ? "godzin" : "godziny");
-				args.Player.SendInfoMessage($"{list[0].Name} lacznie na serwerze spedzil {(int)timeSpan.TotalHours} {text4}, {timeSpan.Minutes} {text3}, {timeSpan.Seconds}] {text2}.");
+				args.Player.SendInfoMessage($"{list[0].Name} lacznie na serwerze spedzil {(int)timeSpan.TotalHours} {text4}, {timeSpan.Minutes} {text3}, {timeSpan.Seconds} {text2}.");
 			}
 			else
 			{
@@ -300,12 +301,12 @@ namespace SurvivalCore
 			if (!SurvivalCore.IsDeathMessage[args.Player.Index])
 			{
 				SurvivalCore.IsDeathMessage[args.Player.Index] = true;
-				args.Player.SendMessage("Powiadomienia o zgonach zostaly [c/66ff66:wlaczone].", Color.Gray);
+				args.Player.SendSuccessMessage("Powiadomienia o zgonach zostaly wlaczone.");
 			}
 			else
 			{
 				SurvivalCore.IsDeathMessage[args.Player.Index] = false;
-				args.Player.SendMessage("Powiadomienia o zgonach zostaly [c/66ff66:wylaczone].", Color.Gray);
+				args.Player.SendSuccessMessage("Powiadomienia o zgonach zostaly wylaczone.");
 			}
 		}
 
@@ -317,158 +318,174 @@ namespace SurvivalCore
 			{
 				text = args.Parameters[0].ToLower();
 			}
+
 			if (args.Parameters.Count > 1)
 			{
 				text2 = args.Parameters[1].ToLower();
 			}
+
 			switch (text)
 			{
-			default:
-				args.Player.SendErrorMessage("Uzycie: /przywolaj <co>");
-				break;
-			case "wof":
-			case "wall of flesh":
-			{
-				int cost3 = 1600;
-				cost3 = Utils.CostCalc(args.Player, cost3);
-				if (SurvivalCore.SrvPlayers[args.Player.Index].Money < cost3)
+				default:
+					args.Player.SendErrorMessage("Uzycie: /przywolaj <co>");
+					break;
+				case "wof":
+				case "wall of flesh":
 				{
-					args.Player.SendErrorMessage("Nie stac cie na przywolanie Wall of Flesha. Koszt {0} €.", cost3);
+					int cost3 = 1600;
+
+					Item itemById = TShock.Utils.GetItemById(267);
+					if (PowelderAPI.Utils.PlayerItemCount(args.Player, itemById) < 1)
+					{
+						args.Player.SendErrorMessage("Nie masz wymaganych materialow w ekwipunku.");
+						args.Player.SendErrorMessage("Wymagane:  [i:267]");
+						break;
+					}
+
+					if (Main.wofNPCIndex >= 0)
+					{
+						args.Player.SendErrorMessage("Wall of Flesh juz jest na swiecie.");
+						break;
+					}
+
+					if (args.Player.Y / 16f < (float) (Main.maxTilesY - 205))
+					{
+						args.Player.SendErrorMessage("Musisz byc w piekle, aby przywolac Wall of Flesha.");
+						break;
+					}
+
+					PowelderAPI.Utils.PlayerRemoveItems(args.Player, itemById, 1);
+					SurvivalCore.SrvPlayers[args.Player.Index].Money -= cost3;
+					NPC.SpawnWOF(new Vector2(args.Player.X, args.Player.Y));
+					TSPlayer.All.SendInfoMessage("{0} przywolal Wall of Flesha.", args.Player.Name);
 					break;
 				}
-				Item itemById = TShock.Utils.GetItemById(267);
-				if (PowelderAPI.Utils.PlayerItemCount(args.Player, itemById) < 1)
+				case "lunatic":
+				case "Lun":
+				case "lc":
+				case "lunatic cultist":
 				{
-					args.Player.SendErrorMessage("Nie masz wymaganych materialow w ekwipunku.");
-					args.Player.SendErrorMessage("Wymagane:  [i:267]");
+					NPC nPc2 = new NPC();
+					nPc2.SetDefaults(439);
+					if (!NPC.downedGolemBoss)
+					{
+						args.Player.SendErrorMessage("Przywolanie bedzie mozliwe po pokonaniu Golema.");
+						break;
+					}
+
+					if (PowelderAPI.Utils.IsNpcOnWorld(nPc2.type))
+					{
+						args.Player.SendErrorMessage("Lunatic Cultist juz jest na swiecie.");
+						break;
+					}
+
+					int cost2 = 5000;
+					cost2 = Utils.CostCalc(args.Player, cost2);
+					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < cost2)
+					{
+						args.Player.SendErrorMessage(
+							"Nie stac cie na przywolanie Lunatic Cultist. [c/595959:(]Koszt {0} €[c/595959:)]", cost2);
+						break;
+					}
+
+					if (PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(1274)) < 1 ||
+					    PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(148)) < 5)
+					{
+						args.Player.SendErrorMessage("Nie masz wymaganych materialow w ekwipunku.");
+						args.Player.SendErrorMessage("Wymagane:  [i:1274] [i/s5:148]");
+						break;
+					}
+
+					PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(1274), 1);
+					PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(148), 5);
+					SurvivalCore.SrvPlayers[args.Player.Index].Money -= cost2;
+					TSPlayer.Server.SpawnNPC(nPc2.type, nPc2.FullName, 1, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendInfoMessage("{0} przywolal Lunatic Cultista.", args.Player.Name);
 					break;
 				}
-				if (Main.wofNPCIndex >= 0)
+				case "martians":
+				case "martian madness":
+				case "mm":
+				case "martian":
 				{
-					args.Player.SendErrorMessage("Wall of Flesh juz jest na swiecie.");
+					if (!NPC.downedGolemBoss)
+					{
+						args.Player.SendErrorMessage("Przywolanie bedzie mozliwe po pokonaniu Golema.");
+						break;
+					}
+
+					if (Main.invasionType != 0)
+					{
+						args.Player.SendErrorMessage("Na swiecie juz jest jakas inwazja.");
+						break;
+					}
+
+					int cost4 = 5500;
+					cost4 = Utils.CostCalc(args.Player, cost4);
+					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < cost4)
+					{
+						args.Player.SendErrorMessage(
+							"Nie stac cie na rozpoczecie Martian Madness. [c/595959:(]Koszt {0} €[c/595959:)]", cost4);
+					}
+					else if (PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(3118)) < 1 ||
+					         PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(530)) < 95)
+					{
+						args.Player.SendErrorMessage("Nie masz wymaganych materialow w ekwipunku.");
+						args.Player.SendErrorMessage("Wymagane:  [i:3118] [i/s5:148]");
+					}
+					else
+					{
+						PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(3118), 1);
+						PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(530), 95);
+						SurvivalCore.SrvPlayers[args.Player.Index].Money -= cost4;
+					}
+
 					break;
 				}
-				if (args.Player.Y / 16f < (float)(Main.maxTilesY - 205))
+				case "skeletron":
+				case "skele":
 				{
-					args.Player.SendErrorMessage("Musisz byc w piekle, aby przywolac Wall of Flesha.");
+					NPC nPc = new NPC();
+					nPc.SetDefaults(35);
+					if (!NPC.downedBoss3)
+					{
+						args.Player.SendErrorMessage("Przywolanie bedzie mozliwe po pierwszym pokonaniu Skeletrona.");
+						break;
+					}
+
+					if (PowelderAPI.Utils.IsNpcOnWorld(nPc.type))
+					{
+						args.Player.SendErrorMessage("Skeletron juz jest na swiecie.");
+						break;
+					}
+
+					if (Main.dayTime)
+					{
+						args.Player.SendErrorMessage("Przywolanie jest mozliwe tylko w nocy.");
+						break;
+					}
+
+					int cost = 1000;
+					cost = Utils.CostCalc(args.Player, cost);
+					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < cost)
+					{
+						args.Player.SendErrorMessage("Nie stac cie na przywolanie Skeletrona. Koszt {0} €.", cost);
+						break;
+					}
+
+					if (PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(1307)) < 1)
+					{
+						args.Player.SendErrorMessage("Nie masz wymaganych materialow w ekwipunku.");
+						args.Player.SendErrorMessage("Wymagane:  [i:1307]");
+						break;
+					}
+
+					PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(1307), 1);
+					SurvivalCore.SrvPlayers[args.Player.Index].Money -= cost;
+					TSPlayer.Server.SpawnNPC(nPc.type, nPc.FullName, 1, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendInfoMessage("{0} przywolal Skeletrona.", args.Player.Name);
 					break;
 				}
-				PowelderAPI.Utils.PlayerRemoveItems(args.Player, itemById, 1);
-				SurvivalCore.SrvPlayers[args.Player.Index].Money -= cost3;
-				NPC.SpawnWOF(new Vector2(args.Player.X, args.Player.Y));
-				TSPlayer.All.SendInfoMessage("{0} przywolal Wall of Flesha.", args.Player.Name);
-				break;
-			}
-			case "lunatic":
-			case "Lun":
-			case "lc":
-			case "lunatic cultist":
-			{
-				NPC nPc2 = new NPC();
-				nPc2.SetDefaults(439);
-				if (!NPC.downedGolemBoss)
-				{
-					args.Player.SendErrorMessage("Przywolanie bedzie mozliwe po pokonaniu Golema.");
-					break;
-				}
-				if (PowelderAPI.Utils.IsNpcOnWorld(nPc2.type))
-				{
-					args.Player.SendErrorMessage("Lunatic Cultist juz jest na swiecie.");
-					break;
-				}
-				int cost2 = 5000;
-				cost2 = Utils.CostCalc(args.Player, cost2);
-				if (SurvivalCore.SrvPlayers[args.Player.Index].Money < cost2)
-				{
-					args.Player.SendErrorMessage("Nie stac cie na przywolanie Lunatic Cultist. [c/595959:(]Koszt {0} €[c/595959:)]", cost2);
-					break;
-				}
-				if (PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(1274)) < 1 || PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(148)) < 5)
-				{
-					args.Player.SendErrorMessage("Nie masz wymaganych materialow w ekwipunku.");
-					args.Player.SendErrorMessage("Wymagane:  [i:1274] [i/s5:148]");
-					break;
-				}
-				PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(1274), 1);
-				PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(148), 5);
-				SurvivalCore.SrvPlayers[args.Player.Index].Money -= cost2;
-				TSPlayer.Server.SpawnNPC(nPc2.type, nPc2.FullName, 1, args.Player.TileX, args.Player.TileY);
-				TSPlayer.All.SendInfoMessage("{0} przywolal Lunatic Cultista.", args.Player.Name);
-				break;
-			}
-			case "martians":
-			case "martian madness":
-			case "mm":
-			case "martian":
-			{
-				if (!NPC.downedGolemBoss)
-				{
-					args.Player.SendErrorMessage("Przywolanie bedzie mozliwe po pokonaniu Golema.");
-					break;
-				}
-				if (Main.invasionType != 0)
-				{
-					args.Player.SendErrorMessage("Na swiecie juz jest jakas inwazja.");
-					break;
-				}
-				int cost4 = 5500;
-				cost4 = Utils.CostCalc(args.Player, cost4);
-				if (SurvivalCore.SrvPlayers[args.Player.Index].Money < cost4)
-				{
-					args.Player.SendErrorMessage("Nie stac cie na rozpoczecie Martian Madness. [c/595959:(]Koszt {0} €[c/595959:)]", cost4);
-				}
-				else if (PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(3118)) < 1 || PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(530)) < 95)
-				{
-					args.Player.SendErrorMessage("Nie masz wymaganych materialow w ekwipunku.");
-					args.Player.SendErrorMessage("Wymagane:  [i:3118] [i/s5:148]");
-				}
-				else
-				{
-				    PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(3118), 1);
-					PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(530), 95);
-					SurvivalCore.SrvPlayers[args.Player.Index].Money -= cost4;
-				}
-				break;
-			}
-			case "skeletron":
-			case "skele":
-			{
-				NPC nPc = new NPC();
-				nPc.SetDefaults(35);
-				if (!NPC.downedBoss3)
-				{
-					args.Player.SendErrorMessage("Przywolanie bedzie mozliwe po pierwszym pokonaniu Skeletrona.");
-					break;
-				}
-				if (PowelderAPI.Utils.IsNpcOnWorld(nPc.type))
-				{
-					args.Player.SendErrorMessage("Skeletron juz jest na swiecie.");
-					break;
-				}
-				if (Main.dayTime)
-				{
-					args.Player.SendErrorMessage("Przywolanie jest mozliwe tylko w nocy.");
-					break;
-				}
-				int cost = 1000;
-				cost = Utils.CostCalc(args.Player, cost);
-				if (SurvivalCore.SrvPlayers[args.Player.Index].Money < cost)
-				{
-					args.Player.SendErrorMessage("Nie stac cie na przywolanie Skeletrona. Koszt {0} €.", cost);
-					break;
-				}
-				if (PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(1307)) < 1)
-				{
-					args.Player.SendErrorMessage("Nie masz wymaganych materialow w ekwipunku.");
-					args.Player.SendErrorMessage("Wymagane:  [i:1307]");
-					break;
-				}
-				PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(1307), 1);
-				SurvivalCore.SrvPlayers[args.Player.Index].Money -= cost;
-				TSPlayer.Server.SpawnNPC(nPc.type, nPc.FullName, 1, args.Player.TileX, args.Player.TileY);
-				TSPlayer.All.SendInfoMessage("{0} przywolal Skeletrona.", args.Player.Name);
-				break;
-			}
 			}
 		}
 
@@ -530,27 +547,49 @@ namespace SurvivalCore
 			
 		public static void BoostCommand(CommandArgs args)
 		{
+
 			if (args.Parameters.Count < 1)
 			{
 				args.Player.SendErrorMessage("Uzycie: /boost <nazwa buffa/list>");
 			}
-			else if (args.Parameters[0] == "list")
+			else if (args.Parameters[0].ToLower() == "list")
 			{
 				List<string> list = new List<string>();
 				foreach (string key in avalibleBuffs.Keys)
 				{
-					//list.Add($"[c/{Colors[key]}:{key}]");
+					list.Add($"{key} - [c/ffff00:{avalibleBuffs[key].Value} €]");
 				}
 
-				args.Player.SendSuccessMessage($"Lista dostepnych kolorow:");
-				PaginationTools.SendPage(args.Player, 0, PaginationTools.BuildLinesFromTerms(list, null, ", ", 140), new PaginationTools.Settings
+				args.Player.SendMessage($"Lista dostepnych kolorow:", Color.Green);
+				PaginationTools.SendPage(args.Player, 0, PaginationTools.BuildLinesFromTerms(list, null, " | ", 140), new PaginationTools.Settings
 				{
 					IncludeHeader = false,
 					LineTextColor = new Color(192, 192, 192),
 					IncludeFooter = false,
 					NothingToDisplayString = "Error 404."
 				});
-				return;
+			}
+			else
+			{
+				string buff = string.Join(" ", args.Parameters).ToLower();
+				
+				if (avalibleBuffs.ContainsKey(buff))
+				{
+					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < avalibleBuffs[buff].Value)
+					{
+						args.Player.SendErrorMessage($"Nie stac cie na wykupienie boosta na serwerze. Koszt {avalibleBuffs[buff].Value} €");
+						return;;
+					}
+
+					args.Player.SendSuccessMessage($"Pomyslnie zboostowales serwer buffem {buff} na 2 godziny.");
+					TSPlayer.All.SendWarningMessage($"Booster {args.Player.Name} obdarowal serwer buffem {buff} na 2 godziny.");
+					SurvivalCore.BoostBuffType = avalibleBuffs[buff].Key;
+					SurvivalCore.BoostBuffEndTime = DateTime.Now.AddHours(2);
+					
+					return;	
+				}
+				args.Player.SendErrorMessage("Nie znaleziono podanego buffa. Lista pod /boost list");
+				
 			}
 		}
 	}

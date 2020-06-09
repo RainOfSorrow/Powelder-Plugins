@@ -86,9 +86,9 @@ namespace SurvivalCore.Economy.Shop
 				{
 					IncludeHeader = false,
 					LineTextColor = new Color(192, 192, 192),
-					FooterFormat = string.Format("Wpisz /sklep szukaj {0} {1}, aby zobaczyc nastepna strone", (cmd2 == null) ? "*" : cmd2, result3 + 1),
+					FooterFormat = string.Format("Wpisz \"/sklep szukaj {0} {1}\", aby zobaczyc nastepna strone", (cmd2 == null) ? "*" : cmd2, result3 + 1),
 					FooterTextColor = Color.Green,
-					NothingToDisplayString = "[c/00ff00:Nie znaleziono zadnego produktu. Wpisz /sklep szukaj *, aby otrzymac pelna liste produktow.]"
+					NothingToDisplayString = "[c/00ff00:Nie znaleziono zadnego produktu. Wpisz \"/sklep szukaj *\", aby otrzymac pelna liste produktow.]"
 				});
 				break;
 			}
@@ -136,8 +136,8 @@ namespace SurvivalCore.Economy.Shop
 					{
 						SurvivalCore.SrvPlayers[player.Index].Money -= num3;
 						args.Player.GiveItem(item3.type, amount);
-						args.Player.SendMessage($"Pomyslnie zakupiono [i:{item3.type}] w ilosci {amount}. Wydano {num3} {Economy.Config.ValueName}", Color.Gray);
-						args.Player.SendMessage($"[c/66ff66:Twoj nowy stan konta][c/595959::] {money - num3:N0} {Economy.Config.ValueName}", Color.Gray);
+						args.Player.SendSuccessMessage($"Pomyslnie zakupiono [i:{item3.type}] w ilosci {amount}. Wydano {num3} {Economy.Config.ValueName}");
+						args.Player.SendInfoMessage($"Twoj nowy stan konta: {money - num3:N0} {Economy.Config.ValueName}");
 					}
 					else
 					{
@@ -146,9 +146,9 @@ namespace SurvivalCore.Economy.Shop
 					break;
 				}
 				Product product4 = new Product(0, null, 0, 0, 0);
-				if (Economy.Products.Exists((Product x) => x.Name == cmd2))
+				if (Economy.Products.Exists(x => x.Name == cmd2))
 				{
-					product4 = Economy.Products.Find((Product x) => x.Name == cmd2);
+					product4 = Economy.Products.Find( x=> x.Name == cmd2);
 				}
 				if (product4.GetIndex() == 0)
 				{
@@ -174,7 +174,7 @@ namespace SurvivalCore.Economy.Shop
 				int money2 = SurvivalCore.SrvPlayers[player.Index].Money;
 				if (money2 < num4)
 				{
-					args.Player.SendErrorMessage("Nie stac cie na zakup {0} w ilosci {1}. [c/595959:(]Brakuje ci {2:N0} {3}[c/595959:)]", item4.Name, amount3, Math.Abs(money2 - num4), Economy.Config.ValueName);
+					args.Player.SendErrorMessage("Nie stac cie na zakup {0} w ilosci {1}. Brakuje ci {2:N0} {3}", item4.Name, amount3, Math.Abs(money2 - num4), Economy.Config.ValueName);
 				}
 				else if (args.Player.Dead)
 				{
@@ -184,8 +184,8 @@ namespace SurvivalCore.Economy.Shop
 				{
 					SurvivalCore.SrvPlayers[player.Index].Money -= num4;
 					args.Player.GiveItem(item4.type, amount3);
-					args.Player.SendMessage($"Pomyslnie zakupiono [c/66ff66:{item4.Name}] w ilosci [c/66ff66:{amount3}]. [c/595959:(]Wydano [c/66ff66:{num4:N0}] {Economy.Config.ValueName}[c/595959:)]", Color.Gray);
-					args.Player.SendMessage($"[c/66ff66:Twoj nowy stan konta][c/595959::] {money2 - num4:N0} {Economy.Config.ValueName}", Color.Gray);
+					args.Player.SendSuccessMessage($"Pomyslnie zakupiono [i:{item4.type}] w ilosci {amount3}. Wydano {num4:N0} {Economy.Config.ValueName}");
+					args.Player.SendInfoMessage($"Twoj nowy stan konta: {money2 - num4:N0} {Economy.Config.ValueName}");
 				}
 				else
 				{
@@ -219,16 +219,16 @@ namespace SurvivalCore.Economy.Shop
 					{
 						int.TryParse(text2, out result);
 					}
-					if (result > PlayerItemCount(args.Player, item))
+					if (result > PowelderAPI.Utils.PlayerItemCount(args.Player, item))
 					{
 						player.SendErrorMessage("Nie masz tylu {0} w ekwipunku.", item.Name);
 						break;
 					}
 					int num = result * product.GetSell();
 					SurvivalCore.SrvPlayers[player.Index].Money += num;
-					PlayerRemoveItems(args.Player, item, result);
-					args.Player.SendMessage($"Pomyslnie sprzedano [c/66ff66:{item.Name}] w ilosci [c/66ff66:{result}]. [c/595959:(]Zarobiono [c/66ff66:{num:N0}] {Economy.Config.ValueName}[c/595959:)]", Color.Gray);
-					args.Player.SendMessage($"[c/66ff66:Twoj nowy stan konta][c/595959::] {SurvivalCore.SrvPlayers[player.Index].Money:N0} {Economy.Config.ValueName}", Color.Gray);
+					PowelderAPI.Utils.PlayerRemoveItems(args.Player, item, result);
+					args.Player.SendSuccessMessage($"Pomyslnie sprzedano [i:{item.type}] w ilosci {result}. Zarobiono {num:N0} {Economy.Config.ValueName}");
+					args.Player.SendInfoMessage($"Twoj nowy stan konta: {SurvivalCore.SrvPlayers[player.Index].Money:N0} {Economy.Config.ValueName}");
 					break;
 				}
 				Product product2 = new Product(0, null, 0, 0, 0);
@@ -252,16 +252,16 @@ namespace SurvivalCore.Economy.Shop
 				{
 					int.TryParse(text2, out result2);
 				}
-				if (result2 > PlayerItemCount(args.Player, item2))
+				if (result2 > PowelderAPI.Utils.PlayerItemCount(args.Player, item2))
 				{
 					player.SendErrorMessage("Nie masz tylu {0} w ekwipunku.", item2.Name);
 					break;
 				}
 				int num2 = result2 * product2.GetSell();
 				SurvivalCore.SrvPlayers[player.Index].Money += num2;
-				PlayerRemoveItems(args.Player, item2, result2);
-				args.Player.SendMessage($"Pomyslnie sprzedano [c/66ff66:{item2.Name}] w ilosci [c/66ff66:{result2}]. [c/595959:(]Zarobiono [c/66ff66:{num2:N0}] {Economy.Config.ValueName}[c/595959:)]", Color.Gray);
-				args.Player.SendMessage($"[c/66ff66:Twoj nowy stan konta][c/595959::] {SurvivalCore.SrvPlayers[player.Index].Money:N0} {Economy.Config.ValueName}", Color.Gray);
+				PowelderAPI.Utils.PlayerRemoveItems(args.Player, item2, result2);
+				args.Player.SendSuccessMessage($"Pomyslnie sprzedano [i:{item2.type}] w ilosci {result2}. Zarobiono {num2:N0} {Economy.Config.ValueName}");
+				args.Player.SendInfoMessage($"Twoj nowy stan konta: {SurvivalCore.SrvPlayers[player.Index].Money:N0} {Economy.Config.ValueName}");
 				break;
 			}
 			}
@@ -292,10 +292,10 @@ namespace SurvivalCore.Economy.Shop
 			switch (text)
 			{
 			default:
-				args.Player.SendMessage("[c/66ff66:Sklep][c/595959::]", Color.Gray);
-				args.Player.SendMessage("add <ID/nazwa> <kupno> <sprzedaz>  - Dodawanie produktu", Color.Gray);
-				args.Player.SendMessage("del <index> - Usuwanie produktu", Color.Gray);
-				args.Player.SendMessage("edit <index> <kupno> <sprzedaz> - Edycja produktu", Color.Gray);
+				args.Player.SendMessage("Admin Sklep:", Color.Green);
+				args.Player.SendInfoMessage("add <ID/nazwa> <kupno> <sprzedaz>  - Dodawanie produktu");
+				args.Player.SendInfoMessage("del <index> - Usuwanie produktu");
+				args.Player.SendInfoMessage("edit <index> <kupno> <sprzedaz> - Edycja produktu");
 				break;
 			case "add":
 			{
