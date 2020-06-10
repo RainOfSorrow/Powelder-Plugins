@@ -581,7 +581,19 @@ namespace SurvivalCore
 						return;;
 					}
 
-					args.Player.SendSuccessMessage($"Pomyslnie zboostowales serwer buffem {buff} na 2 godziny.");
+					if ((DateTime.Now - SurvivalCore.SrvPlayers[args.Player.Index].BoostCooldown).Seconds > 0)
+					{
+						args.Player.SendErrorMessage($"Nastepny boost bedzie mozliwy za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[args.Player.Index].BoostCooldown)}");
+						return;;
+					}
+
+
+					SurvivalCore.SrvPlayers[args.Player.Index].Money -= avalibleBuffs[buff].Value;
+					
+					SurvivalCore.SrvPlayers[args.Player.Index].BoostCooldown = DateTime.Now.AddDays(2);
+					
+					args.Player.SendSuccessMessage($"Pomyslnie zboostowales serwer buffem {buff} na 2 godziny. Twoj nastepny boost bedzie mozliwy za 48h.");
+					args.Player.SendInfoMessage($"Twoj nowy stan konta: {SurvivalCore.SrvPlayers[args.Player.Index]} €");
 					TSPlayer.All.SendWarningMessage($"Booster {args.Player.Name} obdarowal serwer buffem {buff} na 2 godziny.");
 					SurvivalCore.BoostBuffType = avalibleBuffs[buff].Key;
 					SurvivalCore.BoostBuffEndTime = DateTime.Now.AddHours(2);

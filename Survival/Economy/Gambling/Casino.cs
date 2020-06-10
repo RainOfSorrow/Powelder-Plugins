@@ -40,12 +40,12 @@ namespace SurvivalCore.Economy.Gambling
 			{
 				if (!SurvivalCore.IsStatusBusy[args.Player.Index])
 				{
-					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < 75)
+					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < 85)
 					{
 						args.Player.SendErrorMessage("Nie stac cie na los.");
 						return;
 					}
-					SurvivalCore.SrvPlayers[args.Player.Index].Money -= 75;
+					SurvivalCore.SrvPlayers[args.Player.Index].Money -= 85;
 					object parameter = new object[2]
 					{
 						args.Player,
@@ -68,13 +68,13 @@ namespace SurvivalCore.Economy.Gambling
 				args.Player.SendMessage("Slots - Nagrody:", Color.Green);
 				args.Player.SendMessage(" [i:20]  - 100 €  [i:19] - 150 €\n" +
 				                             " [i:57] - 250 €  [i:175] - 400 €", Color.Yellow);
-				args.Player.SendMessage(" [i:382]  - 600 €  [i:1225] - 400 €\n" +
-				                             " [i:1006] - 450 €  [i:3467] - 500 €", Color.Yellow);
+				args.Player.SendMessage(" [i:382]  - 600 €  [i:1225] - 850 €\n" +
+				                             " [i:1006] - 1150 €  [i:3467] - 1400 €", Color.Yellow);
 			}
 			else
 			{
 				args.Player.SendMessage("Slots - Zasady:", Color.Green);
-				args.Player.SendMessage("Aby zaczac losowanie wpisz /kasyno slots start. Koszt za kazdorazowy los 75 €. Wylosowane zostana 3 pola", Color.Yellow);
+				args.Player.SendMessage("Aby zaczac losowanie wpisz /kasyno slots start. Koszt za kazdorazowy los 85 €. Wylosowane zostana 3 pola", Color.Yellow);
 				args.Player.SendMessage("ze sztabkami. Jezeli wszystkie pola beda takie same, otrzymasz nagrode - /kasyno slots nagrody. Jezeli", Color.Yellow);
 				args.Player.SendMessage("tylko dwa pola beda takie same, to otrzymasz polowe nagrody.", Color.Yellow);
 			}
@@ -82,32 +82,45 @@ namespace SurvivalCore.Economy.Gambling
 
 		private static void SlotsThread(object packet)
 		{
-			TSPlayer tSPlayer = (TSPlayer)((Array)packet).GetValue(0);
-			UserAccount plr = (UserAccount)((Array)packet).GetValue(1);
-			byte b = (byte)tSPlayer.Index;
-			SurvivalCore.IsStatusBusy[b] = true;
-			Slots slots = new Slots();
-			for (int i = 1; i != 62; i++)
+			try
 			{
-				if (TShock.Players[b] != tSPlayer || TShock.ShuttingDown)
+				TSPlayer tSPlayer = (TSPlayer) ((Array) packet).GetValue(0);
+				UserAccount plr = (UserAccount) ((Array) packet).GetValue(1);
+				byte b = (byte) tSPlayer.Index;
+				SurvivalCore.IsStatusBusy[b] = true;
+				Slots slots = new Slots();
+				for (int i = 1; i != 62; i++)
 				{
-					QueryPlr.SetMoney(plr, DataBase.GetSrvPlayer(plr).Money + 75);
-					SurvivalCore.IsStatusBusy[b] = false;
-					return;
+					if (TShock.Players[b] != tSPlayer || TShock.ShuttingDown)
+					{
+						QueryPlr.SetMoney(plr, DataBase.GetSrvPlayer(plr).Money + 85);
+						SurvivalCore.IsStatusBusy[b] = false;
+						return;
+					}
+
+					slots.MoveSlots();
+					tSPlayer.SendData(PacketTypes.Status, slots.GetStatus(), 0 , 3);
+					Thread.Sleep(22 * (int) (i * 0.3));
 				}
-				slots.MoveSlots();
-				tSPlayer.SendData(PacketTypes.Status, slots.GetStatus());
-				Thread.Sleep(22 * (int)((double)(float)i * 0.3));
+
+				tSPlayer.SendMessage(
+					$"[i:3312] [c/595959:;] [c/9f339f:Kasyno] [c/595959:;] Wygrales {slots.GetResult()} {Economy.Config.ValueName}",
+					new Color(205, 101, 205));
+				SurvivalCore.SrvPlayers[b].Money += slots.GetResult();
+				tSPlayer.SendData(PacketTypes.Status, slots.GetStatus(true), 0, 3);
+				if (slots.Special() != null)
+				{
+					TSPlayer.All.SendMessage(string.Format(slots.Special(), tSPlayer.Name), new Color(205, 101, 205));
+				}
+
+				Thread.Sleep(4000);
+				SurvivalCore.IsStatusBusy[b] = false;
+
 			}
-			tSPlayer.SendMessage($"[i:3312] [c/595959:;] [c/9f339f:Kasyno] [c/595959:;] Wygrales {slots.GetResult()} {Economy.Config.ValueName}", new Color(205, 101, 205));
-			SurvivalCore.SrvPlayers[b].Money += slots.GetResult();
-			tSPlayer.SendData(PacketTypes.Status, slots.GetStatus(true), 0 , 3);
-			if (slots.Special() != null)
+			catch (Exception)
 			{
-				TSPlayer.All.SendMessage(string.Format(slots.Special(), tSPlayer.Name), new Color(205, 101, 205));
+				//Ignore
 			}
-			Thread.Sleep(4000);
-			SurvivalCore.IsStatusBusy[b] = false;
 		}
 	}
 }

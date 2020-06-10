@@ -1,4 +1,6 @@
 using System;
+using Microsoft.Xna.Framework;
+using TShockAPI;
 
 namespace SurvivalCore
 {
@@ -13,6 +15,7 @@ namespace SurvivalCore
 		public string NickColor;
 
 		public int Deaths;
+		
 
 		public int Money;
 

@@ -227,6 +227,12 @@ namespace PowelderAPI
 					return null;
 			}
 		}
+		
+		public static string ExpireCountDown(DateTime time)
+		{
+			TimeSpan timeSpan = time - DateTime.Now;
+			return $"{(int)timeSpan.TotalDays}d {timeSpan.Hours}h {timeSpan.Minutes}min {timeSpan.Seconds}sec";
+		}
 	}
 
 }

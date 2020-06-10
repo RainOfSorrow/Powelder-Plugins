@@ -18,7 +18,7 @@ namespace SurvivalCore.Economy.Gambling
 			Crown
 		}
 
-		private static readonly Random Random = new Random(DateTime.UtcNow.Millisecond * DateTime.UtcNow.Minute / DateTime.UtcNow.Hour);
+		private static readonly Random Random = new Random(DateTime.UtcNow.Millisecond * DateTime.UtcNow.Minute);
 
 		private int[] _pool1 = new int[20];
 
@@ -199,15 +199,15 @@ namespace SurvivalCore.Economy.Gambling
 		{
 			if (_pool1[_actualpool1] == 8 && _pool2[_actualpool2] == 8 && _pool3[_actualpool3] == 8)
 			{
-				return "[i:3312] [c/595959:;] [c/9f339f:Kasyno] [c/595959:;] {0} trafil [c/9f339f:3x♕] w slotach!!!";
+				return "[i:3312] [c/595959:;] [c/9f339f:Kasyno] [c/595959:;] {0} trafil 3x[i:3467] w slotach!!!";
 			}
 			if ((_pool1[_actualpool1] == 8 && _pool2[_actualpool2] == 8) || (_pool1[_actualpool1] == 8 && _pool3[_actualpool3] == 8) || (_pool2[_actualpool2] == 8 && _pool3[_actualpool3] == 8))
 			{
-				return "[i:3312] [c/595959:;] [c/9f339f:Kasyno] [c/595959:;] {0} trafil [c/9f339f:2x♕] w slotach!";
+				return "[i:3312] [c/595959:;] [c/9f339f:Kasyno] [c/595959:;] {0} trafil 2x[i:3467] w slotach!";
 			}
 			if (_pool1[_actualpool1] == 7 && _pool2[_actualpool2] == 7 && _pool3[_actualpool3] == 7)
 			{
-				return "[i:3312] [c/595959:;] [c/9f339f:Kasyno] [c/595959:;] {0} trafil [c/9f339f:3x☯] w slotach!";
+				return "[i:3312] [c/595959:;] [c/9f339f:Kasyno] [c/595959:;] {0} trafil 3x[i:1006] w slotach!";
 			}
 			return null;
 		}
@@ -223,17 +223,17 @@ namespace SurvivalCore.Economy.Gambling
 				case 2:
 					return 150;
 				case 3:
-					return 200;
-				case 4:
 					return 250;
-				case 5:
-					return 350;
-				case 6:
+				case 4:
 					return 400;
+				case 5:
+					return 600;
+				case 6:
+					return 850;
 				case 7:
-					return 450;
+					return 1150;
 				case 8:
-					return 500;
+					return 1400;
 				}
 			}
 			if (_pool1[_actualpool1] == _pool2[_actualpool2] || _pool1[_actualpool1] == _pool3[_actualpool3])
@@ -245,39 +245,39 @@ namespace SurvivalCore.Economy.Gambling
 				case 2:
 					return 75;
 				case 3:
-					return 100;
-				case 4:
 					return 125;
-				case 5:
-					return 175;
-				case 6:
+				case 4:
 					return 200;
+				case 5:
+					return 300;
+				case 6:
+					return 425;
 				case 7:
-					return 225;
+					return 575;
 				case 8:
-					return 250;
+					return 700;
 				}
 			}
 			if (_pool2[_actualpool2] == _pool3[_actualpool3])
 			{
 				switch (_pool2[_actualpool2])
 				{
-				default:
-					return 50;
-				case 2:
-					return 75;
-				case 3:
-					return 100;
-				case 4:
-					return 125;
-				case 5:
-					return 175;
-				case 6:
-					return 200;
-				case 7:
-					return 225;
-				case 8:
-					return 250;
+					default:
+						return 50;
+					case 2:
+						return 75;
+					case 3:
+						return 125;
+					case 4:
+						return 200;
+					case 5:
+						return 300;
+					case 6:
+						return 425;
+					case 7:
+						return 575;
+					case 8:
+						return 700;
 				}
 			}
 			return 0;
