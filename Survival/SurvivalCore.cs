@@ -26,8 +26,7 @@ namespace SurvivalCore
 		public static List<string> Excluded = new List<string>
 		{
 			"Iwobos",
-			"Flame",
-			"Momo"
+			"Flame"
 		};
 
 		public static byte BoostBuffType = 0;
@@ -110,8 +109,8 @@ namespace SurvivalCore
 			Commands.ChatCommands.Add(new Command("server.gracz", SrvCommands.Top, "top"));
 			Commands.ChatCommands.Add(new Command("server.gracz", SrvCommands.Przywolywanie, "przywolaj", "przyw"));
 			Commands.ChatCommands.Add(new Command("server.booster", SrvCommands.BoostCommand, "boost"));
-			Commands.ChatCommands.Add(new Command("server.gracz", ExtendedChat.CommandItem, "prefixitem", "pitem"));
-			Commands.ChatCommands.Add(new Command("server.gracz", ExtendedChat.CommandNick, "nickcolor", "ncolor"));
+			Commands.ChatCommands.Add(new Command("server.gracz", ExtendedChat.CommandPrefixItem, "prefixitem", "pitem"));
+			Commands.ChatCommands.Add(new Command("server.gracz", ExtendedChat.CommandNickColor, "nickcolor", "ncolor"));
 			Commands.ChatCommands.Add(new Command("server.debug", ExtendedChat.Debug, "srvdebug"));
 
 			//Economy Hooks
@@ -359,8 +358,6 @@ namespace SurvivalCore
 					return;
 				}
 				
-				Console.WriteLine("Control");
-
 				for (int i = 0; i < 255; i++)
 				{
 					if (TShock.Players[i] != null)
@@ -587,11 +584,11 @@ namespace SurvivalCore
 							_cleancount--;
 							if (_cleancount == 30)
 							{
-								TSPlayer.All.SendMessage($"[i:536] [c/595959:⮘] [c/0099ff:Clean Bot] [c/595959:⮚] Za [c/0099ff:{_cleancount}] sekund zostana usuniete wszystkie przedmioty z ziemi.", new Color(102, 153, 255));
+								TSPlayer.All.SendMessage($"[i:536] [c/595959:;] [c/0099ff:Clean Bot] [c/595959:;] Za [c/0099ff:{_cleancount}] sekund zostana usuniete wszystkie przedmioty z ziemi.", new Color(102, 153, 255));
 							}
 							else if (_cleancount == 5)
 							{
-								TSPlayer.All.SendMessage($"[i:536] [c/595959:⮘] [c/0099ff:Clean Bot] [c/595959:⮚] Za [c/0099ff:{_cleancount}] sekund zostana usuniete wszystkie przedmioty z ziemi.", new Color(102, 153, 255));
+								TSPlayer.All.SendMessage($"[i:536] [c/595959:;] [c/0099ff:Clean Bot] [c/595959:;] Za [c/0099ff:{_cleancount}] sekund zostana usuniete wszystkie przedmioty z ziemi.", new Color(102, 153, 255));
 							}
 							else if (_cleancount == 0)
 							{

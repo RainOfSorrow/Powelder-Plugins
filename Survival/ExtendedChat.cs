@@ -108,7 +108,7 @@ namespace SurvivalCore
 
 		}
 
-		public static void CommandItem(TShockAPI.CommandArgs args)
+		public static void CommandPrefixItem(TShockAPI.CommandArgs args)
 		{
 			int money = SurvivalCore.SrvPlayers[args.Player.Index].Money;
 			if (args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type == 0)
@@ -155,7 +155,7 @@ SurvivalCore.SrvPlayers[args.Player.Index].NickColor ?? PowelderAPI.Utils.GetGro
 			TShock.Players[who].SendMessage($"Oto twoj nowy item w prefixie: [i:{num2}]", Color.Gray);
 		}
 
-		public static void CommandNick(TShockAPI.CommandArgs args)
+		public static void CommandNickColor(TShockAPI.CommandArgs args)
 		{
 			int money = SurvivalCore.SrvPlayers[args.Player.Index].Money;
 			string text = "0:0=1";

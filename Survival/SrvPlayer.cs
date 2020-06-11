@@ -29,19 +29,20 @@ namespace SurvivalCore
 		public DateTime BoostCooldown;
 
 
-		public SrvPlayer(int id, string nick, int prefixitem, string nickcolor, int deaths, int money, string statusoptions, int pk, int pd, long pt)
+		public SrvPlayer(int id, string nick, int prefixItem, string nickColor, int deaths, int money, string statusOptions, int pk, int pd, long pt, DateTime bc)
 		{
 			Id = id;
 			Nick = nick;
-			PrefixItem = prefixitem;
-			NickColor = nickcolor;
+			PrefixItem = prefixItem;
+			NickColor = nickColor;
 			Deaths = deaths;
 			Money = money;
-			StatusOptions = statusoptions;
+			StatusOptions = statusOptions;
 			PvpKills = pk;
 			PvpDeaths = pd;
 			PlayTime = pt;
 			IsVanished = false;
+			BoostCooldown = bc;
 		}
 	}
 }

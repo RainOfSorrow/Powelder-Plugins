@@ -20,86 +20,124 @@ namespace SurvivalCore
 			{
 				text = args.Parameters[0].ToLower();
 			}
+
 			switch (text)
 			{
-			default:
-				args.Player.SendMessage("[c/66FF66:Uzycie]: /top <kasa/pvp/czasgry>", Color.Gray);
-				break;
-			case "kasa":
-			{
-				Dictionary<string, int> topKasa = QueryPlr.GetTopKasa(args.Player.Name);
-				int num3 = 1;
-				Color color3 = Color.Gold;
-				args.Player.SendMessage("               [c/595959:«]Top 5 - Kasa[c/595959:»]", Color.LightGray);
-				foreach (string key in topKasa.Keys)
+				default:
+					args.Player.SendMessage("[c/66FF66:Uzycie]: /top <kasa/pvp/czasgry>", Color.Gray);
+					break;
+				case "kasa":
 				{
-					args.Player.SendMessage(string.Format("{0}# [c/595959:-] {1} [c/595959:(]{2} €[c/595959:)]", num3, key, topKasa[key].ToString("N0")), color3);
-					num3++;
-					switch (num3)
+					Dictionary<string, int> topKasa = QueryPlr.GetTopKasa(args.Player.Name);
+					int num3 = 1;
+					Color color3 = Color.Gold;
+					args.Player.SendMessage("               [c/595959:«]Top 5 - Kasa[c/595959:»]", Color.LightGray);
+					foreach (string key in topKasa.Keys)
 					{
-					case 2:
-						color3 = Color.Silver;
-						break;
-					case 3:
-						color3 = new Color(205, 127, 50);
-						break;
-					default:
-						color3 = Color.Gray;
-						break;
+						args.Player.SendMessage(
+							string.Format("{0}# [c/595959:-] {1} [c/595959:(]{2} €[c/595959:)]", num3, key,
+								topKasa[key].ToString("N0")), color3);
+						num3++;
+						switch (num3)
+						{
+							case 2:
+								color3 = Color.Silver;
+								break;
+							case 3:
+								color3 = new Color(205, 127, 50);
+								break;
+							default:
+								color3 = Color.Gray;
+								break;
+						}
 					}
+
+					break;
 				}
-				break;
-			}
-			case "pvp":
-			{
-				Dictionary<string, double[]> topPvp = DataBase.GetTopPvp(args.Player.Name);
-				int num2 = 1;
-				Color color2 = Color.Gold;
-				args.Player.SendMessage("              [c/595959:«]Top 5 - PvP[c/595959:»]", Color.LightGray);
-				foreach (string key2 in topPvp.Keys)
+				case "pvp":
 				{
-					args.Player.SendMessage($"{num2}# [c/595959:-] {key2} [c/595959:(]{topPvp[key2][0]}/{topPvp[key2][1]} | {topPvp[key2][2]}[c/595959:)]", color2);
-					num2++;
-					switch (num2)
+					Dictionary<string, double[]> topPvp = DataBase.GetTopPvp(args.Player.Name);
+					int num2 = 1;
+					Color color2 = Color.Gold;
+					args.Player.SendMessage("              [c/595959:«]Top 5 - PvP[c/595959:»]", Color.LightGray);
+					foreach (string key2 in topPvp.Keys)
 					{
-					case 2:
-						color2 = Color.Silver;
-						break;
-					case 3:
-						color2 = new Color(205, 127, 50);
-						break;
-					default:
-						color2 = Color.Gray;
-						break;
+						args.Player.SendMessage(
+							$"{num2}# [c/595959:-] {key2} [c/595959:(]{topPvp[key2][0]}/{topPvp[key2][1]} | {topPvp[key2][2]}[c/595959:)]",
+							color2);
+						num2++;
+						switch (num2)
+						{
+							case 2:
+								color2 = Color.Silver;
+								break;
+							case 3:
+								color2 = new Color(205, 127, 50);
+								break;
+							default:
+								color2 = Color.Gray;
+								break;
+						}
 					}
+
+					break;
 				}
-				break;
-			}
-			case "czasgry":
-			{
-				Dictionary<string, TimeSpan> topCzasGry = DataBase.GetTopCzasGry(args.Player.Name);
-				int num = 1;
-				Color color = Color.Gold;
-				args.Player.SendMessage("             [c/595959:«]Top 5 - Czas Gry[c/595959:»]", Color.LightGray);
-				foreach (string key3 in topCzasGry.Keys)
+				case "czasgry":
 				{
-					args.Player.SendMessage($"{num}# [c/595959:-] {key3} [c/595959:(]{Math.Round(topCzasGry[key3].TotalHours, 1)} h[c/595959:)]", color);
-					num++;
-					switch (num)
+					Dictionary<string, TimeSpan> topCzasGry = DataBase.GetTopCzasGry(args.Player.Name);
+					int num = 1;
+					Color color = Color.Gold;
+					args.Player.SendMessage("             [c/595959:«]Top 5 - Czas Gry[c/595959:»]", Color.LightGray);
+					foreach (string key3 in topCzasGry.Keys)
 					{
-					case 2:
-						color = Color.Silver;
-						break;
-					case 3:
-						color = new Color(205, 127, 50);
-						break;
-					default:
-						color = Color.Gray;
-						break;
+						args.Player.SendMessage(
+							$"{num}# [c/595959:-] {key3} [c/595959:(]{Math.Round(topCzasGry[key3].TotalHours, 1)} h[c/595959:)]",
+							color);
+						num++;
+						switch (num)
+						{
+							case 2:
+								color = Color.Silver;
+								break;
+							case 3:
+								color = new Color(205, 127, 50);
+								break;
+							default:
+								color = Color.Gray;
+								break;
+						}
 					}
+
+					break;
 				}
-				break;
-			}
+				case "zgony":
+				{
+					Dictionary<string, int> topZgony = DataBase.GetTopZgony(args.Player.Name);
+					int num = 1;
+					Color color = Color.Gold;
+					args.Player.SendMessage("               [c/595959:«]Top 5 - Zgony[c/595959:»]", Color.LightGray);
+					foreach (string key in topZgony.Keys)
+					{
+						args.Player.SendMessage(
+							$"{num}# [c/595959:-] {key} [c/595959:(]{topZgony[key]} h[c/595959:)]",
+							color);
+						num++;
+						switch (num)
+						{
+							case 2:
+								color = Color.Silver;
+								break;
+							case 3:
+								color = new Color(205, 127, 50);
+								break;
+							default:
+								color = Color.Gray;
+								break;
+						}
+					}
+
+					break;
+				}
 			}
 		}
 
@@ -493,11 +531,11 @@ namespace SurvivalCore
 		{
 			{
 				"iron skin", //pelna nazwa
-				new KeyValuePair<byte, int>(5, 100) //ID
+				new KeyValuePair<byte, int>(5, 100) //ID i Koszt
 			},
 			{
 				"regeneration",
-				new KeyValuePair<byte, int>(3, 100) 
+				new KeyValuePair<byte, int>(2, 100) 
 			},
 			{
 				"well fed",
@@ -541,7 +579,7 @@ namespace SurvivalCore
 			},
 			{
 				"night owl",
-				new KeyValuePair<byte, int>(79, 100)
+				new KeyValuePair<byte, int>(12, 100)
 			},
 		};
 			
@@ -581,9 +619,15 @@ namespace SurvivalCore
 						return;;
 					}
 
-					if ((DateTime.Now - SurvivalCore.SrvPlayers[args.Player.Index].BoostCooldown).Seconds > 0)
+					if ((SurvivalCore.SrvPlayers[args.Player.Index].BoostCooldown - DateTime.Now).Seconds > 0)
 					{
 						args.Player.SendErrorMessage($"Nastepny boost bedzie mozliwy za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[args.Player.Index].BoostCooldown)}");
+						return;;
+					}
+
+					if (SurvivalCore.BoostBuffType != 0)
+					{
+						args.Player.SendErrorMessage($"Aktualnie jest aktywny juz jeden boost. Minie on za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.BoostBuffEndTime)}");
 						return;;
 					}
 
@@ -593,7 +637,7 @@ namespace SurvivalCore
 					SurvivalCore.SrvPlayers[args.Player.Index].BoostCooldown = DateTime.Now.AddDays(2);
 					
 					args.Player.SendSuccessMessage($"Pomyslnie zboostowales serwer buffem {buff} na 2 godziny. Twoj nastepny boost bedzie mozliwy za 48h.");
-					args.Player.SendInfoMessage($"Twoj nowy stan konta: {SurvivalCore.SrvPlayers[args.Player.Index]} €");
+					args.Player.SendInfoMessage($"Twoj nowy stan konta: {SurvivalCore.SrvPlayers[args.Player.Index].Money} €");
 					TSPlayer.All.SendWarningMessage($"Booster {args.Player.Name} obdarowal serwer buffem {buff} na 2 godziny.");
 					SurvivalCore.BoostBuffType = avalibleBuffs[buff].Key;
 					SurvivalCore.BoostBuffEndTime = DateTime.Now.AddHours(2);
