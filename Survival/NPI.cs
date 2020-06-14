@@ -10,6 +10,7 @@ using Terraria.DataStructures;
 using Terraria.Localization;
 using TShockAPI;
 using System.Runtime.InteropServices;
+using PowelderAPI;
 
 namespace SurvivalCore
 {
@@ -265,12 +266,21 @@ namespace SurvivalCore
 						isBoss ? ("przywolanie " + nPc.FullName) : ("rozpoczecie " + GetInvasion(npcid)), cost);
 					if (SpawnItemId(npcid) != -1)
 					{
-						PowelderAPI.Utils.GiveItemWithoutSpawn(tSPlayer, TShock.Utils.GetItemById(SpawnItemId(npcid)),
-							1);
+						tSPlayer.GiveItem(SpawnItemId(npcid), 1);
 					}
 
 					return true;
 				}
+
+				if ((SurvivalCore.SrvPlayers[tSPlayer.Index].BossCooldown - DateTime.Now).TotalSeconds > 0)
+				{
+					tSPlayer.GiveItem(SpawnItemId(npcid), 1);
+					tSPlayer.SendErrorMessage($"Musisz odczekac jakis czas, aby moc zrespic kolejnego bossa. Mozliwe to bedzie za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[tSPlayer.Index].BossCooldown)}");
+					return true;
+				}
+
+				
+				SurvivalCore.SrvPlayers[tSPlayer.Index].BossCooldown = DateTime.Now.AddMinutes(30);
 
 				SurvivalCore.SrvPlayers[tSPlayer.Index].Money -= cost;
 				TSPlayer.All.SendInfoMessage("{0} {1}.", tSPlayer.Name,
@@ -386,9 +396,14 @@ namespace SurvivalCore
 			return false;
 		}
 
+		//Classic Tshock's death implementation.
+		//Death with no message on chat or if you want to know who died, you can turn on messages.
+		//Slightly modified death messages.
 		public static void PlayerDeath(object sender, GetDataHandlers.KillMeEventArgs args)
 		{
-
+			if (args.Handled)
+				return;
+			
 			args.Player.Dead = true;
 			args.Player.RespawnTimer = TShock.Config.RespawnSeconds;
 
@@ -467,20 +482,23 @@ namespace SurvivalCore
 				{
 					if (tSPlayer?.TPlayer.hostile ?? false)
 					{
-						tSPlayer.SendMessage($"[c/66ff66:{TShock.Players[args.PlayerDeathReason._sourcePlayerIndex].Name}] [i/p{args.PlayerDeathReason._sourceItemPrefix}:{args.PlayerDeathReason._sourceItemType}] [c/595959:→] [c/ff6666:{args.Player.Name}] [i:{num2}]", Color.SlateGray);
+						tSPlayer.SendMessage($"[c/66ff66:{TShock.Players[args.PlayerDeathReason._sourcePlayerIndex].Name}] [i/p{args.PlayerDeathReason._sourceItemPrefix}:{args.PlayerDeathReason._sourceItemType}] [c/595959:→] [c/ff6666:{args.Player.Name}] [i:{num2}]", Color.DarkRed);
 					}
 				}
 				SurvivalCore.SrvPlayers[args.Player.Index].PvpDeaths++;
 				SurvivalCore.SrvPlayers[args.PlayerDeathReason._sourcePlayerIndex].PvpKills++;
 			}
+			
+			
 			else
 			{
+
 				TSPlayer[] players2 = TShock.Players;
 				foreach (TSPlayer tSPlayer2 in players2)
 				{
 					if (tSPlayer2 != null && SurvivalCore.IsDeathMessage[tSPlayer2.Index])
 					{
-						tSPlayer2.SendMessage(string.Format("[i:{0}] {1} ", num2, args.PlayerDeathReason.GetDeathText("[c/ff6666:" + args.Player.Name + "]")), Color.Gray);
+						tSPlayer2.SendMessage(args.PlayerDeathReason.GetDeathText(args.Player.Name).ToString(), Color.DarkRed);
 					}
 				}
 				SurvivalCore.SrvPlayers[args.Player.Index].Deaths++;
@@ -568,6 +586,37 @@ namespace SurvivalCore
 				return 4988;
 			default:
 				return 0;
+			}
+		}
+
+		//Sticky Bomb, bomb and Fish bomb are available but there's a cooldown that lasts 7 seconds.
+		public static void NewProjectile(object sender, GetDataHandlers.NewProjectileEventArgs e)
+		{
+			if (e.Handled)
+				return;
+			
+			
+			if (e.Type == 28 || e.Type == 37 || e.Type == 519 || e.Type == 773)
+			{
+				if ((SurvivalCore.SrvPlayers[e.Player.Index].BombCooldown - DateTime.Now).TotalSeconds > 0)
+				{
+					e.Player.SendErrorMessage($"Nie za szybko z ladunkiem kolego. Musisz odczekac {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[e.Player.Index].BombCooldown)}");
+					
+					if (e.Type == 28)
+						e.Player.GiveItem(166, 1);
+					if (e.Type == 37)
+						e.Player.GiveItem(235, 1);
+					if (e.Type == 519)
+						e.Player.GiveItem(3196, 1);
+					if (e.Type == 773)
+						e.Player.GiveItem(4423, 1);
+					
+					e.Player.RemoveProjectile(e.Identity, e.Owner);
+					e.Handled = true;
+					return;
+				}
+				
+				SurvivalCore.SrvPlayers[e.Player.Index].BombCooldown = DateTime.Now.AddSeconds(5);
 			}
 		}
 	}

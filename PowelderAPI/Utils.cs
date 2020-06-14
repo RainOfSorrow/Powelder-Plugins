@@ -52,6 +52,7 @@ namespace PowelderAPI
 			NetMessage.SendData(5, plr.Index, -1, NetworkText.FromLiteral(plr.TPlayer.inventory[num].Name), plr.Index, num, (int)plr.TPlayer.inventory[num].prefix);
 		}
 
+		
 		public static void GiveItemWithoutSpawn(TSPlayer plr, Item item, int amount)
 		{
 			if (item.maxStack > 1)
@@ -212,17 +213,17 @@ namespace PowelderAPI
 			switch (group)
 			{
 				case "Xedlefix":
-					return "[c/595959:;][c/" + Utils.GetGroupColor(group) + ":Zalozyciel][c/595959:;] ";
+					return "[c/595959:;][c/" + GetGroupColor(group) + ":Zalozyciel][c/595959:;] ";
 				case "Iwobos":
-					return "[c/595959:;][c/" + Utils.GetGroupColor(group) + ":Zalozyciel][c/595959:;] ";
+					return "[c/595959:;][c/" + GetGroupColor(group) + ":Zalozyciel][c/595959:;] ";
 				case "GlobalMod":
-					return "[c/595959:;][c/" + Utils.GetGroupColor(group) + ":GlobalMod][c/595959:;] ";
+					return "[c/595959:;][c/" + GetGroupColor(group) + ":GlobalMod][c/595959:;] ";
 				case "Moderator":
-					return "[c/595959:;][c/" + Utils.GetGroupColor(group) + ":Mod][c/595959:;] ";
+					return "[c/595959:;][c/" + GetGroupColor(group) + ":Mod][c/595959:;] ";
 				case "JuniorMod":
-					return "[c/595959:;][c/" + Utils.GetGroupColor(group) + ":JuniorMod][c/595959:;] ";
+					return "[c/595959:;][c/" + GetGroupColor(group) + ":JuniorMod][c/595959:;] ";
 				case "Special":
-					return "[c/595959:;][c/" + Utils.GetGroupColor(group) + ":Special][c/595959:;] ";
+					return "[c/595959:;][c/" + GetGroupColor(group) + ":Special][c/595959:;] ";
 				default:
 					return null;
 			}
@@ -231,7 +232,7 @@ namespace PowelderAPI
 		public static string ExpireCountDown(DateTime time)
 		{
 			TimeSpan timeSpan = time - DateTime.Now;
-			return $"{(int)timeSpan.TotalDays}d {timeSpan.Hours}h {timeSpan.Minutes}min {timeSpan.Seconds}sec";
+			return $"{((int)timeSpan.TotalDays > 0 ? timeSpan.TotalDays + "d " : null )}{(timeSpan.Hours > 0 ? timeSpan.Hours + "h " : null)}{(timeSpan.Minutes > 0 ? timeSpan.Minutes + "min " : null)}{(timeSpan.Seconds > 0 ? timeSpan.Seconds + "sec " : null)}";
 		}
 	}
 

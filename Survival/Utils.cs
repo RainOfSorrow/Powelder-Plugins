@@ -100,7 +100,7 @@ namespace SurvivalCore
 			{
 				cost = (int)(cost * 0.6);
 			}
-			else if (who.HasPermission("isSpecial"))
+			else if (who.HasPermission("isBooster"))
 			{
 				cost = (int)(cost * 0.5);
 			}

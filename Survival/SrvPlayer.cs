@@ -27,9 +27,12 @@ namespace SurvivalCore
 		public long PlayTime;
 
 		public DateTime BoostCooldown;
+		public DateTime BossCooldown;
+
+		public DateTime BombCooldown;
 
 
-		public SrvPlayer(int id, string nick, int prefixItem, string nickColor, int deaths, int money, string statusOptions, int pk, int pd, long pt, DateTime bc)
+		public SrvPlayer(int id, string nick, int prefixItem, string nickColor, int deaths, int money, string statusOptions, int pk, int pd, long pt, DateTime bc, DateTime bossc)
 		{
 			Id = id;
 			Nick = nick;
@@ -43,6 +46,9 @@ namespace SurvivalCore
 			PlayTime = pt;
 			IsVanished = false;
 			BoostCooldown = bc;
+			BossCooldown = bossc;
+			
+			BombCooldown = DateTime.Now;
 		}
 	}
 }

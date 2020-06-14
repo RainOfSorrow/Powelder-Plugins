@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using MySql.Data.MySqlClient;
 using Terraria;
 using Terraria.ID;
 using TerrariaApi.Server;
@@ -108,7 +109,7 @@ namespace SurvivalCore
 			Commands.ChatCommands.Add(new Command("server.gracz", SrvCommands.GetPlayTime, "czasgry"));
 			Commands.ChatCommands.Add(new Command("server.gracz", SrvCommands.Top, "top"));
 			Commands.ChatCommands.Add(new Command("server.gracz", SrvCommands.Przywolywanie, "przywolaj", "przyw"));
-			Commands.ChatCommands.Add(new Command("server.booster", SrvCommands.BoostCommand, "boost"));
+			Commands.ChatCommands.Add(new Command("server.isBooster", SrvCommands.BoostCommand, "boost"));
 			Commands.ChatCommands.Add(new Command("server.gracz", ExtendedChat.CommandPrefixItem, "prefixitem", "pitem"));
 			Commands.ChatCommands.Add(new Command("server.gracz", ExtendedChat.CommandNickColor, "nickcolor", "ncolor"));
 			Commands.ChatCommands.Add(new Command("server.debug", ExtendedChat.Debug, "srvdebug"));
@@ -132,12 +133,15 @@ namespace SurvivalCore
 			ServerApi.Hooks.GamePostInitialize.Register(this, PostInitialize);
 			ServerApi.Hooks.NetSendData.Register(this, OnSendData);
 			GetDataHandlers.KillMe += Npi.PlayerDeath;
+			GetDataHandlers.NewProjectile += Npi.NewProjectile;
 			AccountHooks.AccountCreate += OnAccountC;
 			AccountHooks.AccountDelete += OnAccountD;
 			PlayerHooks.PlayerPostLogin += OnPlayerPostLogin;
 			PlayerHooks.PlayerLogout += OnPlayerLogout;
 			GeneralHooks.ReloadEvent += OnReload;
 			Hooks.Npc.PostUpdate += NpcPostUpdate;
+			
+			//TShock.CharacterDB = new CharacterManager(new MySqlConnection($"Server=54.38.50.59; Port=3306; Database=www497_powelder_survival; Uid=www497_powelder_survival; Pwd=HorwAYBmXqYqeUsgqdBu;"));
 			
 		}
 
@@ -222,7 +226,7 @@ namespace SurvivalCore
 		private void PostInitialize(EventArgs args)
 		{
 			IsReload = true;
-			global::SurvivalCore.Economy.Economy.Products = QueryShop.GetProducts();
+			Economy.Economy.Products = QueryShop.GetProducts();
 			TSPlayer.Server.SendInfoMessage("[Economy Shop] Pomyslnie zaladowano {0} produktow.", global::SurvivalCore.Economy.Economy.Products.Count);
 			IsReload = false;
 			Thread thread = new Thread(OneSecondThread)
@@ -245,6 +249,7 @@ namespace SurvivalCore
 				IsBackground = true
 			};
 			thread4.Start();
+			
 
 			System.Timers.Timer task = new System.Timers.Timer();
 			task.Elapsed += BuffBoostTask;
@@ -351,9 +356,10 @@ namespace SurvivalCore
 		{
 			if (BoostBuffType != 0)
 			{
-				if ((DateTime.Now - BoostBuffEndTime).Seconds > 0)
+				if ((DateTime.Now - BoostBuffEndTime).TotalSeconds > 0)
 				{
 					TSPlayer.All.SendWarningMessage("Boost zostal zakonczony.");
+					File.Delete("boost.txt");
 					BoostBuffType = 0;
 					return;
 				}
@@ -365,6 +371,7 @@ namespace SurvivalCore
 						TShock.Players[i].SetBuff(BoostBuffType, 330, true);
 					}
 				}
+				
 			}
 		}
 

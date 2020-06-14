@@ -35,7 +35,7 @@ namespace SurvivalCore
 
 		public static void CreateSrvPlayer(UserAccount plr)
 		{
-			PowelderAPI.PowelderApi.Db.Query("INSERT INTO Powelder_Players (ID, Nick, prefixItem, colorNick, Deaths, Money, statusOptions, pvpKills, pvpDeaths, BoostCooldown) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9)", plr.ID, plr.Name, -1, null, 0, 0, "11111111111111111111", 0, 0, DateTime.Now.ToString(PowelderApi.GlobalDateFormat));
+			PowelderAPI.PowelderApi.Db.Query("INSERT INTO Powelder_Players (ID, Nick, prefixItem, colorNick, Deaths, Money, statusOptions, pvpKills, pvpDeaths, BoostCooldown, BossCooldown) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10)", plr.ID, plr.Name, -1, null, 0, 0, "11111111111111111111", 0, 0, DateTime.Now.ToString(PowelderApi.GlobalDateFormat), DateTime.Now.ToString(PowelderApi.GlobalDateFormat));
 		}
 
 		public static void RemovePlayTime(UserAccount plr)
@@ -62,11 +62,21 @@ namespace SurvivalCore
 			{
 				if (queryResult2.Read())
 				{
-					return new SrvPlayer(queryResult2.Get<int>("ID"), queryResult2.Get<string>("Nick"), queryResult2.Get<int>("prefixItem"), queryResult2.Get<string>("colorNick"), queryResult2.Get<int>("Deaths"), queryResult2.Get<int>("Money"), queryResult2.Get<string>("statusOptions"), queryResult2.Get<int>("pvpKills"), queryResult2.Get<int>("pvpDeaths"), pt, DateTime.ParseExact(queryResult2.Get<string>("BoostCooldown"), PowelderApi.GlobalDateFormat, null));
+					return new SrvPlayer(queryResult2.Get<int>("ID"),
+						queryResult2.Get<string>("Nick"),
+						queryResult2.Get<int>("prefixItem"),
+						queryResult2.Get<string>("colorNick"),
+						queryResult2.Get<int>("Deaths"),
+						queryResult2.Get<int>("Money"),
+						queryResult2.Get<string>("statusOptions"),
+						queryResult2.Get<int>("pvpKills"),
+						queryResult2.Get<int>("pvpDeaths"), pt,
+						DateTime.ParseExact(queryResult2.Get<string>("BoostCooldown"), PowelderApi.GlobalDateFormat, null),
+						DateTime.ParseExact(queryResult2.Get<string>("BossCooldown"), PowelderApi.GlobalDateFormat, null));
 				}
 			}
 			TSPlayer.Server.SendErrorMessage("Nie wczytalem xDDD");
-			return new SrvPlayer(0, null, -1, null, 0, 0, null, 0, 0, pt, DateTime.Now);
+			return new SrvPlayer(0, null, -1, null, 0, 0, null, 0, 0, pt, DateTime.Now, DateTime.Now);
 		}
 
 		public static SrvPlayer GetSrvPlayer(string plr)
@@ -83,10 +93,20 @@ namespace SurvivalCore
 			{
 				if (queryResult2.Read())
 				{
-					return new SrvPlayer(queryResult2.Get<int>("ID"), queryResult2.Get<string>("Nick"), queryResult2.Get<int>("prefixItem"), queryResult2.Get<string>("colorNick"), queryResult2.Get<int>("Deaths"), queryResult2.Get<int>("Money"), queryResult2.Get<string>("statusOptions"), queryResult2.Get<int>("pvpKills"), queryResult2.Get<int>("pvpDeaths"), pt, DateTime.ParseExact(queryResult2.Get<string>("BoostCooldown"), PowelderApi.GlobalDateFormat, null));
+					return new SrvPlayer(queryResult2.Get<int>("ID"),
+						queryResult2.Get<string>("Nick"),
+						queryResult2.Get<int>("prefixItem"),
+						queryResult2.Get<string>("colorNick"),
+						queryResult2.Get<int>("Deaths"),
+						queryResult2.Get<int>("Money"),
+						queryResult2.Get<string>("statusOptions"),
+						queryResult2.Get<int>("pvpKills"),
+						queryResult2.Get<int>("pvpDeaths"), pt,
+						DateTime.ParseExact(queryResult2.Get<string>("BoostCooldown"), PowelderApi.GlobalDateFormat, null),
+						DateTime.ParseExact(queryResult2.Get<string>("BossCooldown"), PowelderApi.GlobalDateFormat, null));
 				}
 			}
-			return new SrvPlayer(0, null, -1, null, 0, 0, null, 0, 0, pt, DateTime.Now);
+			return new SrvPlayer(0, null, -1, null, 0, 0, null, 0, 0, pt, DateTime.Now, DateTime.Now);
 		}
 
 		public static void UpdatePlayTime(UserAccount plr, long play)
@@ -96,7 +116,7 @@ namespace SurvivalCore
 
 		public static void SrvPlayerUpdate(SrvPlayer plr)
 		{
-			PowelderAPI.PowelderApi.Db.Query("UPDATE Powelder_Players SET prefixItem=@0, colorNick=@1, Deaths=@2, Money=@3, statusOptions=@4, pvpKills=@5, pvpDeaths=@6, BoostCooldown=@7  WHERE ID=@8", plr.PrefixItem, plr.NickColor, plr.Deaths, plr.Money, plr.StatusOptions, plr.PvpKills, plr.PvpDeaths, plr.BoostCooldown.ToString(PowelderApi.GlobalDateFormat), plr.Id);
+			PowelderAPI.PowelderApi.Db.Query("UPDATE Powelder_Players SET prefixItem=@0, colorNick=@1, Deaths=@2, Money=@3, statusOptions=@4, pvpKills=@5, pvpDeaths=@6, BoostCooldown=@7, BossCooldown=@8  WHERE ID=@9", plr.PrefixItem, plr.NickColor, plr.Deaths, plr.Money, plr.StatusOptions, plr.PvpKills, plr.PvpDeaths, plr.BoostCooldown.ToString(PowelderApi.GlobalDateFormat), plr.BossCooldown.ToString(PowelderApi.GlobalDateFormat), plr.Id);
 		}
 
 		public static Dictionary<string, double[]> GetTopPvp(string nick)

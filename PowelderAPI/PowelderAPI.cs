@@ -101,8 +101,8 @@ namespace PowelderAPI
 					return;
 				}
 				string[] array = Config.MySqlHost.Split(':');
-				MySqlConnection val = (MySqlConnection)(object)new MySqlConnection();
-				((DbConnection)(object)val).ConnectionString = $"Server={array[0]}; Port={((array.Length == 1) ? "3306" : array[1])}; Database={Config.MySqlDbName}; Uid={Config.MySqlUsername}; Pwd={Config.MySqlPassword};";
+				MySqlConnection val = new MySqlConnection();
+				val.ConnectionString = $"Server={array[0]}; Port={((array.Length == 1) ? "3306" : array[1])}; Database={Config.MySqlDbName}; Uid={Config.MySqlUsername}; Pwd={Config.MySqlPassword};";
 				Db = val;
 			}
 			CrDatabase.SetupDb(Db);

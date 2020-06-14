@@ -90,9 +90,9 @@ namespace SurvivalCore
 				args.Player.SendErrorMessage("Twoj ekwipunek jest pelny.");
 				return;
 			}
-			Recipes[result3].Do(args.Player, result2);
-			SurvivalCore.SrvPlayers[args.Player.Index].Money -= Recipes[result3].Cost * result2;
-			args.Player.SendSuccessMessage($"Pomyslnie wytworzono [i:{Recipes[result3].Result.Id}] w ilosci [c/66ff66:{Recipes[result3].Result.Amount * result2}].", Color.Gray);
+			int done = Recipes[result3].Do(args.Player, result2);
+			SurvivalCore.SrvPlayers[args.Player.Index].Money -= Recipes[result3].Cost * done;
+			args.Player.SendSuccessMessage($"Pomyslnie wytworzono [i:{Recipes[result3].Result.Id}] w ilosci [c/66ff66:{Recipes[result3].Result.Amount * done}].", Color.Gray);
 		}
 	}
 

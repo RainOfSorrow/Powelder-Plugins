@@ -5,9 +5,6 @@ namespace SurvivalCore
 {
 	public class Config
 	{
-
-		public bool IsGolemDowned = false;
-
 		public void Write(string file)
 		{
 			File.WriteAllText(file, JsonConvert.SerializeObject((object)this, (Formatting)1));

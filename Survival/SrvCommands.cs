@@ -3,6 +3,8 @@ using SurvivalCore.Economy.Database;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
+using System.IO;
+using System.IO.Streams;
 using System.Linq;
 using Terraria;
 using Terraria.Localization;
@@ -630,8 +632,7 @@ namespace SurvivalCore
 						args.Player.SendErrorMessage($"Aktualnie jest aktywny juz jeden boost. Minie on za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.BoostBuffEndTime)}");
 						return;;
 					}
-
-
+					
 					SurvivalCore.SrvPlayers[args.Player.Index].Money -= avalibleBuffs[buff].Value;
 					
 					SurvivalCore.SrvPlayers[args.Player.Index].BoostCooldown = DateTime.Now.AddDays(2);

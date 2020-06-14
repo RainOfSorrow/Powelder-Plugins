@@ -53,16 +53,25 @@ namespace SurvivalCore
 			return true;
 		}
 
-		public void Do(TSPlayer plr, int amount = 1)
+		public int Do(TSPlayer plr, int amount = 1)
 		{
+			if (!plr.InventorySlotAvailable)
+			{
+				plr.SendErrorMessage("Zabraklo miejsca w ekwipunku.");
+				return 0;
+			}
+			
 			for (int i = 0; i < amount; i++)
 			{
+
 				foreach (SimpleItem ingredient in Ingrediens)
 				{
 					PowelderAPI.Utils.PlayerRemoveItems(plr, TShock.Utils.GetItemById(ingredient.Id), ingredient.Amount);
 				}
-				PowelderAPI.Utils.GiveItemWithoutSpawn(plr, TShock.Utils.GetItemById(Result.Id), Result.Amount);
+				plr.GiveItem(Result.Id, Result.Amount);
 			}
+
+			return amount;
 		}
 	}
 
