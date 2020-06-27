@@ -122,13 +122,20 @@ namespace SurvivalCore
 			byte b2 = read.ReadByte();
 			if (b2 == 1)
 			{
-				int cost = 1100;
+				int cost = 1800;
 				cost = Utils.CostCalc(who, cost);
 				if (SurvivalCore.SrvPlayers[b].Money < cost)
 				{
 					who.SendErrorMessage("Nie stac cie na przywolanie Skeletrona. Koszt {0} €.", cost);
 					return true;
 				}
+				
+				if ((SurvivalCore.SrvPlayers[who.Index].BossCooldown - DateTime.Now).TotalSeconds > 0)
+				{
+					who.SendErrorMessage($"Musisz odczekac jakis czas, aby moc zrespic kolejnego bossa. Mozliwe to bedzie za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[who.Index].BossCooldown)}");
+					return true;
+				}
+				
 				SurvivalCore.SrvPlayers[b].Money -= cost;
 				TSPlayer.All.SendInfoMessage("{0} przywolal Skeletrona.", who.Name);
 			}
@@ -182,40 +189,40 @@ namespace SurvivalCore
 			switch (npcid)
 			{
 			case -1:
-				cost = 500;
+				cost = 1300;
 				break;
 			case -2:
-				cost = 2200;
+				cost = 2650;
 				break;
 			case -3:
 				cost = 2000;
 				break;
 			case -4:
-				cost = 4500;
+				cost = 3100;
 				break;
 			case -5:
-				cost = 4500;
+				cost = 4200;
 				break;
 			case -6:
-				cost = 2500;
+				cost = 2700;
 				break;
 			case -7:
-				cost = 5500;
+				cost = 15000;
 				break;
 			case -8:
-				cost = 6000;
+				cost = 3000;
 				break;
 			case -10:
 				cost = 500;
 				break;;
 			case 4:
-				cost = 300;
+				cost = 1000;
 				break;
 			case 13:
-				cost = 400;
+				cost = 1200;
 				break;
 			case 50:
-				cost = 200;
+				cost = 800;
 				break;
 			case 75:
 				cost = 15000;
@@ -228,37 +235,52 @@ namespace SurvivalCore
 			case 130:
 			case 131:
 			case 134:
-				cost = 2000;
+				cost = 3200;
 				break;
 			case 222:
-				cost = 800;
+				cost = 1500;
 				break;
 			case 245:
-				cost = 4200;
+				cost = 3600;
 				break;
-			case 266:
-				cost = 300;
+			case 266: //BOC
+				cost = 1200;
 				break;
-			case 370:
-				cost = 4200;
+			case 370: //Duke Fishron
+				cost = 3800;
 				break;
 			case 422:
 			case 439:
 			case 493:
 			case 507:
 			case 517:
-				cost = 5000;
+				cost = 4500;
 				break;
 			case 398:
-				cost = 6000;
+				cost = 5000;
 				break;
 			case 657: //Queen slime
-				cost = 300;
+				cost = 2900;
 				break;
 			}
 
 			if (cost > 0)
 			{
+				if (isBoss)
+				{
+					short bossid = (short) (npcid == 266 || npcid == 13 ? 6969 : npcid);
+
+					if (!Goals.IsDone(bossid))
+					{
+						tSPlayer.SendErrorMessage("Ten boss w tej chwili jest zablokowany.");
+						if (SpawnItemId(npcid) != -1)
+						{
+							tSPlayer.GiveItem(SpawnItemId(npcid), 1);
+						}
+						return true;
+					}
+				}
+
 				cost = Utils.CostCalc(tSPlayer, cost);
 				if (SurvivalCore.SrvPlayers[tSPlayer.Index].Money < cost)
 				{
@@ -274,7 +296,6 @@ namespace SurvivalCore
 
 				if ((SurvivalCore.SrvPlayers[tSPlayer.Index].BossCooldown - DateTime.Now).TotalSeconds > 0)
 				{
-					tSPlayer.GiveItem(SpawnItemId(npcid), 1);
 					tSPlayer.SendErrorMessage($"Musisz odczekac jakis czas, aby moc zrespic kolejnego bossa. Mozliwe to bedzie za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[tSPlayer.Index].BossCooldown)}");
 					return true;
 				}
@@ -308,36 +329,45 @@ namespace SurvivalCore
 			{
 				switch (Main.tile[x, y].type)
 				{
-				case 0:
-				case 1:
-				case 40:
-				case 59:
-				case 123:
-					if ((double)y > Main.worldSurface - 150.0)
-					{
-						Random random = new Random();
-						if (random.Next(0, 1550) <= 2)
+					case 0:
+					case 1:
+					case 40:
+					case 59:
+					case 123:
+						if (y > Main.worldSurface - 150.0)
 						{
-							int num4 = random.Next(25, 75);
-							SurvivalCore.SrvPlayers[who.Index].Money += num4;
-							who.SendInfoMessage($"Znalazles mieszek, a w nim {num4} €.");
+							Random random = new Random();
+							if (random.Next(0, 1550) <= 2)
+							{
+								int num4 = random.Next(25, 75);
+								SurvivalCore.SrvPlayers[who.Index].Money += num4;
+								who.SendInfoMessage($"Znalazles mieszek, a w nim {num4} €.");
+							}
 						}
-					}
-					break;
-				case 238:
-				{
-					int cost = 3300;
-					cost = Utils.CostCalc(who, cost);
-					if (SurvivalCore.SrvPlayers[who.Index].Money < cost)
+
+						break;
+					case 238:
 					{
-						who.SendErrorMessage("Nie stac cie na przywolanie Plantery. Koszt {0} €", cost);
-						TSPlayer.All.SendTileSquare(x, y);
-						return true;
+						if (!Goals.IsDone(262))
+						{
+							who.SendErrorMessage("Ten boss w tej chwili jest zablokowany.");
+							who.SendTileSquare(x, y);
+							return true;
+						}
+						
+						int cost = 3500;
+						cost = Utils.CostCalc(who, cost);
+						if (SurvivalCore.SrvPlayers[who.Index].Money < cost)
+						{
+							who.SendErrorMessage("Nie stac cie na przywolanie Plantery. Koszt {0} €", cost);
+							who.SendTileSquare(x, y);
+							return true;
+						}
+
+						SurvivalCore.SrvPlayers[who.Index].Money -= cost;
+						TSPlayer.All.SendInfoMessage("{0} przywolal Plantere.", who.Name);
+						break;
 					}
-					SurvivalCore.SrvPlayers[who.Index].Money -= cost;
-					TSPlayer.All.SendInfoMessage("{0} przywolal Plantere.", who.Name);
-					break;
-				}
 				}
 			}
 			return false;
@@ -383,13 +413,28 @@ namespace SurvivalCore
 					return true;
 				}
 				
-				int cost = 4300;
+				if (!Goals.IsDone(636))
+				{
+					who.SendErrorMessage("Ten boss w tej chwili jest zablokowany.");
+					return true;
+				}
+				
+				
+				int cost = 4000;
 				cost = Utils.CostCalc(who, cost);
 				if (SurvivalCore.SrvPlayers[who.Index].Money < cost)
 				{
 					who.SendErrorMessage("Nie stac cie na przywolanie Empress of Light. Koszt {0} €", cost);
 					return true;
 				}
+				
+				if ((SurvivalCore.SrvPlayers[who.Index].BossCooldown - DateTime.Now).TotalSeconds > 0)
+				{
+					who.GiveItem(SpawnItemId(npcid), 1);
+					who.SendErrorMessage($"Musisz odczekac jakis czas, aby moc zrespic kolejnego bossa. Mozliwe to bedzie za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[who.Index].BossCooldown)}");
+					return true;
+				}
+				
 				SurvivalCore.SrvPlayers[who.Index].Money -= cost;
 				TSPlayer.All.SendInfoMessage("{0} przywolal Empress of Light", who.Name);
 			}
@@ -592,7 +637,7 @@ namespace SurvivalCore
 		//Sticky Bomb, bomb and Fish bomb are available but there's a cooldown that lasts 7 seconds.
 		public static void NewProjectile(object sender, GetDataHandlers.NewProjectileEventArgs e)
 		{
-			if (e.Handled)
+			if (e.Handled || e.Player.HasPermission("server.jmod"))
 				return;
 			
 			

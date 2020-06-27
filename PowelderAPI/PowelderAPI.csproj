@@ -55,9 +55,6 @@
     <Reference Include="TProxy-Plugin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\TProxy\Plugin\TProxy-Plugin\bin\Debug\TProxy-Plugin.dll</HintPath>
     </Reference>
-    <Reference Include="TShockAPI, Version=4.3.26.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Powelder (on_serwer)\ServerPlugins\TShockAPI.dll</HintPath>
-    </Reference>
     <Reference Include="TShockAPI, Version=4.4.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Test1\ServerPlugins\TShockAPI.dll</HintPath>
     </Reference>

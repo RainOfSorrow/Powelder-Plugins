@@ -135,6 +135,10 @@ namespace PowelderAPI
 			{
 				result = "18B690";
 			}
+			else if (group == "Administrator")
+			{
+				result = "1F8B4C";
+			}
 			else if (group == "GlobalMod")
 			{
 				result = "ff3333";
@@ -146,10 +150,6 @@ namespace PowelderAPI
 			else if (group == "JuniorMod")
 			{
 				result = "3498DB";
-			}
-			else if (group == "Special")
-			{
-				result = "fd7c24";
 			}
 			else if (group == "Gracz++")
 			{
@@ -187,11 +187,7 @@ namespace PowelderAPI
 			}
 			else if (itemm == "JuniorMod")
 			{
-				result = 2219;
-			}
-			else if (itemm == "Special")
-			{
-				result = 122;
+				result = 4994;
 			}
 			else if (itemm == "Gracz++")
 			{
@@ -216,14 +212,18 @@ namespace PowelderAPI
 					return "[c/595959:;][c/" + GetGroupColor(group) + ":Zalozyciel][c/595959:;] ";
 				case "Iwobos":
 					return "[c/595959:;][c/" + GetGroupColor(group) + ":Zalozyciel][c/595959:;] ";
+				case "Administrator":
+					return "[c/595959:;][c/" + GetGroupColor(group) + ":Admin][c/595959:;] ";
 				case "GlobalMod":
 					return "[c/595959:;][c/" + GetGroupColor(group) + ":GlobalMod][c/595959:;] ";
 				case "Moderator":
 					return "[c/595959:;][c/" + GetGroupColor(group) + ":Mod][c/595959:;] ";
 				case "JuniorMod":
 					return "[c/595959:;][c/" + GetGroupColor(group) + ":JuniorMod][c/595959:;] ";
-				case "Special":
-					return "[c/595959:;][c/" + GetGroupColor(group) + ":Special][c/595959:;] ";
+				case "Gracz++":
+					return "[c/595959:;][c/" + GetGroupColor(group) + ":Gracz++][c/595959:;] ";
+				case "Gracz+":
+					return "[c/595959:;][c/" + GetGroupColor(group) + ":Gracz+][c/595959:;] ";
 				default:
 					return null;
 			}

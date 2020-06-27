@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using MySql.Data.MySqlClient;
+using PowelderAPI;
 using Terraria;
 using Terraria.ID;
 using TerrariaApi.Server;
@@ -91,6 +92,7 @@ namespace SurvivalCore
 
 		public override void Initialize()
 		{
+
 			for (int i = 0; i != IsStatusBusy.Length; i++)
 			{
 				IsStatusBusy[i] = false;
@@ -141,9 +143,11 @@ namespace SurvivalCore
 			GeneralHooks.ReloadEvent += OnReload;
 			Hooks.Npc.PostUpdate += NpcPostUpdate;
 			
+
 			//TShock.CharacterDB = new CharacterManager(new MySqlConnection($"Server=54.38.50.59; Port=3306; Database=www497_powelder_survival; Uid=www497_powelder_survival; Pwd=HorwAYBmXqYqeUsgqdBu;"));
-			
+
 		}
+		
 
 		private void OnReload(ReloadEventArgs args)
 		{
@@ -217,6 +221,13 @@ namespace SurvivalCore
 				}
 			}
 			else if (Main.dayTime && (npc.type == 127 || npc.type == 35 || npc.type == 636))
+			{
+				Main.npc[i].active = false;
+				TSPlayer.All.SendData(PacketTypes.NpcUpdate, "", i);
+			}
+			else if (!Goals.IsDone((npc.type == 233 || npc.type == 13 || npc.type == 14 || npc.type == 15
+				? 6969
+				: npc.type)))
 			{
 				Main.npc[i].active = false;
 				TSPlayer.All.SendData(PacketTypes.NpcUpdate, "", i);
@@ -393,8 +404,6 @@ namespace SurvivalCore
 			{
 				Change.Recipes.Add(i, Change.Config.Recipes[i]);
 			}
-
-			DataBase.SetupDb(PowelderAPI.PowelderApi.Db);
 		}
 
 		private void OnConnect(ConnectEventArgs args)

@@ -12,20 +12,7 @@ namespace SurvivalCore
 	{
 		public static void SetupDb(IDbConnection db)
 		{
-			//IQueryBuilder provider;
-			//	IQueryBuilder queryBuilder = new SqliteQueryCreator();
-			//	provider = queryBuilder;
-			//SqlTableCreator sqlTableCreator = new SqlTableCreator(db, provider);
-			//SqlTable table = new SqlTable("Powelder_Players", new SqlColumn("ID", (MySqlDbType)3)
-			//{
-			//	Unique = true
-			//}, new SqlColumn("Nick", (MySqlDbType)752), new SqlColumn("prefixItem", (MySqlDbType)3), new SqlColumn("colorNick", (MySqlDbType)752), new SqlColumn("Deaths", (MySqlDbType)3), new SqlColumn("Money", (MySqlDbType)3), new SqlColumn("statusOptions", (MySqlDbType)752), new SqlColumn("pvpKills", (MySqlDbType)3), new SqlColumn("pvpDeaths", (MySqlDbType)3));
-			//sqlTableCreator.EnsureTableStructure(table);
-			//SqlTable table2 = new SqlTable("PlayerPlayTime", new SqlColumn("ID", (MySqlDbType)3)
-			//{
-			//	Unique = true
-			//}, new SqlColumn("Nick", (MySqlDbType)752), new SqlColumn("playTime", (MySqlDbType)8));
-			//sqlTableCreator.EnsureTableStructure(table2);
+
 		}
 
 		public static void CreatePlayTime(UserAccount plr)

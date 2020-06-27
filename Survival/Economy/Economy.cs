@@ -43,8 +43,6 @@ namespace SurvivalCore.Economy
 			{
 				Config.Write("powelder/economy/config.json");
 			}
-
-			Setup.SetupDb(PowelderAPI.PowelderApi.Db);
 		}
 
 		public static void OnReload(ReloadEventArgs e)

@@ -12,6 +12,10 @@ namespace SurvivalCore
 
 		public static Dictionary<int, Recipe> Recipes = new Dictionary<int, Recipe>();
 
+		public static void ReloadRecipes(CommandArgs args)
+		{
+			
+		}
 		public static void Command(CommandArgs args)
 		{
 			string text = null;
@@ -35,7 +39,7 @@ namespace SurvivalCore
 				List<string> list = new List<string>();
 				foreach (int key in Recipes.Keys)
 				{
-					list.Add($" [[c/dddd11:{key}]] [i/s{Recipes[key].Result.Amount}:{Recipes[key].Result.Id}] ← {Recipes[key].GetIngrediensString()}");
+					list.Add($" [[c/dddd11:{key}]] [i/s{Recipes[key].Result.Amount}:{Recipes[key].Result.Id}] ← {Recipes[key].GetIngredientsString()}");
 				}
 				PaginationTools.SendPage(args.Player, result, PaginationTools.BuildLinesFromTerms(list, null, ""), new PaginationTools.Settings
 				{
@@ -57,8 +61,8 @@ namespace SurvivalCore
 			}
 			if (text == null)
 			{
-				args.Player.SendMessage("Uzycie: /wytworz <index> <ilosc>", Color.Gray);
-				args.Player.SendMessage("Uzycie: /wytworz list <strona>", Color.Gray);
+				args.Player.SendErrorMessage("Uzycie: /wytworz <index> <ilosc>");
+				args.Player.SendErrorMessage("Uzycie: /wytworz list <strona>");
 				return;
 			}
 			if (!int.TryParse(text, out int result3))
@@ -80,7 +84,7 @@ namespace SurvivalCore
 				args.Player.SendErrorMessage($"Nie stac cie na wytworzenie [i:{Recipes[result3].Result.Id}] w ilosci {result2}. Koszt {Recipes[result3].Cost * result2} €.");
 				return;
 			}
-			if (!Recipes[result3].IsPlayerHaveIngrediens(args.Player))
+			if (!Recipes[result3].IsPlayerHaveIngredients(args.Player))
 			{
 				args.Player.SendErrorMessage("Brakuje wymaganych materialow do stworzenia przedmiotu.");
 				return;

@@ -21,6 +21,10 @@ namespace PowelderAPI
 		public static string GlobalDateFormat  = "dd.MM.yyyy HH:mm:ss";
 
 		public Config Config;
+		
+		public delegate void DatabaseSetup(IDbConnection connection);
+
+		public static event DatabaseSetup OnDatabaseSetup;
 
 		public delegate void PlayerThreadHookD(TSPlayer player);
 
@@ -107,6 +111,8 @@ namespace PowelderAPI
 			}
 			CrDatabase.SetupDb(Db);
 			TempGroup.TempGroupDbManage.SetupDb(Db);
+			
+			OnDatabaseSetup?.Invoke(Db);
 		}
 
 		protected void PostInitialize(EventArgs args)

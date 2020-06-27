@@ -9,29 +9,29 @@ namespace SurvivalCore
 
 		public SimpleItem Result;
 
-		public List<SimpleItem> Ingrediens = new List<SimpleItem>();
+		public List<SimpleItem> Ingredients = new List<SimpleItem>();
 
 		public Recipe(int cost, SimpleItem result, params SimpleItem[] ingrediens)
 		{
 			this.Cost = cost;
 			this.Result = result;
-			this.Ingrediens.AddRange(ingrediens);
+			this.Ingredients.AddRange(ingrediens);
 		}
 
-		public string GetIngrediensString()
+		public string GetIngredientsString()
 		{
 			string text = null;
 			bool flag = true;
-			foreach (SimpleItem ingredien in Ingrediens)
+			foreach (SimpleItem ingredient in Ingredients)
 			{
 				if (flag)
 				{
-					text = text + "[i/s" + ingredien.Amount + ":" + ingredien.Id + "]";
+					text = text + "[i/s" + ingredient.Amount + ":" + ingredient.Id + "]";
 					flag = false;
 				}
 				else
 				{
-					text = text + ", [i/s" + ingredien.Amount + ":" + ingredien.Id + "]";
+					text = text + ", [i/s" + ingredient.Amount + ":" + ingredient.Id + "]";
 				}
 			}
 			if (Cost != 0)
@@ -41,9 +41,9 @@ namespace SurvivalCore
 			return text;
 		}
 
-		public bool IsPlayerHaveIngrediens(TSPlayer plr, int amount = 1)
+		public bool IsPlayerHaveIngredients(TSPlayer plr, int amount = 1)
 		{
-			foreach (SimpleItem ingredient in Ingrediens)
+			foreach (SimpleItem ingredient in Ingredients)
 			{
 				if (PowelderAPI.Utils.PlayerItemCount(plr, TShock.Utils.GetItemById(ingredient.Id)) < ingredient.Amount * amount)
 				{
@@ -64,7 +64,7 @@ namespace SurvivalCore
 			for (int i = 0; i < amount; i++)
 			{
 
-				foreach (SimpleItem ingredient in Ingrediens)
+				foreach (SimpleItem ingredient in Ingredients)
 				{
 					PowelderAPI.Utils.PlayerRemoveItems(plr, TShock.Utils.GetItemById(ingredient.Id), ingredient.Amount);
 				}

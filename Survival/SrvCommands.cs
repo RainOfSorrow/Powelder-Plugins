@@ -363,6 +363,12 @@ namespace SurvivalCore
 			{
 				text2 = args.Parameters[1].ToLower();
 			}
+			
+			if ((SurvivalCore.SrvPlayers[args.Player.Index].BossCooldown - DateTime.Now).TotalSeconds > 0)
+			{
+				args.Player.SendErrorMessage($"Musisz odczekac jakis czas, aby moc zrespic kolejnego bossa. Mozliwe to bedzie za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[args.Player.Index].BossCooldown)}");
+				return;
+			}
 
 			switch (text)
 			{
@@ -372,7 +378,7 @@ namespace SurvivalCore
 				case "wof":
 				case "wall of flesh":
 				{
-					int cost3 = 1600;
+					int cost3 = 2600;
 
 					Item itemById = TShock.Utils.GetItemById(267);
 					if (PowelderAPI.Utils.PlayerItemCount(args.Player, itemById) < 1)
@@ -419,7 +425,7 @@ namespace SurvivalCore
 						break;
 					}
 
-					int cost2 = 5000;
+					int cost2 = 4500;
 					cost2 = Utils.CostCalc(args.Player, cost2);
 					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < cost2)
 					{
@@ -460,7 +466,7 @@ namespace SurvivalCore
 						break;
 					}
 
-					int cost4 = 5500;
+					int cost4 = 3500;
 					cost4 = Utils.CostCalc(args.Player, cost4);
 					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < cost4)
 					{
@@ -505,7 +511,7 @@ namespace SurvivalCore
 						break;
 					}
 
-					int cost = 1000;
+					int cost = 1800;
 					cost = Utils.CostCalc(args.Player, cost);
 					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < cost)
 					{
