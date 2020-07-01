@@ -34,7 +34,7 @@ namespace SurvivalCore.Economy.Gambling
 			if (text4 == null || !(text4 == "slots"))
 			{
 				args.Player.SendMessage("Kasyno:", Color.Green);
-				args.Player.SendMessage("/kasyno slots] [c/595959:-] Gra w sloty.", Color.Gray);
+				args.Player.SendMessage("/kasyno slots [c/595959:-] Gra w sloty.", Color.Yellow);
 			}
 			else if (arg1 == "start")
 			{

@@ -46,13 +46,13 @@ namespace PowelderAPI
 				return;
 			}
 			var account = new UserAccount();
-			account.Name = args.Parameters[1];
+			account.Name = args.Parameters[0];
 
-			TShock.UserAccounts.GetUserAccountByName(args.Parameters[1]);
+			TShock.UserAccounts.GetUserAccountByName(args.Parameters[0]);
 
 			try
 			{
-				TShock.UserAccounts.SetUserAccountPassword(account, args.Parameters[2]);
+				TShock.UserAccounts.SetUserAccountPassword(account, args.Parameters[1]);
 				TShock.Log.ConsoleInfo(args.Player.Name + " zmienil haslo dla " + account.Name);
 				args.Player.SendSuccessMessage("Pomyslne zmieniono haslo dla " + account.Name + ".");
 			}

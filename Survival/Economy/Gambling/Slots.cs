@@ -138,27 +138,27 @@ namespace SurvivalCore.Economy.Gambling
 				{
 					_pool3[k] = 1;
 				}
-				else if (num3 >= 47 && num3 <= 67)
+				else if (num3 >= 49 && num3 <= 69)
 				{
 					_pool3[k] = 2;
 				}
-				else if (num3 >= 31 && num3 <= 46)
+				else if (num3 >= 33 && num3 <= 48)
 				{
 					_pool3[k] = 3;
 				}
-				else if (num3 >= 20 && num3 <= 30)
+				else if (num3 >= 22 && num3 <= 32)
 				{
 					_pool3[k] = 4;
 				}
-				else if (num3 >= 12 && num3 <= 19)
+				else if (num3 >= 15 && num3 <= 21)
 				{
 					_pool3[k] = 5;
 				}
-				else if (num3 >= 6 && num3 <= 11)
+				else if (num3 >= 8 && num3 <= 14)
 				{
 					_pool3[k] = 6;
 				}
-				else if (num3 >= 2 && num3 <= 5)
+				else if (num3 >= 4 && num3 <= 7)
 				{
 					_pool3[k] = 7;
 				}
@@ -191,7 +191,7 @@ namespace SurvivalCore.Economy.Gambling
 
 		public string GetStatus(bool isLast = false)
 		{
-			return string.Format(">|{0}[c/595959:─── «] [c/52e092:Slots] [c/595959:» ───]  " +
+			return string.Format("{0}[c/595959:─── «] [c/52e092:Slots] [c/595959:» ───]  " +
 			                     " \r\n    {1}   {2}   {3}\r\n[c/ffdf00:>] [c/595959:[]{4}[c/595959:]] [c/595959:[]{5}[c/595959:]] [c/595959:[]{6}[c/595959:]] [c/ffdf00:<]\r\n    {7}   {8}   {9}\r\n\r\n{10}", RepeatLineBreaks(10), GetPoolSymbol((_actualpool1 == 19) ? _pool1[0] : _pool1[_actualpool1 + 1]), GetPoolSymbol((_actualpool2 == 19) ? _pool2[0] : _pool2[_actualpool2 + 1]), GetPoolSymbol((_actualpool3 == 19) ? _pool3[0] : _pool3[_actualpool3 + 1]), GetPoolSymbol(_pool1[_actualpool1]), GetPoolSymbol(_pool2[_actualpool2]), GetPoolSymbol(_pool3[_actualpool3]), GetPoolSymbol((_actualpool1 == 0) ? _pool1[19] : _pool1[_actualpool1 - 1]), GetPoolSymbol((_actualpool2 == 0) ? _pool2[19] : _pool2[_actualpool2 - 1]), GetPoolSymbol((_actualpool3 == 0) ? _pool3[19] : _pool3[_actualpool3 - 1]), isLast ? ("[c/66ff66:Wygrales][c/595959::] " + GetResult() + " " + Economy.Config.ValueName) : null);
 		}
 

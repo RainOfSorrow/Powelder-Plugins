@@ -101,6 +101,12 @@ namespace SurvivalCore
                 return;
             }
 
+            if (money < 0)
+            {
+                args.Player.SendErrorMessage("Podano kwote w liczbie ujemnej.");
+                return;
+            }
+
             if (SurvivalCore.SrvPlayers[args.Player.Index].Money < money)
             {
                 args.Player.SendErrorMessage("Chciales wplacic wiecej niz posiadasz.");

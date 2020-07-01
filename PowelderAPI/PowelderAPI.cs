@@ -70,11 +70,12 @@ namespace PowelderAPI
 			
 			Commands.ChatCommands.Remove(Commands.ChatCommands.Find(x => x.Name == "broadcast"));
 			Commands.ChatCommands.Add(new Command("server.gmod", PowelderCommands.Broadcast, "broadcast", "bc", "say"));
+			Commands.ChatCommands.Add(new Command("server.gmod", PowelderCommands.ChangePassword, "changepassword", "cpass"));
 			
 			Commands.ChatCommands.Remove(Commands.ChatCommands.Find(x => x.Name == "tempgroup"));
 			Commands.ChatCommands.Add(new Command("server.admin", TempGroup.TempGroup.TempGroupCommand, "tempgroup"));
 			
-
+			
 			
 
 			//TempGroup

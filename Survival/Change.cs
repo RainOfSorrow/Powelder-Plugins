@@ -11,11 +11,7 @@ namespace SurvivalCore
 		public static ChangeConfig Config;
 
 		public static Dictionary<int, Recipe> Recipes = new Dictionary<int, Recipe>();
-
-		public static void ReloadRecipes(CommandArgs args)
-		{
-			
-		}
+		
 		public static void Command(CommandArgs args)
 		{
 			string text = null;
@@ -49,7 +45,7 @@ namespace SurvivalCore
 					MaxLinesPerPage = 4,
 					LineTextColor = new Color(192, 192, 192),
 					FooterFormat = $"Wpisz /wytworz list {result + 1}], aby zobaczyc nastepna strone.",
-					NothingToDisplayString = "Error 404."
+					NothingToDisplayString = "Wkrotce pojawia sie jakies receptury"
 				});
 				return;
 			}
@@ -61,18 +57,18 @@ namespace SurvivalCore
 			}
 			if (text == null)
 			{
-				args.Player.SendErrorMessage("Uzycie: /wytworz <index> <ilosc>");
+				args.Player.SendErrorMessage("Uzycie: /wytworz <indeks> <ilosc>");
 				args.Player.SendErrorMessage("Uzycie: /wytworz list <strona>");
 				return;
 			}
 			if (!int.TryParse(text, out int result3))
 			{
-				args.Player.SendErrorMessage("Podano niepoprawny index.");
+				args.Player.SendErrorMessage("Podano niepoprawny indeks.");
 				return;
 			}
 			if (!Recipes.ContainsKey(result3))
 			{
-				args.Player.SendErrorMessage("Nie ma receptury o takim indexie.");
+				args.Player.SendErrorMessage("Nie ma receptury o takim indeksie.");
 				return;
 			}
 			if (TShock.Utils.GetItemById(Recipes[result3].Result.Id).maxStack < result2)

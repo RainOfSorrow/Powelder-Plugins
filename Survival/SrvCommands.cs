@@ -387,6 +387,12 @@ namespace SurvivalCore
 						break;
 					}
 
+					if (!Goals.IsDone(113))
+					{
+						args.Player.SendErrorMessage("Ten boss w tej chwili jest zablokowany.");
+						return;
+					}
+
 					if (Main.wofNPCIndex >= 0)
 					{
 						args.Player.SendErrorMessage("Wall of Flesh juz jest na swiecie.");
@@ -417,6 +423,12 @@ namespace SurvivalCore
 						break;
 					}
 
+					if (!Goals.IsDone(439))
+					{
+						args.Player.SendErrorMessage("Ten boss w tej chwili jest zablokowany.");
+						return;
+					}
+					
 					if (PowelderAPI.Utils.IsNpcOnWorld(nPc2.type))
 					{
 						args.Player.SendErrorMessage("Lunatic Cultist juz jest na swiecie.");
@@ -435,7 +447,6 @@ namespace SurvivalCore
 					PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(1274), 1);
 					PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(148), 5);
 					TSPlayer.Server.SpawnNPC(nPc2.type, nPc2.FullName, 1, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendInfoMessage("{0} przywolal Lunatic Cultista.", args.Player.Name);
 					break;
 				}
 				case "martians":
@@ -454,7 +465,13 @@ namespace SurvivalCore
 						args.Player.SendErrorMessage("Na swiecie juz jest jakas inwazja.");
 						break;
 					}
-					
+
+					int cost = Utils.CostCalc(args.Player, 3500);
+					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < cost)
+					{
+						args.Player.SendErrorMessage("Nie stac Cie na rozpoczecie tego eventu. Koszt to {0} €", cost);
+						break;
+					}
 
 					if (PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(3118)) < 1 ||
 					         PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(530)) < 95)

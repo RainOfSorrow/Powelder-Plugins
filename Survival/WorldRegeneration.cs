@@ -26,7 +26,7 @@ namespace SurvivalCore
 				}
 			}
 			WorldGen.AddTrees();
-			TSPlayer.All.SendMessage("[i:27] [c/595959:⮘] [c/996633:Drzewa] [c/595959:⮚] Wygenerowano nowe drzewa.", new Color(210, 166, 121));
+			TSPlayer.All.SendMessage("[i:27] [c/595959:;] [c/996633:Drzewa] [c/595959:;] Wygenerowano nowe drzewa.", new Color(210, 166, 121));
 		}
 
 		public static void DoOres(string name, float oreAmts)

@@ -33,8 +33,6 @@ namespace SurvivalCore
 
 		public static byte BoostBuffType = 0;
 		public static DateTime BoostBuffEndTime;
-		
-		private static byte _statusTick = 0;
 
 		public static bool IsReload = false;
 
@@ -124,7 +122,6 @@ namespace SurvivalCore
 			//Survival Hooks
 			ServerApi.Hooks.GameInitialize.Register(this, OnInitialize);
 			ServerApi.Hooks.NetGetData.Register(this, OnGetData);
-			ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
 			ServerApi.Hooks.WorldSave.Register(this, OnWorldSave);
 			ServerApi.Hooks.ServerJoin.Register(this, OnJoin);
 			ServerApi.Hooks.ServerLeave.Register(this, OnLeave);
@@ -172,7 +169,6 @@ namespace SurvivalCore
 				Goals.ProgressUpdate();
 				
 				ServerApi.Hooks.GameInitialize.Deregister(this, global::SurvivalCore.Economy.Economy.OnInitialize);
-				ServerApi.Hooks.GameUpdate.Deregister(this, OnUpdate);
 				ServerApi.Hooks.WorldSave.Deregister(this, OnWorldSave);
 				ServerApi.Hooks.NetGetData.Deregister(this, OnGetData);
 				ServerApi.Hooks.ServerJoin.Deregister(this, OnJoin);
@@ -330,11 +326,11 @@ namespace SurvivalCore
 					WorldRegeneration.DoTrees();
 					GenTrees = DateTime.UtcNow;
 				}
-				if (!((DateTime.UtcNow - GenOres).TotalMinutes >= 700.0))
+				if (!((DateTime.UtcNow - GenOres).TotalMinutes >= 5.0))
 				{
 					continue;
 				}
-				TSPlayer.All.SendInfoMessage("Generacja rud.");
+				TSPlayer.All.SendMessage("[i:1527] [c/595959:;] [c/9FBDCE:Mineraly] [c/595959:;] Wygenerowano nowe zloza mineralne.", new Color(223,230, 255));
 				WorldRegeneration.DoOres("tin", 70f);
 				WorldRegeneration.DoOres("copper", 70f);
 				WorldRegeneration.DoOres("lead", 60f);
@@ -493,20 +489,6 @@ namespace SurvivalCore
 						args.Handled = Npi.Tile(read3, TShock.Players[args.Msg.whoAmI]);
 					}
 				}
-				if (!args.Handled && args.MsgID == PacketTypes.PlayerTeam)
-				{
-					using (BinaryReader read5 = new BinaryReader(new MemoryStream(args.Msg.readBuffer, args.Index, args.Length)))
-					{
-						args.Handled = Npi.PlayerTeam(read5, TShock.Players[args.Msg.whoAmI]);
-					}
-				}
-				if (!args.Handled && args.MsgID == PacketTypes.PlayerInfo)
-				{
-					using (BinaryReader read7 = new BinaryReader(new MemoryStream(args.Msg.readBuffer, args.Index, args.Length)))
-					{
-						args.Handled = Npi.PlayerInfo(read7, TShock.Players[args.Msg.whoAmI]);
-					}
-				}
 				if (!args.Handled && args.MsgID == PacketTypes.SpawnBossorInvasion)
 				{
 					using (BinaryReader read8 = new BinaryReader(new MemoryStream(args.Msg.readBuffer, args.Index, args.Length)))
@@ -541,7 +523,8 @@ namespace SurvivalCore
 			
 			foreach (var player in TShock.Players.Where(x => x != null))
 			{
-				player.SendInfoMessage($"Kazdy z was otrzymal darmowe {amount} €");
+				player.SendInfoMessage($"[i:1523] [c/595959:;] [c/ffff00:Bogaty Pan] [c/595959:;]  Kazdy z was otrzymal darmowe {amount} €");
+				player.SendData(PacketTypes.CreateCombatTextExtended, "Pieniazki", (int) new Color(255, 255, 0).PackedValue, player.TPlayer.Center.X, player.TPlayer.Center.Y, 0.0f, 0);
 				if (SrvPlayers[player.Index] != null)
 					SrvPlayers[player.Index].Money += amount;
 			}
@@ -552,11 +535,7 @@ namespace SurvivalCore
 				IsBackground = true
 			}.Start(rand.Next(45, 85));
 		}
-
-		private void OnUpdate(EventArgs args)
-		{
-
-		}
+		
 
 		private void OnAccountC(AccountCreateEventArgs args)
 		{
@@ -607,7 +586,7 @@ namespace SurvivalCore
 							{
 								if (SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 0) && !IsStatusBusy[tSPlayer.Index])
 								{
-									string text2 = string.Format(">|{8} [c/595959:───── «] [c/52e092:Powelder] [c/595959:» ───── ]{0}{1}{2}{3}{4}{5}{6}{7} \n\r [c/595959:───── «] [c/52e092:Survival] [c/595959:» ───── ]",
+									string text2 = string.Format("{7} [c/595959:───── «] [c/52e092:Powelder] [c/595959:» ───── ]{0}{1}{2}{3}{4}{5}{6} \n\r [c/595959:───── «] [c/52e092:Survival] [c/595959:» ───── ]",
 										SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 1) //0
 											? $"\n\r[c/66ff66:Online][c/595959::] {TShock.Utils.GetActivePlayerCount()}"
 											: null,
@@ -628,7 +607,7 @@ namespace SurvivalCore
 										null,
 										(!SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 5)) //5
 											? null
-											: $"\n\r[c/66ff66:{Goals.GetCurrentGoal().Name}][c/595959::]  {goal.Progress}/{goal.ToComplete} ({Math.Round((float)goal.Progress / (float)goal.ToComplete, 4) * 100}%)",
+											: $"\n\r[c/66ff66:{goal.Name}][c/595959::] {goal.Progress}/{goal.ToComplete} ({Math.Round((float)goal.Progress / (float)goal.ToComplete, 3) * 100}%)",
 										RepeatLineBreaks(10)
 									);
 										tSPlayer.SendData(PacketTypes.Status, text2, 0 , 3);

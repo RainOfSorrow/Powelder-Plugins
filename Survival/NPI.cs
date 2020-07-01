@@ -16,11 +16,6 @@ namespace SurvivalCore
 {
 	public class Npi
 	{
-		public static bool PasswordSend(BinaryReader read, TSPlayer who)
-		{
-			string text = read.ReadString();
-			return false;
-		}
 
 		public static bool ItemOwner(BinaryReader read, TSPlayer who)
 		{
@@ -66,38 +61,8 @@ namespace SurvivalCore
 			}
 			return false;
 		}
-
-		public static bool PlayerInfo(BinaryReader read, TSPlayer who)
-		{
-			read.ReadByte();
-			read.ReadByte();
-			read.ReadByte();
-			read.ReadString();
-			return false;
-		}
-
-		public static bool TogglePvP(BinaryReader read, TSPlayer who)
-		{
-			return false;
-		}
-
-		public static bool PlayerTeam(BinaryReader read, TSPlayer who)
-		{
-
-			return false;
-		}
-
-		public static bool UpdatePlayer(BinaryReader read, TSPlayer who)
-		{
-			return false;
-		}
-
-		public static bool PlayMusic(BinaryReader read, TSPlayer who)
-		{
-			return false;
-		}
 		
-
+		
 		public static bool SpecialNpcEffect(BinaryReader read, TSPlayer who)
 		{
 			byte b = read.ReadByte();
@@ -105,6 +70,11 @@ namespace SurvivalCore
 			if (b2 == 1)
 			{
 
+				if (!Goals.IsDone(35))
+				{
+					who.SendErrorMessage("Ten boss w tej chwili jest zablokowany.");
+					return true;
+				}
 				
 				if ((SurvivalCore.SrvPlayers[who.Index].BossCooldown - DateTime.Now).TotalSeconds > 0)
 				{
@@ -564,7 +534,7 @@ namespace SurvivalCore
 					return;
 				}
 				
-				SurvivalCore.SrvPlayers[e.Player.Index].BombCooldown = DateTime.Now.AddSeconds(5);
+				SurvivalCore.SrvPlayers[e.Player.Index].BombCooldown = DateTime.Now.AddSeconds(7);
 			}
 		}
 	}
