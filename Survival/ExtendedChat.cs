@@ -116,7 +116,7 @@ namespace SurvivalCore
 				args.Player.SendErrorMessage("Nie znaleziono itemu.");
 				return;
 			}
-			int cost = 7500;
+			int cost = 3500;
 			cost = Utils.CostCalc(args.Player, cost);
 			if (money < cost)
 			{
@@ -186,7 +186,7 @@ SurvivalCore.SrvPlayers[args.Player.Index].NickColor ?? PowelderAPI.Utils.GetGro
 				args.Player.SendInfoMessage($"Wpisz /ncolor list, aby otrzymac liste dostepnych kolorow.");
 				return;
 			}
-			int cost = 12500;
+			int cost = 6500;
 			cost = Utils.CostCalc(args.Player, cost);
 			if (money < cost)
 			{
@@ -230,12 +230,12 @@ SurvivalCore.SrvPlayers[args.Player.Index].NickColor ?? PowelderAPI.Utils.GetGro
 			SurvivalCore.ChatEventWord = RandomWord();
 			SurvivalCore.ChatEventStoper.Start();
 			SurvivalCore.IsChatEvent = true;
-			TSPlayer.All.SendMessage("[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] Kto napisze najszybciej [c/00cc66:" + SurvivalCore.ChatEventWord + "] wygra 60 €.", new Color(128, 255, 191));
+			TSPlayer.All.SendMessage("[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] Kto napisze najszybciej [c/00cc66:" + SurvivalCore.ChatEventWord + "] wygra 80 €.", new Color(128, 255, 191));
 			Thread.Sleep((SurvivalCore.ChatEventWord.Length + 8) * 1000);
 			if (SurvivalCore.IsChatEvent)
 			{
 				SurvivalCore.ChatEventStoper.Reset();
-				TSPlayer.All.SendMessage("[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] Nikt nie napisal [c/00cc66:" + SurvivalCore.ChatEventWord + "] w czas.", new Color(128, 255, 191));
+				TSPlayer.All.SendMessage("[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] Nikt nie napisal [c/00cc66:" + SurvivalCore.ChatEventWord + "] wystarczajaco szybko.", new Color(128, 255, 191));
 				SurvivalCore.IsChatEvent = false;
 				SurvivalCore.ChatEventTimer = DateTime.UtcNow;
 			}
@@ -243,7 +243,7 @@ SurvivalCore.SrvPlayers[args.Player.Index].NickColor ?? PowelderAPI.Utils.GetGro
 
 		private static string RandomWord()
 		{
-			Random random = new Random();
+			Random random = new Random(Guid.NewGuid().GetHashCode());
 			string text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 			byte[] array = new byte[3]
 			{

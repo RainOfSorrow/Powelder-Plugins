@@ -97,10 +97,16 @@ namespace SurvivalCore.Economy.Shop
 			{
 				if (int.TryParse(cmd2, out int index))
 				{
-					Product product3 = new Product(0, null, 0, 0, 0);
-					if (Economy.Products.Exists((Product x) => x.Index == index))
+					if (index < 0)
 					{
-						product3 = Economy.Products.Find((Product x) => x.Index == index);
+						args.Player.SendErrorMessage("Podano wartosc ujemna indexu, mozesz podac tylko dodatnia.");
+						return;
+					}
+					
+					Product product3 = new Product(0, null, 0, 0, 0);
+					if (Economy.Products.Exists(x => x.Index == index))
+					{
+						product3 = Economy.Products.Find(x => x.Index == index);
 					}
 					if (product3.GetIndex() == 0)
 					{
@@ -122,6 +128,13 @@ namespace SurvivalCore.Economy.Shop
 					{
 						amount = item3.maxStack;
 					}
+					
+					if (amount < 0)
+					{
+						args.Player.SendErrorMessage("Podano wartosc ujemna ilosci, mozesz podac tylko dodatnia.");
+						return;
+					}
+					
 					int num3 = amount * product3.GetBuy();
 					int money = SurvivalCore.SrvPlayers[player.Index].Money;
 					if (money < num3)
@@ -198,6 +211,12 @@ namespace SurvivalCore.Economy.Shop
 			{
 				if (int.TryParse(cmd2, out int index2))
 				{
+					if (index2 < 0)
+					{
+						args.Player.SendErrorMessage("Podano wartosc ujemna, mozesz podac tylko dodatnia.");
+						return;
+					}
+					
 					Product product = new Product(0, null, 0, 0, 0);
 					if (Economy.Products.Exists((Product x) => x.Index == index2))
 					{
@@ -223,6 +242,12 @@ namespace SurvivalCore.Economy.Shop
 					{
 						player.SendErrorMessage("Nie masz tylu {0} w ekwipunku.", item.Name);
 						break;
+					}
+					
+					if (result < 0)
+					{
+						args.Player.SendErrorMessage("Podano wartosc ujemna ilosci, mozesz podac tylko dodatnia.");
+						return;
 					}
 					int num = result * product.GetSell();
 					SurvivalCore.SrvPlayers[player.Index].Money += num;

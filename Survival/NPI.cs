@@ -96,25 +96,7 @@ namespace SurvivalCore
 		{
 			return false;
 		}
-
-		public static bool ItemDrop(BinaryReader read, TSPlayer who)
-		{
-			short num = read.ReadInt16();
-			read.ReadSingle();
-			read.ReadSingle();
-			read.ReadSingle();
-			read.ReadSingle();
-			read.ReadInt16();
-			read.ReadByte();
-			read.ReadByte();
-			short num2 = read.ReadInt16();
-			if (num2 == 267 && num == 400)
-			{
-				PowelderAPI.Utils.GiveItemWithoutSpawn(who, TShock.Utils.GetItemById(num2), 1);
-				return true;
-			}
-			return false;
-		}
+		
 
 		public static bool SpecialNpcEffect(BinaryReader read, TSPlayer who)
 		{
@@ -122,13 +104,7 @@ namespace SurvivalCore
 			byte b2 = read.ReadByte();
 			if (b2 == 1)
 			{
-				int cost = 1800;
-				cost = Utils.CostCalc(who, cost);
-				if (SurvivalCore.SrvPlayers[b].Money < cost)
-				{
-					who.SendErrorMessage("Nie stac cie na przywolanie Skeletrona. Koszt {0} €.", cost);
-					return true;
-				}
+
 				
 				if ((SurvivalCore.SrvPlayers[who.Index].BossCooldown - DateTime.Now).TotalSeconds > 0)
 				{
@@ -136,8 +112,6 @@ namespace SurvivalCore
 					return true;
 				}
 				
-				SurvivalCore.SrvPlayers[b].Money -= cost;
-				TSPlayer.All.SendInfoMessage("{0} przywolal Skeletrona.", who.Name);
 			}
 			return false;
 		}
@@ -150,7 +124,8 @@ namespace SurvivalCore
 			{
 				return true;
 			}
-			bool isBoss = false;
+
+			bool isBoss;
 			int cost = 0;
 			NPC nPc = new NPC();
 			nPc.SetDefaults(npcid);
@@ -159,128 +134,95 @@ namespace SurvivalCore
 			{
 				switch (npcid)
 				{
-				case 4:
-				case 13:
-				case 50:
-				case 75:
-				case 125:
-				case 126:
-				case 127:
-				case 128:
-				case 129:
-				case 130:
-				case 131:
-				case 134:
-				case 222:
-				case 245:
-				case 266:
-				case 370:
-				case 398:
-				case 422:
-				case 439:
-				case 493:
-				case 507:
-				case 517:
-				case 657:
-					isBoss = true;
-					break;
+					case 4:
+					case 13:
+					case 50:
+					case 75:
+					case 125:
+					case 126:
+					case 127:
+					case 128:
+					case 129:
+					case 130:
+					case 131:
+					case 134:
+					case 222:
+					case 245:
+					case 266:
+					case 370:
+					case 398:
+					case 422:
+					case 439:
+					case 493:
+					case 507:
+					case 517:
+					case 657:
+						isBoss = true;
+						break;
 				}
 			}
+
 			switch (npcid)
 			{
-			case -1:
-				cost = 1300;
-				break;
-			case -2:
-				cost = 2650;
-				break;
-			case -3:
-				cost = 2000;
-				break;
-			case -4:
-				cost = 3100;
-				break;
-			case -5:
-				cost = 4200;
-				break;
-			case -6:
-				cost = 2700;
-				break;
-			case -7:
-				cost = 15000;
-				break;
-			case -8:
-				cost = 3000;
-				break;
-			case -10:
-				cost = 500;
-				break;;
-			case 4:
-				cost = 1000;
-				break;
-			case 13:
-				cost = 1200;
-				break;
-			case 50:
-				cost = 800;
-				break;
-			case 75:
-				cost = 15000;
-				break;
-			case 125:
-			case 126:
-			case 127:
-			case 128:
-			case 129:
-			case 130:
-			case 131:
-			case 134:
-				cost = 3200;
-				break;
-			case 222:
-				cost = 1500;
-				break;
-			case 245:
-				cost = 3600;
-				break;
-			case 266: //BOC
-				cost = 1200;
-				break;
-			case 370: //Duke Fishron
-				cost = 3800;
-				break;
-			case 422:
-			case 439:
-			case 493:
-			case 507:
-			case 517:
-				cost = 4500;
-				break;
-			case 398:
-				cost = 5000;
-				break;
-			case 657: //Queen slime
-				cost = 2900;
-				break;
+				case -1:
+					cost = 1300;
+					break;
+				case -2:
+					cost = 2650;
+					break;
+				case -3:
+					cost = 2000;
+					break;
+				case -4:
+					cost = 3100;
+					break;
+				case -5:
+					cost = 4200;
+					break;
+				case -6:
+					cost = 2700;
+					break;
+				case -7:
+					cost = 15000;
+					break;
+				case -8:
+					cost = 3000;
+					break;
+				case -10:
+					cost = 500;
+					break;
+			}
+
+			
+			int bossId = (npcid == 266 || npcid == 13 ? 6969 : npcid);
+
+			if (npcid == 126 || npcid == 125 || npcid == 134 || npcid == 127 || npcid == 128 || npcid == 129 ||
+			    npcid == 130 || npcid == 131)
+			{
+				bossId = 42069;
+			}
+
+			if (!Goals.IsDone(bossId))
+			{
+				tSPlayer.SendErrorMessage("Ten boss w tej chwili jest zablokowany.");
+				if (SpawnItemId(npcid) != -1)
+				{
+					tSPlayer.GiveItem(SpawnItemId(npcid), 1);
+				}
+
+				return true;
+			}
+
+
+			if ((SurvivalCore.SrvPlayers[tSPlayer.Index].BossCooldown - DateTime.Now).TotalSeconds > 0)
+			{
+				tSPlayer.SendErrorMessage(
+					$"Musisz odczekac jakis czas, aby moc zrespic kolejnego bossa/inwazje. Mozliwe to bedzie za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[tSPlayer.Index].BossCooldown)}");
+				return true;
 			}
 
 			if (cost > 0)
 			{
-				if (isBoss)
-				{
-					short bossid = (short) (npcid == 266 || npcid == 13 ? 6969 : npcid);
-
-					if (!Goals.IsDone(bossid))
-					{
-						tSPlayer.SendErrorMessage("Ten boss w tej chwili jest zablokowany.");
-						if (SpawnItemId(npcid) != -1)
-						{
-							tSPlayer.GiveItem(SpawnItemId(npcid), 1);
-						}
-						return true;
-					}
-				}
-
 				cost = Utils.CostCalc(tSPlayer, cost);
 				if (SurvivalCore.SrvPlayers[tSPlayer.Index].Money < cost)
 				{
@@ -294,19 +236,12 @@ namespace SurvivalCore
 					return true;
 				}
 
-				if ((SurvivalCore.SrvPlayers[tSPlayer.Index].BossCooldown - DateTime.Now).TotalSeconds > 0)
-				{
-					tSPlayer.SendErrorMessage($"Musisz odczekac jakis czas, aby moc zrespic kolejnego bossa. Mozliwe to bedzie za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[tSPlayer.Index].BossCooldown)}");
-					return true;
-				}
-
-				
-				SurvivalCore.SrvPlayers[tSPlayer.Index].BossCooldown = DateTime.Now.AddMinutes(30);
-
 				SurvivalCore.SrvPlayers[tSPlayer.Index].Money -= cost;
-				TSPlayer.All.SendInfoMessage("{0} {1}.", tSPlayer.Name,
-					isBoss ? ("przywolal " + nPc.FullName) : ("rozpoczal " + GetInvasion(npcid)));
 			}
+
+
+			SurvivalCore.SrvPlayers[tSPlayer.Index].BossCooldown = DateTime.Now.AddMinutes(30);
+
 
 			return false;
 		}
@@ -339,7 +274,7 @@ namespace SurvivalCore
 							Random random = new Random();
 							if (random.Next(0, 1550) <= 2)
 							{
-								int num4 = random.Next(25, 75);
+								int num4 = random.Next(35, 85);
 								SurvivalCore.SrvPlayers[who.Index].Money += num4;
 								who.SendInfoMessage($"Znalazles mieszek, a w nim {num4} €.");
 							}
@@ -355,37 +290,20 @@ namespace SurvivalCore
 							return true;
 						}
 						
-						int cost = 3500;
-						cost = Utils.CostCalc(who, cost);
-						if (SurvivalCore.SrvPlayers[who.Index].Money < cost)
+						if ((SurvivalCore.SrvPlayers[who.Index].BossCooldown - DateTime.Now).TotalSeconds > 0)
 						{
-							who.SendErrorMessage("Nie stac cie na przywolanie Plantery. Koszt {0} €", cost);
+							who.SendErrorMessage($"Musisz odczekac jakis czas, aby moc zrespic kolejnego bossa/inwazje. Mozliwe to bedzie za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[who.Index].BossCooldown)}");
 							who.SendTileSquare(x, y);
 							return true;
 						}
-
-						SurvivalCore.SrvPlayers[who.Index].Money -= cost;
-						TSPlayer.All.SendInfoMessage("{0} przywolal Plantere.", who.Name);
+						
 						break;
 					}
 				}
 			}
 			return false;
 		}
-
-		public static bool ItemFrame(BinaryReader read, TSPlayer who)
-		{
-			read.ReadInt16();
-			read.ReadInt16();
-			int num = read.ReadInt16();
-			if (num == 267)
-			{
-				PowelderAPI.Utils.GiveItemWithoutSpawn(who, TShock.Utils.GetItemById(267), 1);
-				who.SendErrorMessage("Nie mozna wlozyc Guide Voodoo Doll do item frame.");
-				return true;
-			}
-			return false;
-		}
+		
 
 		public static bool StrikeNpc(BinaryReader read, TSPlayer who)
 		{
@@ -400,12 +318,7 @@ namespace SurvivalCore
 				endDamage *= 2.0;
 
 			bool isDead = false || npc.life - endDamage <= 0;
-			if (npc.type == 66 && isDead)
-			{
-				Main.npc[npcid].active = false;
-				PowelderAPI.Utils.GiveItemWithoutSpawn(who, TShock.Utils.GetItemById(267), 1);
-			}
-			else if (npc.type == 661)
+			if (npc.type == 661)
 			{
 				if (Main.dayTime)
 				{
@@ -420,23 +333,13 @@ namespace SurvivalCore
 				}
 				
 				
-				int cost = 4000;
-				cost = Utils.CostCalc(who, cost);
-				if (SurvivalCore.SrvPlayers[who.Index].Money < cost)
-				{
-					who.SendErrorMessage("Nie stac cie na przywolanie Empress of Light. Koszt {0} €", cost);
-					return true;
-				}
-				
 				if ((SurvivalCore.SrvPlayers[who.Index].BossCooldown - DateTime.Now).TotalSeconds > 0)
 				{
 					who.GiveItem(SpawnItemId(npcid), 1);
 					who.SendErrorMessage($"Musisz odczekac jakis czas, aby moc zrespic kolejnego bossa. Mozliwe to bedzie za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[who.Index].BossCooldown)}");
 					return true;
 				}
-				
-				SurvivalCore.SrvPlayers[who.Index].Money -= cost;
-				TSPlayer.All.SendInfoMessage("{0} przywolal Empress of Light", who.Name);
+
 			}
 			return false;
 		}
@@ -645,15 +548,15 @@ namespace SurvivalCore
 			{
 				if ((SurvivalCore.SrvPlayers[e.Player.Index].BombCooldown - DateTime.Now).TotalSeconds > 0)
 				{
-					e.Player.SendErrorMessage($"Nie za szybko z ladunkiem kolego. Musisz odczekac {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[e.Player.Index].BombCooldown)}");
+					e.Player.SendErrorMessage($"Zwolnij troche z wyrzucaniem ladunkow. Nastepny rzut bedzie mozliwy za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[e.Player.Index].BombCooldown)}");
 					
 					if (e.Type == 28)
 						e.Player.GiveItem(166, 1);
-					if (e.Type == 37)
+					else if (e.Type == 37)
 						e.Player.GiveItem(235, 1);
-					if (e.Type == 519)
+					else if (e.Type == 519)
 						e.Player.GiveItem(3196, 1);
-					if (e.Type == 773)
+					else if (e.Type == 773)
 						e.Player.GiveItem(4423, 1);
 					
 					e.Player.RemoveProjectile(e.Identity, e.Owner);

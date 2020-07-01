@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using MySql.Data.MySqlClient;
+using OTAPI;
 using PowelderAPI;
 using Terraria;
 using Terraria.GameContent.Bestiary;
@@ -33,8 +36,8 @@ namespace SurvivalCore
         public static void ProgressLoad()
         {
             _goalsList = new List<Goal>();
-            
-            using (QueryResult queryResult = PowelderApi.Db.QueryReader("SELECT * FROM Goals"))
+
+            using (QueryResult queryResult = PowelderApi.Db.QueryReader("SELECT * FROM Goals ORDER BY `Index` ASC"))
             {
                 while (queryResult.Read())
                 {
@@ -43,21 +46,31 @@ namespace SurvivalCore
                         queryResult.Get<string>("Name"),
                         queryResult.Get<int>("Id"),
                         queryResult.Get<int>("ToComplete"),
-                        queryResult.Get<int>("Progress"),
-                        queryResult.Get<int>("Queue")
+                        queryResult.Get<int>("Progress")
                     ));
                 }
             }
+
         }
 
         public static void ProgressUpdate()
         {
             foreach (var goal in _goalsList)
             {
-                PowelderApi.Db.Query("UPDATE Goals SET Progress=@1 WHERE Index=@0", goal.Index, goal.Progress);
+                PowelderApi.Db.Query("UPDATE Goals SET Progress=@1 WHERE `Index`=@0", goal.Index, goal.Progress);
             }
         }
 
+        public static Goal GetCurrentGoal()
+        {
+            foreach (var goal in _goalsList)
+            {
+                if (goal.ToComplete != goal.Progress)
+                    return goal;
+            }
+            return new Goal(-1, "Brak", -1, 1, 0);
+        }
+        
         public static bool IsDone(int npcId)
         {
 
@@ -68,34 +81,72 @@ namespace SurvivalCore
                 return _goalsList[index].ToComplete == _goalsList[index].Progress;
             }
 
-            return false;
+            return true;
         }
 
         public static void ProgressCommand(CommandArgs args)
         {
-           
+            if (args.Parameters.Count < 1)
+            {
+                Goal goal1 = GetCurrentGoal();
+                args.Player.SendInfoMessage($"Aktualny stan postepu to {goal1.Name}: {goal1.Progress}/{goal1.ToComplete} ({Math.Round((float)goal1.Progress / (float)goal1.ToComplete, 4) * 100}% )");
+                args.Player.SendInfoMessage("Aby pomoc w uzyskaniu celu uzyj komendy /postep <kwota>");
+                return;;
+            }
+
+            int money = 0;
+            if (!int.TryParse(args.Parameters[0], out money))
+            {
+                args.Player.SendErrorMessage("W kwocie musisz podac sama liczbe.");
+                return;
+            }
+
+            if (SurvivalCore.SrvPlayers[args.Player.Index].Money < money)
+            {
+                args.Player.SendErrorMessage("Chciales wplacic wiecej niz posiadasz.");
+            }
+
+            Goal goal = GetCurrentGoal();
+
+            if (goal.ToComplete - (goal.Progress + money) < 0)
+                money = goal.ToComplete - goal.Progress;
+
+            goal.Progress += money;
+            SurvivalCore.SrvPlayers[args.Player.Index].Money -= money;
+            args.Player.SendSuccessMessage($"Pomyslnie wplacono {money}. Nowy stan prostepu to {goal.Name}: {goal.Progress}/{goal.ToComplete} ({Math.Round((float)goal.Progress / (float)goal.ToComplete, 4) * 100}% )");
+
+            if (goal.ToComplete == goal.Progress)
+            {
+                Random rand = new Random(Guid.NewGuid().GetHashCode());
+                foreach (var plr in TShock.Players.Where(x => x != null))
+                {
+                    plr.SendWarningMessage($"Aktualny cel zostal osiagniety! Nowy cel to {GetCurrentGoal().Name}.");
+                    int proj = Projectile.NewProjectile(plr.TPlayer.position.X, plr.TPlayer.position.Y - 32, 0f, -8f, rand.Next(168, 170), 0, (float)0);
+                    Main.projectile[proj].Kill();
+                }
+            }
+
         }
 
         
+    }
+    
+    
+    public class Goal
+    {
+        public int Index;
+        public string Name;
+        public int Id;
+        public int ToComplete;
+        public int Progress;
 
-        public struct Goal
+        public Goal(int index, string name, int id, int toComplete, int progress)
         {
-            public int Index;
-            public string Name;
-            public int Id;
-            public int ToComplete;
-            public int Progress;
-            public int Queue;
-
-            public Goal(int index, string name, int id, int toComplete, int progress, int queue)
-            {
-                Index = index;
-                Name = name;
-                Id = id;
-                ToComplete = toComplete;
-                Progress = progress;
-                Queue = queue;
-            }
+            Index = index;
+            Name = name;
+            Id = id;
+            ToComplete = toComplete;
+            Progress = progress;
         }
     }
 }

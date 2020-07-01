@@ -154,7 +154,7 @@ namespace PowelderAPI
 				string shortPrefix = Utils.GetShortPrefix(tSPlayer.Group.Name);
 				if (shortPrefix != null)
 				{
-					foreach (TSPlayer item4 in TShock.Players.Where((TSPlayer p) => p?.Active ?? false))
+					foreach (TSPlayer item4 in TShock.Players.Where(p => p?.Active ?? false))
 					{
 						if (tSPlayer != null && tSPlayer.Account != null && (item4.Team != tSPlayer.Team || tSPlayer.Team == 0))
 						{

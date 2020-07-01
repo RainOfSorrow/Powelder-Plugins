@@ -121,7 +121,7 @@ namespace SurvivalCore
 					foreach (string key in topZgony.Keys)
 					{
 						args.Player.SendMessage(
-							$"{num}# [c/595959:-] {key} [c/595959:(]{topZgony[key]} h[c/595959:)]",
+							$"{num}# [c/595959:-] {key} [c/595959:(]{topZgony[key]}[c/595959:)]",
 							color);
 						num++;
 						switch (num)
@@ -214,7 +214,7 @@ namespace SurvivalCore
 			{
 			default:
 				args.Player.SendErrorMessage("Uzycie: /status <opcja>");
-				args.Player.SendInfoMessage("Opcje: cale, online, ping, konto, zgony, pvp, waznosc, clean");
+				args.Player.SendInfoMessage("Opcje: cale, online, ping, konto, zgony, pvp, waznosc, postep");
 				break;
 			case "cale":
 				if (SavingFormat.IsTrue(SurvivalCore.SrvPlayers[args.Player.Index].StatusOptions, 0))
@@ -277,16 +277,16 @@ namespace SurvivalCore
 					args.Player.SendSuccessMessage("Waznosc w statusie zostala wlaczona.");
 				}
 				break;
-			case "clean":
+			case "Postep":
 				if (SavingFormat.IsTrue(SurvivalCore.SrvPlayers[args.Player.Index].StatusOptions, 5))
 				{
 					SurvivalCore.SrvPlayers[args.Player.Index].StatusOptions = SavingFormat.Change(SurvivalCore.SrvPlayers[args.Player.Index].StatusOptions, 5, false);
-					args.Player.SendSuccessMessage("Clean w statusie zostal wylaczony.");
+					args.Player.SendSuccessMessage("Postep w statusie zostal wylaczony.");
 				}
 				else
 				{
 					SurvivalCore.SrvPlayers[args.Player.Index].StatusOptions = SavingFormat.Change(SurvivalCore.SrvPlayers[args.Player.Index].StatusOptions, 5, true);
-					args.Player.SendSuccessMessage("Clean w statusie zostal wlaczony.");
+					args.Player.SendSuccessMessage("Postep w statusie zostal wlaczony.");
 				}
 				break;
 			case "pvp":
@@ -378,7 +378,6 @@ namespace SurvivalCore
 				case "wof":
 				case "wall of flesh":
 				{
-					int cost3 = 2600;
 
 					Item itemById = TShock.Utils.GetItemById(267);
 					if (PowelderAPI.Utils.PlayerItemCount(args.Player, itemById) < 1)
@@ -401,7 +400,6 @@ namespace SurvivalCore
 					}
 
 					PowelderAPI.Utils.PlayerRemoveItems(args.Player, itemById, 1);
-					SurvivalCore.SrvPlayers[args.Player.Index].Money -= cost3;
 					NPC.SpawnWOF(new Vector2(args.Player.X, args.Player.Y));
 					TSPlayer.All.SendInfoMessage("{0} przywolal Wall of Flesha.", args.Player.Name);
 					break;
@@ -424,15 +422,7 @@ namespace SurvivalCore
 						args.Player.SendErrorMessage("Lunatic Cultist juz jest na swiecie.");
 						break;
 					}
-
-					int cost2 = 4500;
-					cost2 = Utils.CostCalc(args.Player, cost2);
-					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < cost2)
-					{
-						args.Player.SendErrorMessage(
-							"Nie stac cie na przywolanie Lunatic Cultist. [c/595959:(]Koszt {0} €[c/595959:)]", cost2);
-						break;
-					}
+					
 
 					if (PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(1274)) < 1 ||
 					    PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(148)) < 5)
@@ -444,7 +434,6 @@ namespace SurvivalCore
 
 					PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(1274), 1);
 					PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(148), 5);
-					SurvivalCore.SrvPlayers[args.Player.Index].Money -= cost2;
 					TSPlayer.Server.SpawnNPC(nPc2.type, nPc2.FullName, 1, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendInfoMessage("{0} przywolal Lunatic Cultista.", args.Player.Name);
 					break;
@@ -465,15 +454,9 @@ namespace SurvivalCore
 						args.Player.SendErrorMessage("Na swiecie juz jest jakas inwazja.");
 						break;
 					}
+					
 
-					int cost4 = 3500;
-					cost4 = Utils.CostCalc(args.Player, cost4);
-					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < cost4)
-					{
-						args.Player.SendErrorMessage(
-							"Nie stac cie na rozpoczecie Martian Madness. [c/595959:(]Koszt {0} €[c/595959:)]", cost4);
-					}
-					else if (PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(3118)) < 1 ||
+					if (PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(3118)) < 1 ||
 					         PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(530)) < 95)
 					{
 						args.Player.SendErrorMessage("Nie masz wymaganych materialow w ekwipunku.");
@@ -483,7 +466,6 @@ namespace SurvivalCore
 					{
 						PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(3118), 1);
 						PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(530), 95);
-						SurvivalCore.SrvPlayers[args.Player.Index].Money -= cost4;
 					}
 
 					break;
@@ -510,15 +492,8 @@ namespace SurvivalCore
 						args.Player.SendErrorMessage("Przywolanie jest mozliwe tylko w nocy.");
 						break;
 					}
-
-					int cost = 1800;
-					cost = Utils.CostCalc(args.Player, cost);
-					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < cost)
-					{
-						args.Player.SendErrorMessage("Nie stac cie na przywolanie Skeletrona. Koszt {0} €.", cost);
-						break;
-					}
-
+					
+					
 					if (PowelderAPI.Utils.PlayerItemCount(args.Player, TShock.Utils.GetItemById(1307)) < 1)
 					{
 						args.Player.SendErrorMessage("Nie masz wymaganych materialow w ekwipunku.");
@@ -527,7 +502,6 @@ namespace SurvivalCore
 					}
 
 					PowelderAPI.Utils.PlayerRemoveItems(args.Player, TShock.Utils.GetItemById(1307), 1);
-					SurvivalCore.SrvPlayers[args.Player.Index].Money -= cost;
 					TSPlayer.Server.SpawnNPC(nPc.type, nPc.FullName, 1, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendInfoMessage("{0} przywolal Skeletrona.", args.Player.Name);
 					break;
@@ -539,56 +513,48 @@ namespace SurvivalCore
 		{
 			{
 				"iron skin", //pelna nazwa
-				new KeyValuePair<byte, int>(5, 100) //ID i Koszt
+				new KeyValuePair<byte, int>(5, 2000) //ID i Koszt
 			},
 			{
 				"regeneration",
-				new KeyValuePair<byte, int>(2, 100) 
-			},
-			{
-				"well fed",
-				new KeyValuePair<byte, int>(26, 100) 
-			},
-			{
-				"mana regeneration",
-				new KeyValuePair<byte, int>(6, 100) 
-			},
-			{
-				"imbue cursed flames",
-				new KeyValuePair<byte, int>(73, 100)
-			},
-			{
-				"imbue fire",
-				new KeyValuePair<byte, int>(74, 100)
-			},
-			{
-				"imbue gold",
-				new KeyValuePair<byte, int>(75, 100)
-			},
-			{
-				"imbue ichor",
-				new KeyValuePair<byte, int>(76, 100) 
-			},
-			{
-				"imbue nanites",
-				new KeyValuePair<byte, int>(77, 100)
-			},
-			{
-				"imbue confetti",
-				new KeyValuePair<byte, int>(78, 100)
-			},
-			{
-				"imbue poison",
-				new KeyValuePair<byte, int>(79, 100)
+				new KeyValuePair<byte, int>(2, 1500) 
 			},
 			{
 				"builder",
-				new KeyValuePair<byte, int>(107, 100)
+				new KeyValuePair<byte, int>(107, 700)
 			},
 			{
 				"night owl",
-				new KeyValuePair<byte, int>(12, 100)
+				new KeyValuePair<byte, int>(12, 700)
 			},
+			{
+				"life force",
+				new KeyValuePair<byte, int>(113, 2500)
+			},
+			{
+				"shine",
+				new KeyValuePair<byte, int>(11, 900)
+			},
+			{
+				"endurance",
+				new KeyValuePair<byte, int>(114, 3000)
+			},
+			{
+				"hunter",
+				new KeyValuePair<byte, int>(17, 900)
+			},
+			{
+				"swiftness",
+				new KeyValuePair<byte, int>(3, 800)
+			},
+			{
+				"honey",
+				new KeyValuePair<byte, int>(48, 2500)
+			},
+			{
+				"finch",
+				new KeyValuePair<byte, int>(216, 69666420)
+			}
 		};
 			
 		public static void BoostCommand(CommandArgs args)
@@ -606,7 +572,7 @@ namespace SurvivalCore
 					list.Add($"{key} - [c/ffff00:{avalibleBuffs[key].Value} €]");
 				}
 
-				args.Player.SendMessage($"Lista dostepnych kolorow:", Color.Green);
+				args.Player.SendMessage($"Lista dostepnych buffow:", Color.Green);
 				PaginationTools.SendPage(args.Player, 0, PaginationTools.BuildLinesFromTerms(list, null, " | ", 140), new PaginationTools.Settings
 				{
 					IncludeHeader = false,

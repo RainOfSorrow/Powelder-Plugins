@@ -33,11 +33,7 @@ namespace SurvivalCore
 
 		public static byte BoostBuffType = 0;
 		public static DateTime BoostBuffEndTime;
-
-		private static byte _cleancount = 0;
-
-		private static bool _isClean = false;
-
+		
 		private static byte _statusTick = 0;
 
 		public static bool IsReload = false;
@@ -111,9 +107,10 @@ namespace SurvivalCore
 			Commands.ChatCommands.Add(new Command("server.gracz", SrvCommands.GetPlayTime, "czasgry"));
 			Commands.ChatCommands.Add(new Command("server.gracz", SrvCommands.Top, "top"));
 			Commands.ChatCommands.Add(new Command("server.gracz", SrvCommands.Przywolywanie, "przywolaj", "przyw"));
-			Commands.ChatCommands.Add(new Command("server.isBooster", SrvCommands.BoostCommand, "boost"));
+			Commands.ChatCommands.Add(new Command("server.boost", SrvCommands.BoostCommand, "boost"));
 			Commands.ChatCommands.Add(new Command("server.gracz", ExtendedChat.CommandPrefixItem, "prefixitem", "pitem"));
 			Commands.ChatCommands.Add(new Command("server.gracz", ExtendedChat.CommandNickColor, "nickcolor", "ncolor"));
+			Commands.ChatCommands.Add(new Command("server.postep", Goals.ProgressCommand, "postep"));
 			Commands.ChatCommands.Add(new Command("server.debug", ExtendedChat.Debug, "srvdebug"));
 
 			//Economy Hooks
@@ -145,7 +142,6 @@ namespace SurvivalCore
 			
 
 			//TShock.CharacterDB = new CharacterManager(new MySqlConnection($"Server=54.38.50.59; Port=3306; Database=www497_powelder_survival; Uid=www497_powelder_survival; Pwd=HorwAYBmXqYqeUsgqdBu;"));
-
 		}
 		
 
@@ -170,8 +166,11 @@ namespace SurvivalCore
 
 		protected override void Dispose(bool disposing)
 		{
+			
 			if (disposing)
 			{
+				Goals.ProgressUpdate();
+				
 				ServerApi.Hooks.GameInitialize.Deregister(this, global::SurvivalCore.Economy.Economy.OnInitialize);
 				ServerApi.Hooks.GameUpdate.Deregister(this, OnUpdate);
 				ServerApi.Hooks.WorldSave.Deregister(this, OnWorldSave);
@@ -224,10 +223,18 @@ namespace SurvivalCore
 			{
 				Main.npc[i].active = false;
 				TSPlayer.All.SendData(PacketTypes.NpcUpdate, "", i);
+				return;
 			}
-			else if (!Goals.IsDone((npc.type == 233 || npc.type == 13 || npc.type == 14 || npc.type == 15
-				? 6969
-				: npc.type)))
+
+			int bossId = (npc.type == 233 || npc.type == 13 || npc.type == 14 || npc.type == 15 ? 6969 : npc.type);
+			
+			if (i == 126 || i == 125 || i == 134 || i == 127 || i == 128 || i == 129 ||
+			    i == 130 || i == 131)
+			{
+				bossId = 42069;
+			}
+			
+			if (!Goals.IsDone(bossId))
 			{
 				Main.npc[i].active = false;
 				TSPlayer.All.SendData(PacketTypes.NpcUpdate, "", i);
@@ -239,6 +246,7 @@ namespace SurvivalCore
 			IsReload = true;
 			Economy.Economy.Products = QueryShop.GetProducts();
 			TSPlayer.Server.SendInfoMessage("[Economy Shop] Pomyslnie zaladowano {0} produktow.", global::SurvivalCore.Economy.Economy.Products.Count);
+			Goals.ProgressLoad();
 			IsReload = false;
 			Thread thread = new Thread(OneSecondThread)
 			{
@@ -261,6 +269,10 @@ namespace SurvivalCore
 			};
 			thread4.Start();
 			
+			new Thread(GiveOutMoneyThread)
+			{
+				IsBackground = true
+			}.Start(10);
 
 			System.Timers.Timer task = new System.Timers.Timer();
 			task.Elapsed += BuffBoostTask;
@@ -361,6 +373,8 @@ namespace SurvivalCore
 					DataBase.SrvPlayerUpdate(SrvPlayers[tSPlayer.Index]);
 				}
 			}
+			
+			Goals.ProgressUpdate();
 		}
 
 		private static void BuffBoostTask(object source, ElapsedEventArgs args)
@@ -388,7 +402,6 @@ namespace SurvivalCore
 
 		public static void OnInitialize(EventArgs e)
 		{
-
 			Config = Config.Read("powelder/srvconfig.json");
 			if (!File.Exists("powelder/srvconfig.json"))
 			{
@@ -480,13 +493,6 @@ namespace SurvivalCore
 						args.Handled = Npi.Tile(read3, TShock.Players[args.Msg.whoAmI]);
 					}
 				}
-				if (!args.Handled && args.MsgID == PacketTypes.ItemDrop)
-				{
-					using (BinaryReader read4 = new BinaryReader(new MemoryStream(args.Msg.readBuffer, args.Index, args.Length)))
-					{
-						args.Handled = Npi.ItemDrop(read4, TShock.Players[args.Msg.whoAmI]);
-					}
-				}
 				if (!args.Handled && args.MsgID == PacketTypes.PlayerTeam)
 				{
 					using (BinaryReader read5 = new BinaryReader(new MemoryStream(args.Msg.readBuffer, args.Index, args.Length)))
@@ -515,13 +521,6 @@ namespace SurvivalCore
 						args.Handled = Npi.StrikeNpc(read9, TShock.Players[args.Msg.whoAmI]);
 					}
 				}
-				if (!args.Handled && args.MsgID == PacketTypes.PlaceItemFrame)
-				{
-					using (BinaryReader read10 = new BinaryReader(new MemoryStream(args.Msg.readBuffer, args.Index, args.Length)))
-					{
-						args.Handled = Npi.ItemFrame(read10, TShock.Players[args.Msg.whoAmI]);
-					}
-				}
 				if (!args.Handled && args.MsgID == PacketTypes.NpcSpecial)
 				{
 					using (BinaryReader read11 = new BinaryReader(new MemoryStream(args.Msg.readBuffer, args.Index, args.Length)))
@@ -532,27 +531,31 @@ namespace SurvivalCore
 			}
 		}
 
+		private void GiveOutMoneyThread(object time)
+		{
+			Thread.Sleep((int)time*60000);
+
+			Random rand = new Random(Guid.NewGuid().GetHashCode());
+
+			int amount = rand.Next(5, 15);
+			
+			foreach (var player in TShock.Players.Where(x => x != null))
+			{
+				player.SendInfoMessage($"Kazdy z was otrzymal darmowe {amount} €");
+				if (SrvPlayers[player.Index] != null)
+					SrvPlayers[player.Index].Money += amount;
+			}
+			
+			
+			new Thread(GiveOutMoneyThread)
+			{
+				IsBackground = true
+			}.Start(rand.Next(45, 85));
+		}
+
 		private void OnUpdate(EventArgs args)
 		{
-			if (Main.time != 0.0 || _isClean)
-			{
-				return;
-			}
-			int num = 0;
-			Item[] item = Main.item;
-			foreach (Item item2 in item)
-			{
-				if (item2.active)
-				{
-					num++;
-				}
-			}
-			if (num >= 75)
-			{
-				_isClean = true;
-				_cleancount = 60;
-				TSPlayer.All.SendMessage($"[i:536] [c/595959:;] [c/0099ff:Clean Bot] [c/595959:;] Za [c/0099ff:{_cleancount}] sekund zostana usuniete wszystkie przedmioty z ziemi.", new Color(102, 153, 255));
-			}
+
 		}
 
 		private void OnAccountC(AccountCreateEventArgs args)
@@ -595,42 +598,16 @@ namespace SurvivalCore
 						{
 							Guardians.Remove(key);
 						}
-						if (_isClean)
-						{
-							_cleancount--;
-							if (_cleancount == 30)
-							{
-								TSPlayer.All.SendMessage($"[i:536] [c/595959:;] [c/0099ff:Clean Bot] [c/595959:;] Za [c/0099ff:{_cleancount}] sekund zostana usuniete wszystkie przedmioty z ziemi.", new Color(102, 153, 255));
-							}
-							else if (_cleancount == 5)
-							{
-								TSPlayer.All.SendMessage($"[i:536] [c/595959:;] [c/0099ff:Clean Bot] [c/595959:;] Za [c/0099ff:{_cleancount}] sekund zostana usuniete wszystkie przedmioty z ziemi.", new Color(102, 153, 255));
-							}
-							else if (_cleancount == 0)
-							{
-								int num = 0;
-								Item[] item = Main.item;
-								foreach (Item item2 in item)
-								{
-									if (item2.active)
-									{
-										item2.active = false;
-										TSPlayer.All.SendData(PacketTypes.ItemDrop, "", Array.IndexOf(Main.item, item2));
-										num++;
-									}
-								}
-								TSPlayer.All.SendMessage($"[i:536] [c/595959:;] [c/0099ff:Clean Bot] [c/595959:;] Usunieto [c/0099ff:{num}] przedmiotow z ziemi.", new Color(102, 153, 255));
-								_isClean = false;
-							}
-						}
+
 						TSPlayer[] players = TShock.Players;
+						Goal goal = Goals.GetCurrentGoal();
 						foreach (TSPlayer tSPlayer in players)
 						{
 							if (tSPlayer != null && tSPlayer.Account != null)
 							{
 								if (SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 0) && !IsStatusBusy[tSPlayer.Index])
 								{
-									string text2 = string.Format(">|{7} [c/595959:───── «] [c/52e092:Powelder] [c/595959:» ───── ]{0}{1}{2}{3}{4}{5}{6} \n\r [c/595959:───── «] [c/52e092:Survival] [c/595959:» ───── ]",
+									string text2 = string.Format(">|{8} [c/595959:───── «] [c/52e092:Powelder] [c/595959:» ───── ]{0}{1}{2}{3}{4}{5}{6}{7} \n\r [c/595959:───── «] [c/52e092:Survival] [c/595959:» ───── ]",
 										SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 1) //0
 											? $"\n\r[c/66ff66:Online][c/595959::] {TShock.Utils.GetActivePlayerCount()}"
 											: null,
@@ -651,7 +628,7 @@ namespace SurvivalCore
 										null,
 										(!SavingFormat.IsTrue(SrvPlayers[tSPlayer.Index].StatusOptions, 5)) //5
 											? null
-											: (_isClean ? ("\n\r[c/66ff66:Clean][c/595959::] " + _cleancount + " sec") : null),
+											: $"\n\r[c/66ff66:{Goals.GetCurrentGoal().Name}][c/595959::]  {goal.Progress}/{goal.ToComplete} ({Math.Round((float)goal.Progress / (float)goal.ToComplete, 4) * 100}%)",
 										RepeatLineBreaks(10)
 									);
 										tSPlayer.SendData(PacketTypes.Status, text2, 0 , 3);
@@ -677,7 +654,6 @@ namespace SurvivalCore
 					{
 						if (tSPlayer != null && SrvPlayers[tSPlayer.Index] != null)
 						{
-							Thread.Sleep(111);
 							PlayTime[(byte)tSPlayer.Index].Stop();
 							SrvPlayers[tSPlayer.Index].PlayTime += (long)PlayTime[(byte)tSPlayer.Index].Elapsed.TotalSeconds;
 							PlayTime[(byte)tSPlayer.Index].Restart();
@@ -685,9 +661,11 @@ namespace SurvivalCore
 							DataBase.SrvPlayerUpdate(SrvPlayers[tSPlayer.Index]);
 						}
 					}
+					Goals.ProgressUpdate();
 				}
 				catch (Exception)
 				{
+					//Ignore
 				}
 			}
 		}
