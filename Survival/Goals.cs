@@ -89,7 +89,7 @@ namespace SurvivalCore
             if (args.Parameters.Count < 1)
             {
                 Goal goal1 = GetCurrentGoal();
-                args.Player.SendInfoMessage($"Aktualny stan postepu to {goal1.Name}: {goal1.Progress}/{goal1.ToComplete} ({Math.Round((float)goal1.Progress / (float)goal1.ToComplete, 4) * 100}% )");
+                args.Player.SendInfoMessage($"Aktualny stan postepu to {goal1.Name}: {goal1.Progress}/{goal1.ToComplete} ({Math.Round((float)goal1.Progress / (float)goal1.ToComplete, 4) * 100}%)");
                 args.Player.SendInfoMessage("Aby pomoc w uzyskaniu celu uzyj komendy /postep <kwota>");
                 return;;
             }
@@ -110,6 +110,7 @@ namespace SurvivalCore
             if (SurvivalCore.SrvPlayers[args.Player.Index].Money < money)
             {
                 args.Player.SendErrorMessage("Chciales wplacic wiecej niz posiadasz.");
+                return;
             }
 
             Goal goal = GetCurrentGoal();

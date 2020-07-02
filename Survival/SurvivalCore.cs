@@ -326,7 +326,7 @@ namespace SurvivalCore
 					WorldRegeneration.DoTrees();
 					GenTrees = DateTime.UtcNow;
 				}
-				if (!((DateTime.UtcNow - GenOres).TotalMinutes >= 5.0))
+				if (!((DateTime.UtcNow - GenOres).TotalMinutes >= 600.0))
 				{
 					continue;
 				}

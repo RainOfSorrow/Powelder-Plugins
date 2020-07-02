@@ -77,8 +77,8 @@ namespace SurvivalCore
 			if (SurvivalCore.IsChatEvent && SurvivalCore.ChatEventWord == args.Text)
 			{
 				SurvivalCore.ChatEventStoper.Stop();
-				TSPlayer.All.SendMessage($"[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] [c/00cc66:{TShock.Players[args.Who].Name}] napisal najszybciej [c/00cc66:{SurvivalCore.ChatEventWord}] i wygral 60 €. [c/595959:(]{Math.Round(SurvivalCore.ChatEventStoper.Elapsed.TotalSeconds, 3)} sec[c/595959:)]", new Color(128, 255, 191));
-				SurvivalCore.SrvPlayers[args.Who].Money += 60;
+				TSPlayer.All.SendMessage($"[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] [c/00cc66:{TShock.Players[args.Who].Name}] napisal najszybciej [c/00cc66:{SurvivalCore.ChatEventWord}] i wygral 80 €. [c/595959:(]{Math.Round(SurvivalCore.ChatEventStoper.Elapsed.TotalSeconds, 3)} sec[c/595959:)]", new Color(128, 255, 191));
+				SurvivalCore.SrvPlayers[args.Who].Money += 80;
 				SurvivalCore.IsChatEvent = false;
 				SurvivalCore.ChatEventTimer = DateTime.UtcNow;
 				SurvivalCore.ChatEventStoper.Reset();

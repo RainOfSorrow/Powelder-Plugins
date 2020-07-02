@@ -51,7 +51,7 @@ namespace SurvivalCore
 			}
 			int result2 = 1;
 			int.TryParse(s, out result2);
-			if (result2 == 0)
+			if (result2 < 1)
 			{
 				result2 = 1;
 			}
@@ -71,6 +71,7 @@ namespace SurvivalCore
 				args.Player.SendErrorMessage("Nie ma receptury o takim indeksie.");
 				return;
 			}
+
 			if (TShock.Utils.GetItemById(Recipes[result3].Result.Id).maxStack < result2)
 			{
 				result2 = TShock.Utils.GetItemById(Recipes[result3].Result.Id).maxStack;
@@ -80,7 +81,7 @@ namespace SurvivalCore
 				args.Player.SendErrorMessage($"Nie stac cie na wytworzenie [i:{Recipes[result3].Result.Id}] w ilosci {result2}. Koszt {Recipes[result3].Cost * result2} €.");
 				return;
 			}
-			if (!Recipes[result3].IsPlayerHaveIngredients(args.Player))
+			if (!Recipes[result3].IsPlayerHaveIngredients(args.Player, result2))
 			{
 				args.Player.SendErrorMessage("Brakuje wymaganych materialow do stworzenia przedmiotu.");
 				return;
@@ -92,7 +93,7 @@ namespace SurvivalCore
 			}
 			int done = Recipes[result3].Do(args.Player, result2);
 			SurvivalCore.SrvPlayers[args.Player.Index].Money -= Recipes[result3].Cost * done;
-			args.Player.SendSuccessMessage($"Pomyslnie wytworzono [i:{Recipes[result3].Result.Id}] w ilosci [c/66ff66:{Recipes[result3].Result.Amount * done}].", Color.Gray);
+			args.Player.SendSuccessMessage($"Pomyslnie wytworzono [i:{Recipes[result3].Result.Id}] w ilosci {Recipes[result3].Result.Amount * done}.");
 		}
 	}
 
