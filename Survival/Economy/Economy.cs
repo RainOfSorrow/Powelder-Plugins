@@ -62,7 +62,6 @@ namespace SurvivalCore.Economy
 			TShockAPI.Commands.ChatCommands.Add(new Command("server.gracz", ECommands.CollectMoney, "odbierz"));
 			TShockAPI.Commands.ChatCommands.Add(new Command("server.admin", SCommands.ShopAdmin, "asklep", "ashop"));
 			TShockAPI.Commands.ChatCommands.Add(new Command("server.gracz", SCommands.ShopUser, "sklep"));
-			TShockAPI.Commands.ChatCommands.Add(new Command("server.gracz", Reforge.ReforgeCost, "przekuj"));
 			TShockAPI.Commands.ChatCommands.Add(new Command("server.gracz", Casino.CasinoCommand, "kasyno"));
 		}
 	}

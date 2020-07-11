@@ -155,7 +155,7 @@ namespace PowelderAPI
 				string shortPrefix = Utils.GetShortPrefix(tSPlayer.Group.Name);
 				if (shortPrefix != null)
 				{
-					foreach (TSPlayer item4 in TShock.Players.Where(p => p?.Active ?? false))
+					foreach (TSPlayer item4 in TShock.Players.Where(p => (p?.Active ?? false) && p != tSPlayer))
 					{
 						if (tSPlayer != null && tSPlayer.Account != null && (item4.Team != tSPlayer.Team || tSPlayer.Team == 0))
 						{
@@ -172,7 +172,7 @@ namespace PowelderAPI
 				}
 				else
 				{
-					NetMessage.SendData(4, -1, -1, NetworkText.FromLiteral(tSPlayer.TPlayer.name), tSPlayer.Index);
+					NetMessage.SendData(4, -1, tSPlayer.Index, NetworkText.FromLiteral(tSPlayer.TPlayer.name), tSPlayer.Index);
 				}
 			};
 

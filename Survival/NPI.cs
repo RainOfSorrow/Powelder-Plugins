@@ -188,6 +188,11 @@ namespace SurvivalCore
 			{
 				tSPlayer.SendErrorMessage(
 					$"Musisz odczekac jakis czas, aby moc zrespic kolejnego bossa/inwazje. Mozliwe to bedzie za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[tSPlayer.Index].BossCooldown)}");
+				if (SpawnItemId(npcid) != -1)
+				{
+					tSPlayer.GiveItem(SpawnItemId(npcid), 1);
+				}
+
 				return true;
 			}
 
@@ -414,9 +419,13 @@ namespace SurvivalCore
 				TSPlayer[] players2 = TShock.Players;
 				foreach (TSPlayer tSPlayer2 in players2)
 				{
-					if (tSPlayer2 != null && SurvivalCore.IsDeathMessage[tSPlayer2.Index])
+					if (args.Player.Name == "Xedlefix")
 					{
-						tSPlayer2.SendMessage(args.PlayerDeathReason.GetDeathText(args.Player.Name).ToString(), Color.DarkRed);
+						tSPlayer2.SendMessage(args.PlayerDeathReason.GetDeathText(args.Player.Name).ToString() + " - Welp", Color.Gold);
+					}
+					else if (tSPlayer2 != null && SurvivalCore.IsDeathMessage[tSPlayer2.Index])
+					{
+						tSPlayer2.SendMessage(args.PlayerDeathReason.GetDeathText(args.Player.Name).ToString(), Color.Maroon);
 					}
 				}
 				SurvivalCore.SrvPlayers[args.Player.Index].Deaths++;
@@ -536,6 +545,15 @@ namespace SurvivalCore
 				
 				SurvivalCore.SrvPlayers[e.Player.Index].BombCooldown = DateTime.Now.AddSeconds(7);
 			}
+		}
+
+		public static void ChestOpen(object sender, GetDataHandlers.ChestOpenEventArgs e)
+		{
+			if (e.Handled)
+				return;
+
+			if (!e.Player.HasBuildPermission(e.X, e.Y))
+				e.Handled = true;
 		}
 	}
 }

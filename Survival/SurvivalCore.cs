@@ -109,7 +109,6 @@ namespace SurvivalCore
 			Commands.ChatCommands.Add(new Command("server.gracz", ExtendedChat.CommandPrefixItem, "prefixitem", "pitem"));
 			Commands.ChatCommands.Add(new Command("server.gracz", ExtendedChat.CommandNickColor, "nickcolor", "ncolor"));
 			Commands.ChatCommands.Add(new Command("server.postep", Goals.ProgressCommand, "postep"));
-			Commands.ChatCommands.Add(new Command("server.debug", ExtendedChat.Debug, "srvdebug"));
 
 			//Economy Hooks
 			ServerApi.Hooks.GameInitialize.Register(this, Economy.Economy.OnInitialize);
@@ -128,8 +127,10 @@ namespace SurvivalCore
 			ServerApi.Hooks.ServerConnect.Register(this, OnConnect);
 			ServerApi.Hooks.GamePostInitialize.Register(this, PostInitialize);
 			ServerApi.Hooks.NetSendData.Register(this, OnSendData);
+			ServerApi.Hooks.NetGreetPlayer.Register(this, OnPlayerGreet);
 			GetDataHandlers.KillMe += Npi.PlayerDeath;
 			GetDataHandlers.NewProjectile += Npi.NewProjectile;
+			GetDataHandlers.ChestOpen += Npi.ChestOpen;
 			AccountHooks.AccountCreate += OnAccountC;
 			AccountHooks.AccountDelete += OnAccountD;
 			PlayerHooks.PlayerPostLogin += OnPlayerPostLogin;
@@ -140,7 +141,14 @@ namespace SurvivalCore
 
 			//TShock.CharacterDB = new CharacterManager(new MySqlConnection($"Server=54.38.50.59; Port=3306; Database=www497_powelder_survival; Uid=www497_powelder_survival; Pwd=HorwAYBmXqYqeUsgqdBu;"));
 		}
-		
+
+		private void OnPlayerGreet(GreetPlayerEventArgs args)
+		{
+			TSPlayer plr = TShock.Players[args.Who];
+			int proj = Projectile.NewProjectile(plr.TPlayer.position.X, plr.TPlayer.position.Y - 32, 0f, -8f, 170, 0, (float)0);
+			Main.projectile[proj].Kill();
+		}
+
 
 		private void OnReload(ReloadEventArgs args)
 		{
@@ -218,6 +226,7 @@ namespace SurvivalCore
 			else if (Main.dayTime && (npc.type == 127 || npc.type == 35 || npc.type == 636))
 			{
 				Main.npc[i].active = false;
+				Main.npc[i].type = 0;
 				TSPlayer.All.SendData(PacketTypes.NpcUpdate, "", i);
 				return;
 			}
@@ -233,6 +242,7 @@ namespace SurvivalCore
 			if (!Goals.IsDone(bossId))
 			{
 				Main.npc[i].active = false;
+				Main.npc[i].type = 0;
 				TSPlayer.All.SendData(PacketTypes.NpcUpdate, "", i);
 			}
 		}
@@ -326,7 +336,7 @@ namespace SurvivalCore
 					WorldRegeneration.DoTrees();
 					GenTrees = DateTime.UtcNow;
 				}
-				if (!((DateTime.UtcNow - GenOres).TotalMinutes >= 600.0))
+				if (!((DateTime.UtcNow - GenOres).TotalMinutes >= 400.0))
 				{
 					continue;
 				}
@@ -380,7 +390,6 @@ namespace SurvivalCore
 				if ((DateTime.Now - BoostBuffEndTime).TotalSeconds > 0)
 				{
 					TSPlayer.All.SendWarningMessage("Boost zostal zakonczony.");
-					File.Delete("boost.txt");
 					BoostBuffType = 0;
 					return;
 				}

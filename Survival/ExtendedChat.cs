@@ -78,6 +78,7 @@ namespace SurvivalCore
 			{
 				SurvivalCore.ChatEventStoper.Stop();
 				TSPlayer.All.SendMessage($"[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] [c/00cc66:{TShock.Players[args.Who].Name}] napisal najszybciej [c/00cc66:{SurvivalCore.ChatEventWord}] i wygral 80 €. [c/595959:(]{Math.Round(SurvivalCore.ChatEventStoper.Elapsed.TotalSeconds, 3)} sec[c/595959:)]", new Color(128, 255, 191));
+				TSPlayer.All.SendData(PacketTypes.CreateCombatTextExtended, "Witamy na serwerze! ;)", (int)Color.LimeGreen.PackedValue, TShock.Players[args.Who].X, TShock.Players[args.Who].Y);
 				SurvivalCore.SrvPlayers[args.Who].Money += 80;
 				SurvivalCore.IsChatEvent = false;
 				SurvivalCore.ChatEventTimer = DateTime.UtcNow;
@@ -227,17 +228,26 @@ SurvivalCore.SrvPlayers[args.Player.Index].NickColor ?? PowelderAPI.Utils.GetGro
 
 		public static void ChatEventThread()
 		{
-			SurvivalCore.ChatEventWord = RandomWord();
-			SurvivalCore.ChatEventStoper.Start();
-			SurvivalCore.IsChatEvent = true;
-			TSPlayer.All.SendMessage("[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] Kto napisze najszybciej [c/00cc66:" + SurvivalCore.ChatEventWord + "] wygra 80 €.", new Color(128, 255, 191));
-			Thread.Sleep((SurvivalCore.ChatEventWord.Length + 8) * 1000);
-			if (SurvivalCore.IsChatEvent)
+			if (TShock.Utils.GetActivePlayerCount() > 2)
 			{
-				SurvivalCore.ChatEventStoper.Reset();
-				TSPlayer.All.SendMessage("[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] Nikt nie napisal [c/00cc66:" + SurvivalCore.ChatEventWord + "] wystarczajaco szybko.", new Color(128, 255, 191));
-				SurvivalCore.IsChatEvent = false;
-				SurvivalCore.ChatEventTimer = DateTime.UtcNow;
+
+
+				SurvivalCore.ChatEventWord = RandomWord();
+				SurvivalCore.ChatEventStoper.Start();
+				SurvivalCore.IsChatEvent = true;
+				TSPlayer.All.SendMessage(
+					"[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] Kto napisze najszybciej [c/00cc66:" +
+					SurvivalCore.ChatEventWord + "] wygra 80 €.", new Color(128, 255, 191));
+				Thread.Sleep((SurvivalCore.ChatEventWord.Length + 8) * 1000);
+				if (SurvivalCore.IsChatEvent)
+				{
+					SurvivalCore.ChatEventStoper.Reset();
+					TSPlayer.All.SendMessage(
+						"[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] Nikt nie napisal [c/00cc66:" +
+						SurvivalCore.ChatEventWord + "] wystarczajaco szybko.", new Color(128, 255, 191));
+					SurvivalCore.IsChatEvent = false;
+					SurvivalCore.ChatEventTimer = DateTime.UtcNow;
+				}
 			}
 		}
 
@@ -259,26 +269,6 @@ SurvivalCore.SrvPlayers[args.Player.Index].NickColor ?? PowelderAPI.Utils.GetGro
 			}
 			return text2;
 		}
-
-		public static void Debug(TShockAPI.CommandArgs args)
-		{
-			Thread thread = new Thread(DebugThread)
-			{
-				IsBackground = true
-			};
-			thread.Start(args.Player);
-		}
-
-		public static void DebugThread(object x)
-		{
-			TSPlayer plr = (TSPlayer)x;
-			plr.SendMessage("[DEBUG]", Color.PaleVioletRed);
-			for (int i = -100; i <= 100; i++)
-			{
-				Thread.Sleep(50);
-				plr.SendData(PacketTypes.PlayHarp, "", plr.Index, (float)i / 100f);
-				plr.SendMessage($"[Debug] PlayHarp: {(float)i / 100f}", Color.DeepSkyBlue);
-			}
-		}
+		
 	}
 }

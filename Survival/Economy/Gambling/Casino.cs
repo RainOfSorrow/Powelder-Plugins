@@ -40,12 +40,12 @@ namespace SurvivalCore.Economy.Gambling
 			{
 				if (!SurvivalCore.IsStatusBusy[args.Player.Index])
 				{
-					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < 85)
+					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < 75)
 					{
 						args.Player.SendErrorMessage("Nie stac cie na los.");
 						return;
 					}
-					SurvivalCore.SrvPlayers[args.Player.Index].Money -= 85;
+					SurvivalCore.SrvPlayers[args.Player.Index].Money -= 75;
 					object parameter = new object[2]
 					{
 						args.Player,
@@ -74,7 +74,7 @@ namespace SurvivalCore.Economy.Gambling
 			else
 			{
 				args.Player.SendMessage("Slots - Zasady:", Color.Green);
-				args.Player.SendMessage("Aby zaczac losowanie wpisz /kasyno slots start. Koszt za kazdorazowy los 85 €. Wylosowane zostana 3 pola", Color.Yellow);
+				args.Player.SendMessage("Aby zaczac losowanie wpisz /kasyno slots start. Koszt za kazdorazowy los 75 €. Wylosowane zostana 3 pola", Color.Yellow);
 				args.Player.SendMessage("ze sztabkami. Jezeli wszystkie pola beda takie same, otrzymasz nagrode - /kasyno slots nagrody. Jezeli", Color.Yellow);
 				args.Player.SendMessage("tylko dwa pola beda takie same, to otrzymasz polowe nagrody.", Color.Yellow);
 			}
@@ -93,7 +93,7 @@ namespace SurvivalCore.Economy.Gambling
 				{
 					if (TShock.Players[b] != tSPlayer || TShock.ShuttingDown)
 					{
-						QueryPlr.SetMoney(plr, DataBase.GetSrvPlayer(plr).Money + 85);
+						QueryPlr.SetMoney(plr, DataBase.GetSrvPlayer(plr).Money + 75);
 						SurvivalCore.IsStatusBusy[b] = false;
 						return;
 					}

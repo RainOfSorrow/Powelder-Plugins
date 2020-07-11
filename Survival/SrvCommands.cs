@@ -26,7 +26,7 @@ namespace SurvivalCore
 			switch (text)
 			{
 				default:
-					args.Player.SendMessage("[c/66FF66:Uzycie]: /top <kasa/pvp/czasgry>", Color.Gray);
+					args.Player.SendErrorMessage("Uzycie: /top <kasa/pvp/czasgry/zgony>");
 					break;
 				case "kasa":
 				{
@@ -567,10 +567,6 @@ namespace SurvivalCore
 			{
 				"honey",
 				new KeyValuePair<byte, int>(48, 2500)
-			},
-			{
-				"finch",
-				new KeyValuePair<byte, int>(216, 69666420)
 			}
 		};
 			
@@ -628,7 +624,7 @@ namespace SurvivalCore
 					
 					args.Player.SendSuccessMessage($"Pomyslnie zboostowales serwer buffem {buff} na 2 godziny. Twoj nastepny boost bedzie mozliwy za 48h.");
 					args.Player.SendInfoMessage($"Twoj nowy stan konta: {SurvivalCore.SrvPlayers[args.Player.Index].Money} €");
-					TSPlayer.All.SendWarningMessage($"Booster {args.Player.Name} obdarowal serwer buffem {buff} na 2 godziny.");
+					TSPlayer.All.SendWarningMessage($"{args.Player.Name} obdarowal serwer buffem {buff} na 2 godziny.");
 					SurvivalCore.BoostBuffType = avalibleBuffs[buff].Key;
 					SurvivalCore.BoostBuffEndTime = DateTime.Now.AddHours(2);
 					
