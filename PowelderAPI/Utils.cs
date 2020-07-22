@@ -151,6 +151,10 @@ namespace PowelderAPI
 			{
 				result = "3498DB";
 			}
+			else if (group == "Gracz+++")
+			{
+				result = "FFCCDD";
+			}
 			else if (group == "Gracz++")
 			{
 				result = "FFD700";
@@ -189,6 +193,10 @@ namespace PowelderAPI
 			{
 				result = 4994;
 			}
+			else if (itemm == "Gracz+++")
+			{
+				result = 4715;
+			}
 			else if (itemm == "Gracz++")
 			{
 				result = 3521;
@@ -220,6 +228,8 @@ namespace PowelderAPI
 					return "[c/595959:;][c/" + GetGroupColor(group) + ":Mod][c/595959:;] ";
 				case "JuniorMod":
 					return "[c/595959:;][c/" + GetGroupColor(group) + ":JuniorMod][c/595959:;] ";
+				case "Gracz+++":
+					return "[c/595959:;][c/" + GetGroupColor(group) + ":Gracz+++][c/595959:;] ";
 				case "Gracz++":
 					return "[c/595959:;][c/" + GetGroupColor(group) + ":Gracz++][c/595959:;] ";
 				case "Gracz+":
@@ -232,7 +242,7 @@ namespace PowelderAPI
 		public static string ExpireCountDown(DateTime time)
 		{
 			TimeSpan timeSpan = time - DateTime.Now;
-			return $"{((int)timeSpan.TotalDays > 0 ? timeSpan.TotalDays + "d " : null )}{(timeSpan.Hours > 0 ? timeSpan.Hours + "h " : null)}{(timeSpan.Minutes > 0 ? timeSpan.Minutes + "min " : null)}{(timeSpan.Seconds > 0 ? timeSpan.Seconds + "sec " : null)}";
+			return $"{((int)timeSpan.Days > 0 ? timeSpan.Days + "d " : null )}{(timeSpan.Hours > 0 ? timeSpan.Hours + "h " : null)}{(timeSpan.Minutes > 0 ? timeSpan.Minutes + "min " : null)}{(timeSpan.Seconds > 0 ? timeSpan.Seconds + "sec " : null)}";
 		}
 	}
 
