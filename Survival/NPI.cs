@@ -288,11 +288,11 @@ namespace SurvivalCore
 			read.ReadByte();
 			bool crit = read.ReadBoolean();
 			NPC npc = Main.npc[npcid];
-			double endDamage = Main.CalculateDamageNPCsTake(damage, npc.defense);
-			if (crit)
-				endDamage *= 2.0;
+			double finalDamage = Main.CalculateDamageNPCsTake(damage, npc.defense);
+			if (crit) 
+				finalDamage *= 2.0;
 
-			bool isDead = false || npc.life - endDamage <= 0;
+			bool isDead = false || npc.life - finalDamage <= 0;
 			if (npc.type == 661)
 			{
 				if (Main.dayTime)
@@ -329,6 +329,7 @@ namespace SurvivalCore
 			
 			args.Player.Dead = true;
 			args.Player.RespawnTimer = TShock.Config.RespawnSeconds;
+
 
 			foreach (NPC npc in Main.npc)
 			{
@@ -381,23 +382,11 @@ namespace SurvivalCore
 				args.Player.TPlayer.respawnTimer = 1;
 			}
 			
-			args.Player.TPlayer.dead = true;
+			args.Player.Dead = true;
 			Main.player[args.Player.Index].dead = true;
 			NetMessage.SendPlayerDeath(args.Player.Index, PlayerDeathReason.LegacyEmpty(), args.Damage, args.Direction, args.Pvp);
 			NetMessage.SendPlayerDeath(args.Player.Index, PlayerDeathReason.LegacyEmpty(), args.Damage, args.Direction, args.Pvp, args.Player.Index);
-			int num2 = 1173;
-			if (SurvivalCore.SrvPlayers[args.Player.Index].Money >= 22500)
-			{
-				num2 = 3231;
-			}
-			else if (SurvivalCore.SrvPlayers[args.Player.Index].Money >= 7500)
-			{
-				num2 = 3229;
-			}
-			else if (SurvivalCore.SrvPlayers[args.Player.Index].Money >= 2500)
-			{
-				num2 = 1175;
-			}
+
 			if (args.Pvp)
 			{
 				TSPlayer[] players = TShock.Players;
@@ -405,7 +394,7 @@ namespace SurvivalCore
 				{
 					if (tSPlayer?.TPlayer.hostile ?? false)
 					{
-						tSPlayer.SendMessage($"[c/66ff66:{TShock.Players[args.PlayerDeathReason._sourcePlayerIndex].Name}] [i/p{args.PlayerDeathReason._sourceItemPrefix}:{args.PlayerDeathReason._sourceItemType}] [c/595959:→] [c/ff6666:{args.Player.Name}] [i:{num2}]", Color.DarkRed);
+						tSPlayer.SendMessage($"[c/66ff66:{TShock.Players[args.PlayerDeathReason._sourcePlayerIndex].Name}] [i/p{args.PlayerDeathReason._sourceItemPrefix}:{args.PlayerDeathReason._sourceItemType}] [c/595959:→] [c/ff6666:{args.Player.Name}]", Color.DarkRed);
 					}
 				}
 				SurvivalCore.SrvPlayers[args.Player.Index].PvpDeaths++;
@@ -419,13 +408,18 @@ namespace SurvivalCore
 				TSPlayer[] players2 = TShock.Players;
 				foreach (TSPlayer tSPlayer2 in players2)
 				{
-					if (args.Player.Name == "Xedlefix")
+					if (tSPlayer2 != null)
 					{
-						tSPlayer2.SendMessage(args.PlayerDeathReason.GetDeathText(args.Player.Name).ToString() + " - Welp", Color.Gold);
-					}
-					else if (tSPlayer2 != null && SurvivalCore.IsDeathMessage[tSPlayer2.Index])
-					{
-						tSPlayer2.SendMessage(args.PlayerDeathReason.GetDeathText(args.Player.Name).ToString(), Color.Maroon);
+						if (args.Player.Name == "Xedlefix")
+						{
+							tSPlayer2.SendMessage(args.PlayerDeathReason.GetDeathText(args.Player.Name) + " - Welp",
+								Color.Gold);
+						}
+						else if (SurvivalCore.IsDeathMessage[tSPlayer2.Index])
+						{
+							tSPlayer2.SendMessage(args.PlayerDeathReason.GetDeathText(args.Player.Name).ToString(),
+								Color.Maroon);
+						}
 					}
 				}
 				SurvivalCore.SrvPlayers[args.Player.Index].Deaths++;
