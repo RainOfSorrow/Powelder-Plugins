@@ -15,6 +15,7 @@ using MySql.Data.MySqlClient;
 using PowelderAPI;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using TerrariaApi.Server;
 using TShockAPI;
 using TShockAPI.DB;
@@ -110,6 +111,9 @@ namespace SurvivalCore
 			Commands.ChatCommands.Add(new Command("server.gracz", ExtendedChat.CommandNickColor, "nickcolor", "ncolor"));
 			Commands.ChatCommands.Add(new Command("server.postep", Goals.ProgressCommand, "postep"));
 
+			Commands.ChatCommands.Remove(Commands.ChatCommands.Find(x => x.Name == "tpnpc"));
+			Commands.ChatCommands.Add((new Command("isGracz++", SrvCommands.TPNpc, "tpnpc")));
+
 			//Economy Hooks
 			ServerApi.Hooks.GameInitialize.Register(this, Economy.Economy.OnInitialize);
 			ServerApi.Hooks.GamePostInitialize.Register(this, Economy.Economy.PostInitialize);
@@ -137,21 +141,25 @@ namespace SurvivalCore
 			PlayerHooks.PlayerLogout += OnPlayerLogout;
 			GeneralHooks.ReloadEvent += OnReload;
 			Hooks.Npc.PostUpdate += NpcPostUpdate;
-			
 
-			//TShock.CharacterDB = new CharacterManager(new MySqlConnection($"Server=54.38.50.59; Port=3306; Database=www497_powelder_survival; Uid=www497_powelder_survival; Pwd=HorwAYBmXqYqeUsgqdBu;"));
+
+			//TShock.CharacterDB = new CharacterManager(new MySqlConnection($"Server=0.0.0.0; Port=3306; Database=BazaDanych; Uid=Login; Pwd=Haslo;"));
 		}
 
 		private void OnPlayerGreet(GreetPlayerEventArgs args)
 		{
 			TSPlayer plr = TShock.Players[args.Who];
-			int proj = Projectile.NewProjectile(plr.TPlayer.position.X, plr.TPlayer.position.Y - 32, 0f, -8f, 170, 0, (float)0);
+			int proj = Projectile.NewProjectile(plr.TPlayer.position.X, plr.TPlayer.position.Y - 32, 0f, -8f, 170,
+				0, (float) 0);
 			Main.projectile[proj].Kill();
 		}
 
 
 		private void OnReload(ReloadEventArgs args)
 		{
+			Economy.Economy.Products = QueryShop.GetProducts();
+			args.Player.SendInfoMessage($"[Economy] Pomyslnie zaladowano {Economy.Economy.Products.Count} produktow.");
+			
 			Change.Config = ChangeConfig.Read("powelder/recipes.json");
 			if (!File.Exists("powelder/recipes.json"))
 			{
@@ -186,7 +194,7 @@ namespace SurvivalCore
 				AccountHooks.AccountCreate -= OnAccountC;
 				AccountHooks.AccountDelete -= OnAccountD;
 				PlayerHooks.PlayerPostLogin -= OnPlayerPostLogin;
-				Hooks.Npc.PostUpdate = (Hooks.Npc.PostUpdateHandler)Delegate.Remove(Hooks.Npc.PostUpdate, new Hooks.Npc.PostUpdateHandler(NpcPostUpdate));
+				Hooks.Npc.PostUpdate -= NpcPostUpdate;
 			}
 			base.Dispose(disposing);
 		}
@@ -212,10 +220,9 @@ namespace SurvivalCore
 
 		private void NpcPostUpdate(NPC npc, int i)
 		{
-			if (npc == null || i > Main.npc.Length - 1 || i < 0 || !npc.active)
-			{
+			if (npc == null || i > Main.npc.Length - 1 || i < 0  || !npc.active)
 				return;
-			}
+			
 			if (npc.type == 68)
 			{
 				if (!Guardians.ContainsKey(i))
@@ -225,26 +232,24 @@ namespace SurvivalCore
 			}
 			else if (Main.dayTime && (npc.type == 127 || npc.type == 35 || npc.type == 636))
 			{
-				Main.npc[i].active = false;
-				Main.npc[i].type = 0;
-				TSPlayer.All.SendData(PacketTypes.NpcUpdate, "", i);
-				return;
+				Main.npc[i] = new NPC();
+				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.Empty, i);
 			}
 
 			int bossId = (npc.type == 233 || npc.type == 13 || npc.type == 14 || npc.type == 15 ? 6969 : npc.type);
 			
-			if (i == 126 || i == 125 || i == 134 || i == 127 || i == 128 || i == 129 ||
-			    i == 130 || i == 131)
+			if (npc.type == 126 || npc.type == 125 || npc.type == 134 || npc.type == 127 || npc.type == 128 || npc.type == 129 ||
+			    npc.type == 130 || npc.type == 131)
 			{
 				bossId = 42069;
 			}
 			
 			if (!Goals.IsDone(bossId))
 			{
-				Main.npc[i].active = false;
-				Main.npc[i].type = 0;
-				TSPlayer.All.SendData(PacketTypes.NpcUpdate, "", i);
+				Main.npc[i] = new NPC();
+				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.Empty, i);
 			}
+			
 		}
 
 		private void PostInitialize(EventArgs args)
@@ -528,21 +533,108 @@ namespace SurvivalCore
 
 			Random rand = new Random(Guid.NewGuid().GetHashCode());
 
-			int amount = rand.Next(5, 15);
+			int amount = (int)(rand.Next(20, 40) * (TShock.Utils.GetActivePlayerCount() * 0.5f));
+			int crate = 0;
+			int crateAmount = rand.Next(1, 2);
+			
+				switch (rand.Next(1, 26))
+				{
+					case 1:
+						crate = 2334;
+						break;
+					case 2:
+						crate = 2335;
+						break;
+					case 3:
+						crate = 2336;
+						break;
+					case 4:
+						crate = 3208;
+						break;
+					case 5:
+						crate = 3206;
+						break;
+					case 6:
+						crate = 3203;
+						break;
+					case 7:
+						crate = 3204;
+						break;
+					case 8:
+						crate = 3207;
+						break;
+					case 9:
+						crate = 3205;
+						break;
+					case 10:
+						crate = 4405;
+						break;
+					case 11:
+						crate = 4407;
+						break;
+					case 12:
+						crate = 4877;
+						break;
+					case 13:
+						crate = 5002;
+						break;
+					case 14:
+						crate = 3979;
+						break;
+					case 15:
+						crate = 3980;
+						break;
+					case 16:
+						crate = 3981;
+						break;
+					case 17:
+						crate = 3987;
+						break;
+					case 18:
+						crate = 3985;
+						break;
+					case 19:
+						crate = 3982;
+						break;
+					case 20:
+						crate = 3983;
+						break;
+					case 21:
+						crate = 3986;
+						break;
+					case 22:
+						crate = 3984;
+						break;
+					case 23:
+						crate = 4406;
+						break;
+					case 24:
+						crate = 4408;
+						break;
+					case 25:
+						crate = 4878;
+						break;
+					case 26:
+						crate = 5003;
+						break;
+				}
 			
 			foreach (var player in TShock.Players.Where(x => x != null))
 			{
-				player.SendInfoMessage($"[i:1523] [c/595959:;] [c/ffff00:Bogaty Pan] [c/595959:;]  Kazdy z was otrzymal darmowe {amount} €");
+				player.SendInfoMessage($"[i:1523] [c/595959:;] [c/ffff00:Bogaty Pan] [c/595959:;] Kazdy z was otrzymal darmowe {amount} € oraz [i/s{crateAmount}:{crate}.");
 				player.SendData(PacketTypes.CreateCombatTextExtended, "Pieniazki", (int) new Color(255, 255, 0).PackedValue, player.TPlayer.Center.X, player.TPlayer.Center.Y, 0.0f, 0);
+				player.GiveItem(crate, crateAmount);
 				if (SrvPlayers[player.Index] != null)
+				{
 					SrvPlayers[player.Index].Money += amount;
+				}
 			}
 			
 			
 			new Thread(GiveOutMoneyThread)
 			{
 				IsBackground = true
-			}.Start(rand.Next(45, 85));
+			}.Start(rand.Next(65, 95));
 		}
 		
 
