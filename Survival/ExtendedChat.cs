@@ -243,7 +243,7 @@ SurvivalCore.SrvPlayers[args.Player.Index].NickColor ?? PowelderAPI.Utils.GetGro
 				TSPlayer.All.SendMessage(
 					"[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] Kto napisze najszybciej [c/00cc66:" +
 					SurvivalCore.ChatEventWord + "] wygra 80 €.", new Color(128, 255, 191));
-				Thread.Sleep((SurvivalCore.ChatEventWord.Length + 8) * 1000);
+				Thread.Sleep((SurvivalCore.ChatEventWord.Length + 18) * 1000);
 				if (SurvivalCore.IsChatEvent)
 				{
 					SurvivalCore.ChatEventStoper.Reset();
