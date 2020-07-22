@@ -17,6 +17,8 @@ namespace SurvivalCore
 	{
 		public static string ChatFormat = "[i:{0}] [c/595959:;] [c/{1}:{2}] [c/595959:;] [c/{3}:{4}][c/595959::] {5}";
 
+		private static int chatEventWinAmount = 80;
+
 		protected static readonly Dictionary<string, string> Colors = new Dictionary<string, string>
 		{
 			{
@@ -230,7 +232,10 @@ SurvivalCore.SrvPlayers[args.Player.Index].NickColor ?? PowelderAPI.Utils.GetGro
 		{
 			if (TShock.Utils.GetActivePlayerCount() > 2)
 			{
+				chatEventWinAmount = 40 * TShock.Utils.GetActivePlayerCount();
 
+				if (chatEventWinAmount > 400)
+					chatEventWinAmount = 400;
 
 				SurvivalCore.ChatEventWord = RandomWord();
 				SurvivalCore.ChatEventStoper.Start();
