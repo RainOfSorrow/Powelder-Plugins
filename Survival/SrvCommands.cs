@@ -10,6 +10,7 @@ using Terraria;
 using Terraria.Localization;
 using TerrariaApi.Server;
 using TShockAPI;
+using TShockAPI.Localization;
 
 namespace SurvivalCore
 {
@@ -530,43 +531,43 @@ namespace SurvivalCore
 		{
 			{
 				"iron skin", //pelna nazwa
-				new KeyValuePair<byte, int>(5, 2000) //ID i Koszt
+				new KeyValuePair<byte, int>(5, 4000) //ID i Koszt
 			},
 			{
 				"regeneration",
-				new KeyValuePair<byte, int>(2, 1500) 
+				new KeyValuePair<byte, int>(2, 3000) 
 			},
 			{
 				"builder",
-				new KeyValuePair<byte, int>(107, 700)
+				new KeyValuePair<byte, int>(107, 1400)
 			},
 			{
 				"night owl",
-				new KeyValuePair<byte, int>(12, 700)
+				new KeyValuePair<byte, int>(12, 1400)
 			},
 			{
 				"life force",
-				new KeyValuePair<byte, int>(113, 2500)
+				new KeyValuePair<byte, int>(113, 5000)
 			},
 			{
 				"shine",
-				new KeyValuePair<byte, int>(11, 900)
+				new KeyValuePair<byte, int>(11, 1800)
 			},
 			{
 				"endurance",
-				new KeyValuePair<byte, int>(114, 3000)
+				new KeyValuePair<byte, int>(114, 6000)
 			},
 			{
 				"hunter",
-				new KeyValuePair<byte, int>(17, 900)
+				new KeyValuePair<byte, int>(17, 1800)
 			},
 			{
 				"swiftness",
-				new KeyValuePair<byte, int>(3, 800)
+				new KeyValuePair<byte, int>(3, 1600)
 			},
 			{
 				"honey",
-				new KeyValuePair<byte, int>(48, 2500)
+				new KeyValuePair<byte, int>(48, 5000)
 			}
 		};
 			
@@ -600,7 +601,8 @@ namespace SurvivalCore
 				
 				if (avalibleBuffs.ContainsKey(buff))
 				{
-					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < avalibleBuffs[buff].Value)
+					
+					if (SurvivalCore.SrvPlayers[args.Player.Index].Money < avalibleBuffs[buff].Value && !args.Player.HasPermission("isGracz+++"))
 					{
 						args.Player.SendErrorMessage($"Nie stac cie na wykupienie boosta na serwerze. Koszt {avalibleBuffs[buff].Value} €");
 						return;;
@@ -618,12 +620,14 @@ namespace SurvivalCore
 						return;;
 					}
 					
-					SurvivalCore.SrvPlayers[args.Player.Index].Money -= avalibleBuffs[buff].Value;
+					if (!args.Player.HasPermission("isGracz+++"))
+						SurvivalCore.SrvPlayers[args.Player.Index].Money -= avalibleBuffs[buff].Value;
 					
 					SurvivalCore.SrvPlayers[args.Player.Index].BoostCooldown = DateTime.Now.AddDays(2);
 					
 					args.Player.SendSuccessMessage($"Pomyslnie zboostowales serwer buffem {buff} na 2 godziny. Twoj nastepny boost bedzie mozliwy za 48h.");
-					args.Player.SendInfoMessage($"Twoj nowy stan konta: {SurvivalCore.SrvPlayers[args.Player.Index].Money} €");
+					if (!args.Player.HasPermission("isGracz+++"))
+						args.Player.SendInfoMessage($"Twoj nowy stan konta: {SurvivalCore.SrvPlayers[args.Player.Index].Money} €");
 					TSPlayer.All.SendWarningMessage($"{args.Player.Name} obdarowal serwer buffem {buff} na 2 godziny.");
 					SurvivalCore.BoostBuffType = avalibleBuffs[buff].Key;
 					SurvivalCore.BoostBuffEndTime = DateTime.Now.AddHours(2);
@@ -634,5 +638,47 @@ namespace SurvivalCore
 				
 			}
 		}
+		
+		public static void TPNpc(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: /tpnpc <NPC>");
+				return;
+			}
+
+			var npcStr = string.Join(" ", args.Parameters);
+			var matches = new List<NPC>();
+			foreach (var npc in Main.npc.Where(npc => npc.active && npc.townNPC))
+			{
+				var englishName = EnglishLanguage.GetNpcNameById(npc.netID);
+
+				if (string.Equals(npc.FullName, npcStr, StringComparison.InvariantCultureIgnoreCase) ||
+				    string.Equals(englishName, npcStr, StringComparison.InvariantCultureIgnoreCase))
+				{
+					matches = new List<NPC> { npc };
+					break;
+				}
+				if (npc.FullName.ToLowerInvariant().StartsWith(npcStr.ToLowerInvariant()) ||
+				    englishName?.StartsWith(npcStr, StringComparison.InvariantCultureIgnoreCase) == true)
+					matches.Add(npc);
+			}
+
+			if (matches.Count > 1)
+			{
+				args.Player.SendMultipleMatchError(matches.Select(n => $"{n.FullName}({n.whoAmI})"));
+				return;
+			}
+			if (matches.Count == 0)
+			{
+				args.Player.SendErrorMessage("Invalid NPC!");
+				return;
+			}
+
+			var target = matches[0];
+			args.Player.Teleport(target.position.X, target.position.Y);
+			args.Player.SendSuccessMessage("Teleported to the '{0}'.", target.FullName);
+		}
+		
 	}
 }
