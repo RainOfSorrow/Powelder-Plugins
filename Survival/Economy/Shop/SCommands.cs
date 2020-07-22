@@ -23,6 +23,7 @@ namespace SurvivalCore.Economy.Shop
 			{
 				text = args.Parameters[0].ToLower();
 			}
+
 			if (args.Parameters.Count > 1)
 			{
 				cmd2 = args.Parameters[1];
@@ -31,268 +32,437 @@ namespace SurvivalCore.Economy.Shop
 			{
 				cmd2 = "*";
 			}
+
 			text2 = ((args.Parameters.Count <= 2) ? "1" : args.Parameters[2].ToLower());
 			if (args.Parameters.Count > 3)
 			{
 				text3 = args.Parameters[3].ToLower();
 			}
+
 			switch (text)
 			{
-			default:
-				args.Player.SendMessage("Sklep: ", Color.Green);
-				args.Player.SendInfoMessage("/sklep szukaj <nazwa>");
-				args.Player.SendInfoMessage("/sklep kup <index/nazwa> <ilosc>");
-				args.Player.SendInfoMessage("/sklep sprzedaj <index/nazwa> <ilosc>");
-				break;
-			case "search":
-			case "szukaj":
-			{
-				int result3 = 1;
-				int.TryParse(text2, out result3);
-				List<string> list = new List<string>();
-				if (cmd2 == null || cmd2 == "*")
+				default:
+					args.Player.SendMessage("Sklep: ", Color.Green);
+					args.Player.SendInfoMessage("/sklep szukaj <nazwa>");
+					args.Player.SendInfoMessage("/sklep kup <index/nazwa> <ilosc>");
+					args.Player.SendInfoMessage("/sklep sprzedaj <index/nazwa> <ilosc>");
+					break;
+				case "search":
+				case "szukaj":
 				{
-					foreach (Product product5 in Economy.Products)
+					int result3 = 1;
+					int.TryParse(text2, out result3);
+					List<string> list = new List<string>();
+					if (cmd2 == null || cmd2 == "*")
 					{
-						list.Add($"[[c/dddd11:{product5.GetIndex()}]] [i:{product5.GetId()}] ([c/11bb11:K] [c/55bb55:{product5.GetBuy()}] ; [c/D42A2A:S] [c/D45A5A:{product5.GetSell()}])");
-					}
-				}
-				else if (cmd2.StartsWith("[i") && cmd2.EndsWith("]"))
-				{
-					int count = cmd2.IndexOf(':') + 1;
-					string text4 = cmd2.Remove(0, count);
-					count = text4.IndexOf(']');
-					text4 = text4.Remove(count);
-					foreach (Product product6 in Economy.Products)
-					{
-						if (product6.GetId().ToString() == text4)
+						foreach (Product product5 in Economy.Products)
 						{
-							list.Add($"[[c/dddd11:{product6.GetIndex()}]] [i:{product6.GetId()}] ([c/11bb11:K] [c/55bb55:{product6.GetBuy()}] ; [c/D42A2A:S] [c/D45A5A:{product6.GetSell()}])");
+							list.Add(
+								$"[[c/dddd11:{product5.GetIndex()}]] [i:{product5.GetId()}] ([c/11bb11:K] [c/55bb55:{product5.GetBuy()}] ; [c/D42A2A:S] [c/D45A5A:{product5.GetSell()}])");
 						}
 					}
-				}
-				else
-				{
-					foreach (Product product7 in Economy.Products)
+					else if (cmd2.StartsWith("[i") && cmd2.EndsWith("]"))
 					{
-						if (product7.GetName().ToLower().Contains(cmd2.ToLower()))
+						int count = cmd2.IndexOf(':') + 1;
+						string text4 = cmd2.Remove(0, count);
+						count = text4.IndexOf(']');
+						text4 = text4.Remove(count);
+						foreach (Product product6 in Economy.Products)
 						{
-							list.Add($"[[c/dddd11:{product7.GetIndex()}]] [i:{product7.GetId()}] ([c/11bb11:K] [c/55bb55:{product7.GetBuy()}] ; [c/D42A2A:S] [c/D45A5A:{product7.GetSell()}])");
+							if (product6.GetId().ToString() == text4)
+							{
+								list.Add(
+									$"[[c/dddd11:{product6.GetIndex()}]] [i:{product6.GetId()}] ([c/11bb11:K] [c/55bb55:{product6.GetBuy()}] ; [c/D42A2A:S] [c/D45A5A:{product6.GetSell()}])");
+							}
 						}
 					}
+					else
+					{
+						foreach (Product product7 in Economy.Products)
+						{
+							if (product7.GetName().ToLower().Contains(cmd2.ToLower()))
+							{
+								list.Add(
+									$"[[c/dddd11:{product7.GetIndex()}]] [i:{product7.GetId()}] ([c/11bb11:K] [c/55bb55:{product7.GetBuy()}] ; [c/D42A2A:S] [c/D45A5A:{product7.GetSell()}])");
+							}
+						}
+					}
+
+					args.Player.SendMessage(string.Format("Wyniki dla: \"{0}\"", (cmd2 == null) ? "*" : cmd2),
+						Color.Green);
+					PaginationTools.SendPage(args.Player, result3,
+						PaginationTools.BuildLinesFromTerms(list, null, " | ", 300), new PaginationTools.Settings
+						{
+							IncludeHeader = false,
+							LineTextColor = new Color(192, 192, 192),
+							FooterFormat =
+								string.Format("Wpisz \"/sklep szukaj {0} {1}\", aby zobaczyc nastepna strone",
+									(cmd2 == null) ? "*" : cmd2, result3 + 1),
+							FooterTextColor = Color.Green,
+							NothingToDisplayString =
+								"[c/00ff00:Nie znaleziono zadnego produktu. Wpisz \"/sklep szukaj *\", aby otrzymac pelna liste produktow.]"
+						});
+					break;
 				}
-				args.Player.SendMessage(string.Format("Wyniki dla: \"{0}\"", (cmd2 == null) ? "*" : cmd2), Color.Green);
-				PaginationTools.SendPage(args.Player, result3, PaginationTools.BuildLinesFromTerms(list, null, " | ", 300), new PaginationTools.Settings
+				case "buy":
+				case "kup":
 				{
-					IncludeHeader = false,
-					LineTextColor = new Color(192, 192, 192),
-					FooterFormat = string.Format("Wpisz \"/sklep szukaj {0} {1}\", aby zobaczyc nastepna strone", (cmd2 == null) ? "*" : cmd2, result3 + 1),
-					FooterTextColor = Color.Green,
-					NothingToDisplayString = "[c/00ff00:Nie znaleziono zadnego produktu. Wpisz \"/sklep szukaj *\", aby otrzymac pelna liste produktow.]"
-				});
-				break;
-			}
-			case "buy":
-			case "kup":
-			{
-				if (int.TryParse(cmd2, out int index))
-				{
-					if (index < 0)
+					if (int.TryParse(cmd2, out int index))
 					{
-						args.Player.SendErrorMessage("Podano wartosc ujemna indexu, mozesz podac tylko dodatnia.");
-						return;
+						if (index < 0)
+						{
+							args.Player.SendErrorMessage("Podano wartosc ujemna indexu, mozesz podac tylko dodatnia.");
+							return;
+						}
+
+						Product product3 = new Product(0, null, 0, 0, 0);
+						if (Economy.Products.Exists(x => x.Index == index))
+						{
+							product3 = Economy.Products.Find(x => x.Index == index);
+						}
+
+						if (product3.GetIndex() == 0)
+						{
+							player.SendErrorMessage("Nie znaleziono przedmiotu w sklepie.");
+							break;
+						}
+
+						if (product3.GetBuy() <= 0)
+						{
+							player.SendErrorMessage("Tego przedmiotu nie mozna zakupic.");
+							break;
+						}
+
+						Item item3 = TShock.Utils.GetItemByIdOrName(product3.GetId().ToString())[0];
+						int amount = 1;
+						if (args.Parameters.Count > 1)
+						{
+							int.TryParse(text2, out amount);
+						}
+
+						if (amount > item3.maxStack)
+						{
+							amount = item3.maxStack;
+						}
+
+						if (amount < 0)
+						{
+							args.Player.SendErrorMessage("Podano wartosc ujemna ilosci, mozesz podac tylko dodatnia.");
+							return;
+						}
+
+						int num3 = amount * product3.GetBuy();
+						int money = SurvivalCore.SrvPlayers[player.Index].Money;
+						if (money < num3)
+						{
+							args.Player.SendErrorMessage("Nie stac cie na zakup {0} w ilosci {1}. Brakuje ci {2} {3}",
+								item3.Name, amount, Math.Abs(money - num3), Economy.Config.ValueName);
+						}
+						else if (args.Player.Dead)
+						{
+							args.Player.SendErrorMessage("Musisz byc zywy, kiedy chcesz cos zakupic.");
+						}
+						else if (args.Player.InventorySlotAvailable || (item3.type > 70 && item3.type < 75) ||
+						         item3.ammo > 0 || item3.type == 58 || item3.type == 184)
+						{
+							SurvivalCore.SrvPlayers[player.Index].Money -= num3;
+							args.Player.GiveItem(item3.type, amount);
+							args.Player.SendSuccessMessage(
+								$"Pomyslnie zakupiono [i:{item3.type}] w ilosci {amount}. Wydano {num3} {Economy.Config.ValueName}");
+							args.Player.SendInfoMessage(
+								$"Twoj nowy stan konta: {money - num3:N0} {Economy.Config.ValueName}");
+						}
+						else
+						{
+							args.Player.SendErrorMessage("Twoj ekwipunek jest pelny.");
+						}
+
+						break;
 					}
-					
-					Product product3 = new Product(0, null, 0, 0, 0);
-					if (Economy.Products.Exists(x => x.Index == index))
+
+					Product product4 = new Product(0, null, 0, 0, 0);
+					if (Economy.Products.Exists(x => x.Name == cmd2))
 					{
-						product3 = Economy.Products.Find(x => x.Index == index);
+						product4 = Economy.Products.Find(x => x.Name == cmd2);
 					}
-					if (product3.GetIndex() == 0)
+
+					if (product4.GetIndex() == 0)
 					{
 						player.SendErrorMessage("Nie znaleziono przedmiotu w sklepie.");
 						break;
 					}
-					if (product3.GetBuy() <= 0)
+
+					if (product4.GetBuy() <= 0)
 					{
 						player.SendErrorMessage("Tego przedmiotu nie mozna zakupic.");
 						break;
 					}
-					Item item3 = TShock.Utils.GetItemByIdOrName(product3.GetId().ToString())[0];
-					int amount = 1;
+
+					Item item4 = TShock.Utils.GetItemByIdOrName(product4.GetId().ToString())[0];
+					int amount3 = 1;
 					if (args.Parameters.Count > 1)
 					{
-						int.TryParse(text2, out amount);
+						int.TryParse(text2, out amount3);
 					}
-					if (amount > item3.maxStack)
+
+					if (amount3 > item4.maxStack)
 					{
-						amount = item3.maxStack;
+						amount3 = item4.maxStack;
 					}
-					
-					if (amount < 0)
+
+					int num4 = amount3 * product4.GetBuy();
+					int money2 = SurvivalCore.SrvPlayers[player.Index].Money;
+					if (money2 < num4)
 					{
-						args.Player.SendErrorMessage("Podano wartosc ujemna ilosci, mozesz podac tylko dodatnia.");
-						return;
-					}
-					
-					int num3 = amount * product3.GetBuy();
-					int money = SurvivalCore.SrvPlayers[player.Index].Money;
-					if (money < num3)
-					{
-						args.Player.SendErrorMessage("Nie stac cie na zakup {0} w ilosci {1}. Brakuje ci {2} {3}", item3.Name, amount, Math.Abs(money - num3), Economy.Config.ValueName);
+						args.Player.SendErrorMessage("Nie stac cie na zakup {0} w ilosci {1}. Brakuje ci {2:N0} {3}",
+							item4.Name, amount3, Math.Abs(money2 - num4), Economy.Config.ValueName);
 					}
 					else if (args.Player.Dead)
 					{
 						args.Player.SendErrorMessage("Musisz byc zywy, kiedy chcesz cos zakupic.");
 					}
-					else if (args.Player.InventorySlotAvailable || (item3.type > 70 && item3.type < 75) || item3.ammo > 0 || item3.type == 58 || item3.type == 184)
+					else if (args.Player.InventorySlotAvailable || (item4.type > 70 && item4.type < 75) ||
+					         item4.ammo > 0 || item4.type == 58 || item4.type == 184)
 					{
-						SurvivalCore.SrvPlayers[player.Index].Money -= num3;
-						args.Player.GiveItem(item3.type, amount);
-						args.Player.SendSuccessMessage($"Pomyslnie zakupiono [i:{item3.type}] w ilosci {amount}. Wydano {num3} {Economy.Config.ValueName}");
-						args.Player.SendInfoMessage($"Twoj nowy stan konta: {money - num3:N0} {Economy.Config.ValueName}");
+						SurvivalCore.SrvPlayers[player.Index].Money -= num4;
+						args.Player.GiveItem(item4.type, amount3);
+						args.Player.SendSuccessMessage(
+							$"Pomyslnie zakupiono [i:{item4.type}] w ilosci {amount3}. Wydano {num4:N0} {Economy.Config.ValueName}");
+						args.Player.SendInfoMessage(
+							$"Twoj nowy stan konta: {money2 - num4:N0} {Economy.Config.ValueName}");
 					}
 					else
 					{
 						args.Player.SendErrorMessage("Twoj ekwipunek jest pelny.");
 					}
+
 					break;
 				}
-				Product product4 = new Product(0, null, 0, 0, 0);
-				if (Economy.Products.Exists(x => x.Name == cmd2))
+				case "sell":
+				case "sprzedaj":
 				{
-					product4 = Economy.Products.Find( x=> x.Name == cmd2);
-				}
-				if (product4.GetIndex() == 0)
-				{
-					player.SendErrorMessage("Nie znaleziono przedmiotu w sklepie.");
-					break;
-				}
-				if (product4.GetBuy() <= 0)
-				{
-					player.SendErrorMessage("Tego przedmiotu nie mozna zakupic.");
-					break;
-				}
-				Item item4 = TShock.Utils.GetItemByIdOrName(product4.GetId().ToString())[0];
-				int amount3 = 1;
-				if (args.Parameters.Count > 1)
-				{
-					int.TryParse(text2, out amount3);
-				}
-				if (amount3 > item4.maxStack)
-				{
-					amount3 = item4.maxStack;
-				}
-				int num4 = amount3 * product4.GetBuy();
-				int money2 = SurvivalCore.SrvPlayers[player.Index].Money;
-				if (money2 < num4)
-				{
-					args.Player.SendErrorMessage("Nie stac cie na zakup {0} w ilosci {1}. Brakuje ci {2:N0} {3}", item4.Name, amount3, Math.Abs(money2 - num4), Economy.Config.ValueName);
-				}
-				else if (args.Player.Dead)
-				{
-					args.Player.SendErrorMessage("Musisz byc zywy, kiedy chcesz cos zakupic.");
-				}
-				else if (args.Player.InventorySlotAvailable || (item4.type > 70 && item4.type < 75) || item4.ammo > 0 || item4.type == 58 || item4.type == 184)
-				{
-					SurvivalCore.SrvPlayers[player.Index].Money -= num4;
-					args.Player.GiveItem(item4.type, amount3);
-					args.Player.SendSuccessMessage($"Pomyslnie zakupiono [i:{item4.type}] w ilosci {amount3}. Wydano {num4:N0} {Economy.Config.ValueName}");
-					args.Player.SendInfoMessage($"Twoj nowy stan konta: {money2 - num4:N0} {Economy.Config.ValueName}");
-				}
-				else
-				{
-					args.Player.SendErrorMessage("Twoj ekwipunek jest pelny.");
-				}
-				break;
-			}
-			case "sell":
-			case "sprzedaj":
-			{
-				if (int.TryParse(cmd2, out int index2))
-				{
-					if (index2 < 0)
+					if (int.TryParse(cmd2, out int index2))
 					{
-						args.Player.SendErrorMessage("Podano wartosc ujemna, mozesz podac tylko dodatnia.");
+						if (index2 < 0)
+						{
+							args.Player.SendErrorMessage("Podano wartosc ujemna, mozesz podac tylko dodatnia.");
+							return;
+						}
+
+						Product product = new Product(0, null, 0, 0, 0);
+						if (Economy.Products.Exists((Product x) => x.Index == index2))
+						{
+							product = Economy.Products.Find((Product x) => x.Index == index2);
+						}
+
+						if (product.GetIndex() == 0)
+						{
+							player.SendErrorMessage("Nie znaleziono przedmiotu w sklepie.");
+							break;
+						}
+
+						if (product.GetSell() <= 0)
+						{
+							player.SendErrorMessage("Tego przedmiotu nie mozna sprzedac.");
+							break;
+						}
+
+						Item item = TShock.Utils.GetItemByIdOrName(product.GetId().ToString())[0];
+						int result = 1;
+						if (args.Parameters.Count > 1)
+						{
+							int.TryParse(text2, out result);
+						}
+
+						if (result > PowelderAPI.Utils.PlayerItemCount(args.Player, item))
+						{
+							player.SendErrorMessage("Nie masz tylu {0} w ekwipunku.", item.Name);
+							break;
+						}
+
+						if (result < 0)
+						{
+							args.Player.SendErrorMessage("Podano wartosc ujemna ilosci, mozesz podac tylko dodatnia.");
+							return;
+						}
+
+						int num = result * product.GetSell();
+						SurvivalCore.SrvPlayers[player.Index].Money += num;
+						PowelderAPI.Utils.PlayerRemoveItems(args.Player, item, result);
+						args.Player.SendSuccessMessage(
+							$"Pomyslnie sprzedano [i:{item.type}] w ilosci {result}. Zarobiono {num:N0} {Economy.Config.ValueName}");
+						args.Player.SendInfoMessage(
+							$"Twoj nowy stan konta: {SurvivalCore.SrvPlayers[player.Index].Money:N0} {Economy.Config.ValueName}");
+						break;
+					}
+
+					if (cmd2.StartsWith("[i"))
+					{
+
+						string cmdItems = string.Join("", args.Parameters.Skip(1));
+						//Prefix only = [i/p59:3094]
+						//Stack only = [i/s43:3094]
+
+						Dictionary<int, int> items = new Dictionary<int, int>(); //Key: ID, Value: amount
+
+						while (cmdItems.Contains(":"))
+						{
+							while (cmdItems[0] == ':')
+							{
+								cmdItems = cmdItems.Remove(0, 1);
+							}
+
+							int indexOfEnd = cmdItems.IndexOf(':');
+							int amount = 1;
+
+
+							if (indexOfEnd > -1)
+							{
+
+								string arg = cmdItems.Substring(0, indexOfEnd);
+								cmdItems = cmdItems.Remove(0, indexOfEnd);
+								string numberText = "";
+
+								if (arg.Contains('p'))
+								{
+									amount = 1;
+								}
+								else
+								{
+									for (int i = 0; i < arg.Length; i++)
+										if (Char.IsDigit(arg[i]))
+											numberText += arg[i];
+
+									if (numberText.Length > 0)
+										amount = int.Parse(numberText);
+								}
+
+								indexOfEnd = cmdItems.IndexOf(']');
+
+								try
+								{
+									arg = cmdItems.Substring(0, indexOfEnd);
+								}
+								catch (ArgumentOutOfRangeException)
+								{
+									args.Player.SendErrorMessage("Wystapil blad z formatem itemu.");
+									return;
+								}
+
+								cmdItems = cmdItems.Remove(0, indexOfEnd + 1);
+								numberText = "";
+								int id = -1;
+
+
+								for (int i = 0; i < arg.Length; i++)
+									if (Char.IsDigit(arg[i]))
+										numberText += arg[i];
+
+								if (numberText.Length > 0)
+									id = int.Parse(numberText);
+
+								
+								if (id > 0)
+								{
+									if (items.ContainsKey(id))
+										items[id] += amount;
+									else
+										items.Add(id, amount);
+
+									if (items.Count > 10)
+										break;
+								}
+							}
+						}
+
+						string finalMessage = "";
+						foreach (var item in items.Keys)
+						{
+							Product product = new Product(0, null, 0, 0, 0);
+							if (Economy.Products.Exists(x => x.GetId() == item))
+							{
+								product = Economy.Products.Find(x => x.GetId() == item);
+							}
+
+							if (product.GetIndex() == 0)
+							{
+								finalMessage += $"[c/ff0000:Nie znaleziono] [i:{item}] [c/ff0000:w sklepie.]\n";
+								continue;
+							}
+
+							if (product.GetSell() <= 0)
+							{
+								finalMessage += $"[c/ff0000:Nie mozna sprzedac] [i:{item}][c/ff0000:.]\n";
+								continue;
+							}
+							
+							Item itemos = TShock.Utils.GetItemByIdOrName(product.GetId().ToString())[0];
+							
+							if (items[item] > PowelderAPI.Utils.PlayerItemCount(args.Player, itemos))
+							{
+								finalMessage += $"[c/ff0000:Nie posiadasz] [i:{item}] [c/ff0000:w ilosci {items[item]}.]\n";
+								continue;
+							}
+							
+							int profit = items[item] * product.GetSell();
+							SurvivalCore.SrvPlayers[player.Index].Money += profit;
+							PowelderAPI.Utils.PlayerRemoveItems(args.Player, itemos, items[item]);
+							finalMessage +=
+								$"Pomyslnie sprzedano [i:{itemos.type}] w ilosci {items[item]}. Zarobiono {profit:N0} {Economy.Config.ValueName}\n";
+						}
+						
+						args.Player.SendSuccessMessage(finalMessage);
+						args.Player.SendInfoMessage(
+							$"Twoj nowy stan konta: {SurvivalCore.SrvPlayers[player.Index].Money:N0} {Economy.Config.ValueName}");
+						
 						return;
 					}
 					
-					Product product = new Product(0, null, 0, 0, 0);
-					if (Economy.Products.Exists((Product x) => x.Index == index2))
+
+					Product product2 = new Product(0, null, 0, 0, 0);
+					if (Economy.Products.Exists((Product x) => x.Name == cmd2))
 					{
-						product = Economy.Products.Find((Product x) => x.Index == index2);
+						product2 = Economy.Products.Find((Product x) => x.Name == cmd2);
 					}
-					if (product.GetIndex() == 0)
+
+					if (product2.GetIndex() == 0)
 					{
 						player.SendErrorMessage("Nie znaleziono przedmiotu w sklepie.");
 						break;
 					}
-					if (product.GetSell() <= 0)
+
+					if (product2.GetSell() <= 0)
 					{
 						player.SendErrorMessage("Tego przedmiotu nie mozna sprzedac.");
 						break;
 					}
-					Item item = TShock.Utils.GetItemByIdOrName(product.GetId().ToString())[0];
-					int result = 1;
+
+					Item item2 = TShock.Utils.GetItemByIdOrName(product2.GetId().ToString())[0];
+					int result2 = 1;
 					if (args.Parameters.Count > 1)
 					{
-						int.TryParse(text2, out result);
+						int.TryParse(text2, out result2);
 					}
-					if (result > PowelderAPI.Utils.PlayerItemCount(args.Player, item))
+
+					if (result2 > PowelderAPI.Utils.PlayerItemCount(args.Player, item2))
 					{
-						player.SendErrorMessage("Nie masz tylu {0} w ekwipunku.", item.Name);
+						player.SendErrorMessage("Nie masz tylu {0} w ekwipunku.", item2.Name);
 						break;
 					}
-					
-					if (result < 0)
-					{
-						args.Player.SendErrorMessage("Podano wartosc ujemna ilosci, mozesz podac tylko dodatnia.");
-						return;
-					}
-					int num = result * product.GetSell();
-					SurvivalCore.SrvPlayers[player.Index].Money += num;
-					PowelderAPI.Utils.PlayerRemoveItems(args.Player, item, result);
-					args.Player.SendSuccessMessage($"Pomyslnie sprzedano [i:{item.type}] w ilosci {result}. Zarobiono {num:N0} {Economy.Config.ValueName}");
-					args.Player.SendInfoMessage($"Twoj nowy stan konta: {SurvivalCore.SrvPlayers[player.Index].Money:N0} {Economy.Config.ValueName}");
+
+					int num2 = result2 * product2.GetSell();
+					SurvivalCore.SrvPlayers[player.Index].Money += num2;
+					PowelderAPI.Utils.PlayerRemoveItems(args.Player, item2, result2);
+					args.Player.SendSuccessMessage(
+						$"Pomyslnie sprzedano [i:{item2.type}] w ilosci {result2}. Zarobiono {num2:N0} {Economy.Config.ValueName}");
+					args.Player.SendInfoMessage(
+						$"Twoj nowy stan konta: {SurvivalCore.SrvPlayers[player.Index].Money:N0} {Economy.Config.ValueName}");
 					break;
-				}
-				Product product2 = new Product(0, null, 0, 0, 0);
-				if (Economy.Products.Exists((Product x) => x.Name == cmd2))
-				{
-					product2 = Economy.Products.Find((Product x) => x.Name == cmd2);
-				}
-				if (product2.GetIndex() == 0)
-				{
-					player.SendErrorMessage("Nie znaleziono przedmiotu w sklepie.");
-					break;
-				}
-				if (product2.GetSell() <= 0)
-				{
-					player.SendErrorMessage("Tego przedmiotu nie mozna sprzedac.");
-					break;
-				}
-				Item item2 = TShock.Utils.GetItemByIdOrName(product2.GetId().ToString())[0];
-				int result2 = 1;
-				if (args.Parameters.Count > 1)
-				{
-					int.TryParse(text2, out result2);
-				}
-				if (result2 > PowelderAPI.Utils.PlayerItemCount(args.Player, item2))
-				{
-					player.SendErrorMessage("Nie masz tylu {0} w ekwipunku.", item2.Name);
-					break;
-				}
-				int num2 = result2 * product2.GetSell();
-				SurvivalCore.SrvPlayers[player.Index].Money += num2;
-				PowelderAPI.Utils.PlayerRemoveItems(args.Player, item2, result2);
-				args.Player.SendSuccessMessage($"Pomyslnie sprzedano [i:{item2.type}] w ilosci {result2}. Zarobiono {num2:N0} {Economy.Config.ValueName}");
-				args.Player.SendInfoMessage($"Twoj nowy stan konta: {SurvivalCore.SrvPlayers[player.Index].Money:N0} {Economy.Config.ValueName}");
-				break;
-			}
 			}
 		}
+	}
 
-		public static void ShopAdmin(CommandArgs args)
+	public static void ShopAdmin(CommandArgs args)
 		{
 			string text = null;
 			string text2 = null;
