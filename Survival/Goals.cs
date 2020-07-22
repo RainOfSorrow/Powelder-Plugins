@@ -15,7 +15,6 @@ namespace SurvivalCore
     public class Goals
     {
         private static List<Goal> _goalsList = new List<Goal>();
-        
 
         public static void Setup(IDbConnection db)
         {
@@ -86,10 +85,17 @@ namespace SurvivalCore
 
         public static void ProgressCommand(CommandArgs args)
         {
+            Goal goal = GetCurrentGoal();
+
+            if (goal.Name == "Brak")
+            {
+                args.Player.SendInfoMessage("Wszystkie cele zostaly osiagniete.");
+                return;
+            }
+            
             if (args.Parameters.Count < 1)
             {
-                Goal goal1 = GetCurrentGoal();
-                args.Player.SendInfoMessage($"Aktualny stan postepu to {goal1.Name}: {goal1.Progress}/{goal1.ToComplete} ({Math.Round((float)goal1.Progress / (float)goal1.ToComplete, 4) * 100}%)");
+                args.Player.SendInfoMessage($"Aktualny stan postepu to {goal.Name}: {goal.Progress}/{goal.ToComplete} ({Math.Round((float)goal.Progress / (float)goal.ToComplete, 4) * 100}%)");
                 args.Player.SendInfoMessage("Aby pomoc w uzyskaniu celu uzyj komendy /postep <kwota>");
                 return;;
             }
@@ -101,7 +107,7 @@ namespace SurvivalCore
                 return;
             }
 
-            if (money < 0)
+            if (money < 1)
             {
                 args.Player.SendErrorMessage("Podano kwote w liczbie ujemnej.");
                 return;
@@ -112,9 +118,7 @@ namespace SurvivalCore
                 args.Player.SendErrorMessage("Chciales wplacic wiecej niz posiadasz.");
                 return;
             }
-
-            Goal goal = GetCurrentGoal();
-
+            
             if (goal.ToComplete - (goal.Progress + money) < 0)
                 money = goal.ToComplete - goal.Progress;
 
