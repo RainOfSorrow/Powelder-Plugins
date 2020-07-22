@@ -60,30 +60,6 @@ namespace SurvivalCore
 			{
 				num = 22;
 			}
-			else if (name == "sapphire")
-			{
-				num = 63;
-			}
-			else if (name == "ruby")
-			{
-				num = 64;
-			}
-			else if (name == "emerald")
-			{
-				num = 65;
-			}
-			else if (name == "topaz")
-			{
-				num = 66;
-			}
-			else if (name == "amethyst")
-			{
-				num = 67;
-			}
-			else if (name == "diamond")
-			{
-				num = 68;
-			}
 			else if (name == "adamantite")
 			{
 				num = 111;
@@ -91,10 +67,6 @@ namespace SurvivalCore
 			else if (name == "hellstone")
 			{
 				num = 58;
-			}
-			else if (name == "meteorite")
-			{
-				num = 37;
 			}
 			else if (name == "tin")
 			{
@@ -131,26 +103,6 @@ namespace SurvivalCore
 			else if (name == "chlorophyte")
 			{
 				num = 211;
-			}
-			else if (name == "dirt")
-			{
-				num = 0;
-			}
-			else if (name == "stone")
-			{
-				num = 1;
-			}
-			else if (name == "sand")
-			{
-				num = 53;
-			}
-			else
-			{
-				if (!(name == "silt"))
-				{
-					return;
-				}
-				num = 123;
 			}
 			int num2 = 0;
 			while ((float)num2 < oreAmts)
