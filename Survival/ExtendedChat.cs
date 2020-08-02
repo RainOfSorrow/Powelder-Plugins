@@ -79,9 +79,9 @@ namespace SurvivalCore
 			if (SurvivalCore.IsChatEvent && SurvivalCore.ChatEventWord == args.Text)
 			{
 				SurvivalCore.ChatEventStoper.Stop();
-				TSPlayer.All.SendMessage($"[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] [c/00cc66:{TShock.Players[args.Who].Name}] napisal najszybciej [c/00cc66:{SurvivalCore.ChatEventWord}] i wygral 80 €. [c/595959:(]{Math.Round(SurvivalCore.ChatEventStoper.Elapsed.TotalSeconds, 3)} sec[c/595959:)]", new Color(128, 255, 191));
-				TSPlayer.All.SendData(PacketTypes.CreateCombatTextExtended, "Witamy na serwerze! ;)", (int)Color.LimeGreen.PackedValue, TShock.Players[args.Who].X, TShock.Players[args.Who].Y);
-				SurvivalCore.SrvPlayers[args.Who].Money += 80;
+				TSPlayer.All.SendMessage($"[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] [c/00cc66:{TShock.Players[args.Who].Name}] napisal najszybciej [c/00cc66:{SurvivalCore.ChatEventWord}] i wygral {chatEventWinAmount} €. [c/595959:(]{Math.Round(SurvivalCore.ChatEventStoper.Elapsed.TotalSeconds, 3)} sec[c/595959:)]", new Color(128, 255, 191));
+				TSPlayer.All.SendData(PacketTypes.CreateCombatTextExtended, "Brawo!", (int)Color.LimeGreen.PackedValue, TShock.Players[args.Who].X, TShock.Players[args.Who].Y);
+				SurvivalCore.SrvPlayers[args.Who].Money += chatEventWinAmount;
 				SurvivalCore.IsChatEvent = false;
 				SurvivalCore.ChatEventTimer = DateTime.UtcNow;
 				SurvivalCore.ChatEventStoper.Reset();
@@ -119,7 +119,7 @@ namespace SurvivalCore
 				args.Player.SendErrorMessage("Nie znaleziono itemu.");
 				return;
 			}
-			int cost = 3500;
+			int cost = 8500;
 			cost = Utils.CostCalc(args.Player, cost);
 			if (money < cost)
 			{
@@ -189,7 +189,7 @@ SurvivalCore.SrvPlayers[args.Player.Index].NickColor ?? PowelderAPI.Utils.GetGro
 				args.Player.SendInfoMessage($"Wpisz /ncolor list, aby otrzymac liste dostepnych kolorow.");
 				return;
 			}
-			int cost = 6500;
+			int cost = 14500;
 			cost = Utils.CostCalc(args.Player, cost);
 			if (money < cost)
 			{
@@ -232,7 +232,7 @@ SurvivalCore.SrvPlayers[args.Player.Index].NickColor ?? PowelderAPI.Utils.GetGro
 		{
 			if (TShock.Utils.GetActivePlayerCount() > 2)
 			{
-				chatEventWinAmount = 40 * TShock.Utils.GetActivePlayerCount();
+				chatEventWinAmount = 30 * TShock.Utils.GetActivePlayerCount();
 
 				if (chatEventWinAmount > 400)
 					chatEventWinAmount = 400;
@@ -242,7 +242,7 @@ SurvivalCore.SrvPlayers[args.Player.Index].NickColor ?? PowelderAPI.Utils.GetGro
 				SurvivalCore.IsChatEvent = true;
 				TSPlayer.All.SendMessage(
 					"[i:889] [c/595959:;] [c/00cc66:Event] [c/595959:;] Kto napisze najszybciej [c/00cc66:" +
-					SurvivalCore.ChatEventWord + "] wygra 80 €.", new Color(128, 255, 191));
+					SurvivalCore.ChatEventWord + $"] wygra {chatEventWinAmount} €.", new Color(128, 255, 191));
 				Thread.Sleep((SurvivalCore.ChatEventWord.Length + 18) * 1000);
 				if (SurvivalCore.IsChatEvent)
 				{
