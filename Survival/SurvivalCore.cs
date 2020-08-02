@@ -535,9 +535,8 @@ namespace SurvivalCore
 
 			int amount = (int)(rand.Next(20, 40) * (TShock.Utils.GetActivePlayerCount() * 0.5f));
 			int crate = 0;
-			int crateAmount = rand.Next(1, 2);
-			
-				switch (rand.Next(1, 26))
+
+			switch (rand.Next(1, 26))
 				{
 					case 1:
 						crate = 2334;
@@ -621,9 +620,9 @@ namespace SurvivalCore
 			
 			foreach (var player in TShock.Players.Where(x => x != null))
 			{
-				player.SendInfoMessage($"[i:1523] [c/595959:;] [c/ffff00:Bogaty Pan] [c/595959:;] Kazdy z was otrzymal darmowe {amount} € oraz [i/s{crateAmount}:{crate}.");
-				player.SendData(PacketTypes.CreateCombatTextExtended, "Pieniazki", (int) new Color(255, 255, 0).PackedValue, player.TPlayer.Center.X, player.TPlayer.Center.Y, 0.0f, 0);
-				player.GiveItem(crate, crateAmount);
+				player.SendInfoMessage($"[i:1523] [c/595959:;] [c/ffff00:Bogaty Pan] [c/595959:;] Kazdy z was otrzymal darmowe {amount} € oraz [i:{crate}].");
+				player.SendData(PacketTypes.CreateCombatTextExtended, "Bogactwo", (int) new Color(255, 255, 0).PackedValue, player.TPlayer.Center.X, player.TPlayer.Center.Y, 0.0f, 0);
+				player.GiveItem(crate, 1);
 				if (SrvPlayers[player.Index] != null)
 				{
 					SrvPlayers[player.Index].Money += amount;
