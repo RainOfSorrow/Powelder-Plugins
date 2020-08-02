@@ -11,11 +11,11 @@ namespace SurvivalCore
 
 		public List<SimpleItem> Ingredients = new List<SimpleItem>();
 
-		public Recipe(int cost, SimpleItem result, params SimpleItem[] ingrediens)
+		public Recipe(int cost, SimpleItem result, params SimpleItem[] ingredients)
 		{
 			this.Cost = cost;
 			this.Result = result;
-			this.Ingredients.AddRange(ingrediens);
+			this.Ingredients.AddRange(ingredients);
 		}
 
 		public string GetIngredientsString()
