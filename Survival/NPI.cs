@@ -163,6 +163,11 @@ namespace SurvivalCore
 					break;
 			}
 
+
+			if (PowelderAPI.Utils.IsNpcOnWorld(125) && npcid == 126)
+			{
+				return false;
+			}
 			
 			int bossId = (npcid == 266 || npcid == 13 ? 6969 : npcid);
 
@@ -188,7 +193,7 @@ namespace SurvivalCore
 			{
 				tSPlayer.SendErrorMessage(
 					$"Musisz odczekac jakis czas, aby moc zrespic kolejnego bossa/inwazje. Mozliwe to bedzie za {PowelderAPI.Utils.ExpireCountDown(SurvivalCore.SrvPlayers[tSPlayer.Index].BossCooldown)}");
-				if (SpawnItemId(npcid) != -1)
+				if (SpawnItemId(npcid) != -1 & npcid != 126)
 				{
 					tSPlayer.GiveItem(SpawnItemId(npcid), 1);
 				}
@@ -375,6 +380,9 @@ namespace SurvivalCore
 				}
 			}
 			
+			
+			args.Player.TPlayer.KillMe(args.PlayerDeathReason, args.Damage, args.Direction, args.Pvp);
+			
 			if (args.Player.HasPermission("server.gmod"))
 			{
 				Main.player[args.Player.Index].respawnTimer = 1;
@@ -382,8 +390,6 @@ namespace SurvivalCore
 				args.Player.TPlayer.respawnTimer = 1;
 			}
 			
-			args.Player.Dead = true;
-			Main.player[args.Player.Index].dead = true;
 			NetMessage.SendPlayerDeath(args.Player.Index, PlayerDeathReason.LegacyEmpty(), args.Damage, args.Direction, args.Pvp);
 			NetMessage.SendPlayerDeath(args.Player.Index, PlayerDeathReason.LegacyEmpty(), args.Damage, args.Direction, args.Pvp, args.Player.Index);
 
@@ -417,6 +423,7 @@ namespace SurvivalCore
 						}
 						else if (SurvivalCore.IsDeathMessage[tSPlayer2.Index])
 						{
+							
 							tSPlayer2.SendMessage(args.PlayerDeathReason.GetDeathText(args.Player.Name).ToString(),
 								Color.Maroon);
 						}
